@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140815233054) do
+ActiveRecord::Schema.define(version: 20140818175607) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -24,6 +24,8 @@ ActiveRecord::Schema.define(version: 20140815233054) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  add_index "job_specs", ["name"], name: "index_job_specs_on_name", unique: true, using: :btree
 
   create_table "tpl_birst_soap_generic_commands", force: true do |t|
     t.string   "command"
