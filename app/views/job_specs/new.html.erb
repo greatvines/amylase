@@ -1,0 +1,31 @@
+<h1>JobSpecs#new</h1>
+<p>Find me in app/views/job_specs/new.html.erb</p>
+
+<div class="row">
+  <div class="span6 offset3">
+    <%= form_for(@job_spec) do |f| %>
+      <%= f.label :name %>
+      <%= f.text_field :name %>
+
+      <%= f.label :enabled, class: "checkbox" do %>
+         <%= f.check_box :enabled %> Enabled?
+      <% end %>
+
+      <%= f.label :job_template_type %>
+      <%= f.select(:job_template_type, options_for_select(['TplBirstSoapGenericCommand']), {include_blank: 'None'}) %>
+
+      <%= f.fields_for :job_template_type do |template| %>
+        <%= template.label :command %>
+        <%= template.text_field :command %>
+
+        <%= template.label :argument_json %>
+        <%= template.text_field :argument_json %>
+      <% end %>
+
+      Happy hat - job_spec_job_template_type
+
+
+
+    <% end %>
+  </div>
+</div>

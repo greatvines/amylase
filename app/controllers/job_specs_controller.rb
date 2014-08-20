@@ -9,9 +9,16 @@ class JobSpecsController < ApplicationController
   end
 
   def new
+    @job_spec = JobSpec.new
   end
 
   def create
+    @job_spec = JobSpec.new(job_spec_params)
+    if @job_spec.save
+      redirect_to home_url
+    else
+      render 'new'
+    end
   end
 
   def edit
