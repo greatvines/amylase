@@ -15,7 +15,7 @@ class JobSpecsController < ApplicationController
   def create
     @job_spec = JobSpec.new(job_spec_params)
     if @job_spec.save
-      redirect_to home_url
+      redirect_to @job_spec
     else
       render 'new'
     end
@@ -30,5 +30,9 @@ class JobSpecsController < ApplicationController
 
 
   private
+
+    def job_spec_params
+      params.require(:job_spec).permit(:name, :enabled, :password, job_template_attributes: [:command, :argument_json])
+    end
 
 end

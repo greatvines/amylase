@@ -2,30 +2,74 @@
 <p>Find me in app/views/job_specs/new.html.erb</p>
 
 <div class="row">
-  <div class="span6 offset3">
+  <div class="col-md-8">
     <%= form_for(@job_spec) do |f| %>
-      <%= f.label :name %>
-      <%= f.text_field :name %>
 
-      <%= f.label :enabled, class: "checkbox" do %>
-         <%= f.check_box :enabled %> Enabled?
-      <% end %>
+      <div class="col-md-12">
+        <%= f.label :name %>
+        <%= f.text_field :name %>
 
-      <%= f.label :job_template_type %>
-      <%= f.select(:job_template_type, options_for_select(['TplBirstSoapGenericCommand']), {include_blank: 'None'}) %>
+        <div class="checkbox">
+          <%= f.label :enabled, class: "checkbox" do %>
+            <%= f.check_box :enabled %> Enabled?
+          <% end %>
+        </div>
 
-      <%= f.fields_for :job_template_type do |template| %>
-        <%= template.label :command %>
-        <%= template.text_field :command %>
+        <% if false %>
+        <%= f.label :job_template %>
+        <%= f.select(:job_template_type, options_for_select(['TplBirstSoapGenericCommand','TplBirstDuplicateSpace'])) %>
+        <% end %>
 
-        <%= template.label :argument_json %>
-        <%= template.text_field :argument_json %>
-      <% end %>
+        <p>
+        <strong>TplBirstSoapGenericCommand</strong>
+        </p>
 
-      Happy hat - job_spec_job_template_type
+        <div class="col-md-8 col-md-offset-1">
+          <%= f.fields_for :job_template_type do |tpl| %>
+            <%= tpl.label :command %>
+            <%= tpl.text_field :command %>
+
+            <%= tpl.label :argument_json %>
+            <%= tpl.text_field :argument_json %>
+          <% end %>
+        </div>
+
+        <% if false %>
+        <strong>TplBirstDuplicateSpace</strong>
+
+        <div class="col-md-8 col-md-offset-1">
+          <%= f.fields_for :job_template_type do |tpl| %>
+            <%= tpl.label :from_space_id_str %>
+            <%= tpl.text_field :from_space_id_str %>
+
+            <%= tpl.label :to_space_name %>
+            <%= tpl.text_field :to_space_name %>
+
+            <div class="checkbox">
+              <%= tpl.label :with_membership, class: "checkbox" do %>
+                <%= tpl.check_box :with_membership %> With Membership?
+              <% end %>
+            </div>
+
+            <div class="checkbox">
+              <%= tpl.label :with_data, class: "checkbox" do %>
+                <%= tpl.check_box :with_data %> With Data?
+              <% end %>
+            </div>
+
+            <div class="checkbox">
+              <%= tpl.label :with_datastore, class: "checkbox" do %>
+                <%= tpl.check_box :with_datastore %> With Datastore?
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+        <% end %>
 
 
+      </div>
 
+      <%= f.submit "Create Job Spec", class: "btn btn-large btn-primary" %>
     <% end %>
   </div>
 </div>
