@@ -15,17 +15,15 @@
           <% end %>
         </div>
 
-        <% if false %>
         <%= f.label :job_template %>
         <%= f.select(:job_template_type, options_for_select(['TplBirstSoapGenericCommand','TplBirstDuplicateSpace'])) %>
-        <% end %>
 
-        <p>
+        <div class="col-md-12">
         <strong>TplBirstSoapGenericCommand</strong>
-        </p>
+        </div>
 
         <div class="col-md-8 col-md-offset-1">
-          <%= f.fields_for :job_template_type do |tpl| %>
+          <%= f.fields_for :job_template_attributes do |tpl| %>
             <%= tpl.label :command %>
             <%= tpl.text_field :command %>
 
@@ -34,11 +32,11 @@
           <% end %>
         </div>
 
-        <% if false %>
+        <div class="col-md-12">
         <strong>TplBirstDuplicateSpace</strong>
-
+        </div>
         <div class="col-md-8 col-md-offset-1">
-          <%= f.fields_for :job_template_type do |tpl| %>
+          <%= f.fields_for :job_template_attributes do |tpl| %>
             <%= tpl.label :from_space_id_str %>
             <%= tpl.text_field :from_space_id_str %>
 
@@ -64,7 +62,6 @@
             </div>
           <% end %>
         </div>
-        <% end %>
 
 
       </div>

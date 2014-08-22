@@ -36,7 +36,12 @@ class JobSpecsController < ApplicationController
   private
 
     def job_spec_params
-      params.require(:job_spec).permit(:name, :enabled, job_template_attributes: [:command, :argument_json])
+      tpl_attributes = (
+        TplBirstSoapGenericCommand::JOB_SPEC_PERMITTED_ATTRIBUTES +
+        TplBirstDuplicateSpace::JOB_SPEC_PERMITTED_ATTRIBUTES
+      )
+
+      params.require(:job_spec).permit(:name, :enabled, :job_template_type, job_template_attributes: tpl_attributes.uniq)
     end
 
 end
