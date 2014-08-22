@@ -5,12 +5,12 @@ Rails.application.routes.draw do
   match '/help', to: 'static_pages#help', via: 'get'
 
   resources :job_specs, only: [:index, :show, :new, :create] do
-    # This may not really be necessary, but this is how you'd do it
-#    scope module: "job_specs" do
-#      resources :job_templates, only: [:show]
-#    end
   end
 
+  namespace :job_specs do
+    resources :job_templates, only: [:show]
+    resources :tpl_birst_soap_generic_commands, only: [:show, :new, :create]
+  end
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
