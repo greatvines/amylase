@@ -1,3 +1,7 @@
+module JobSpecs
+  JOB_SPEC_PERMITTED = [:id, :name, :enabled]
+end
+
 class JobSpecsController < ApplicationController
 
   def index
@@ -32,7 +36,7 @@ class JobSpecsController < ApplicationController
   private
 
     def job_spec_params
-      params.require(:job_spec).permit(:name, :enabled, :password, job_template_attributes: [:command, :argument_json])
+      params.require(:job_spec).permit(:name, :enabled, job_template_attributes: [:command, :argument_json])
     end
 
 end
