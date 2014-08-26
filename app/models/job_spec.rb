@@ -1,6 +1,6 @@
 class JobSpec < ActiveRecord::Base
   JOB_TEMPLATE_TYPES = %w(TplBirstSoapGenericCommand TplBirstDuplicateSpace)
-  validates_inclusion_of :job_template_type, :in => JOB_TEMPLATE_TYPES, :allow_nil => false
+  validates_inclusion_of :job_template_type, in: JOB_TEMPLATE_TYPES, allow_nil: false
 
   validates_uniqueness_of :name
   validates_presence_of :name

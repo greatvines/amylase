@@ -37,13 +37,16 @@ gem 'simple_form', '3.1.0.rc2'
 
 group :development, :test do
   gem 'rspec-rails', '~> 3.0'
+  gem 'factory_girl_rails', '~> 4.4'
   gem 'shoulda-matchers', '~> 2.6'
 end
 
 group :test do
   gem 'selenium-webdriver', '~> 2.13'
   gem 'capybara', '~> 2.4'
-  gem 'factory_girl_rails', '~> 4.4'
+  gem 'faker', '~> 1.4'
+  gem 'launchy', '~> 2.4'
+  gem 'guard-rspec', '~> 4.3'
 end
 
 group :production do
