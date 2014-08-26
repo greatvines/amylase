@@ -1,17 +1,14 @@
 require 'rails_helper'
 
 RSpec.describe JobSpec, :type => :model do
-  before do
-    @job_spec = JobSpec.new(
-      name:    "a_fascinating_job",
-      job_template_type: "TplBirstSoapGenericCommand",
-      job_template_attributes: {
-        command: "list_spaces"
-      }
-    )
-  end
 
+  before { @job_spec = FactoryGirl.create(:job_spec) }
   subject { @job_spec }
+
+  it "should do something" do
+    puts @job_spec.inspect
+    puts @job_spec.job_template.inspect
+  end
 
   it { should respond_to(:name) }
   it { should respond_to(:enabled) }
@@ -19,41 +16,41 @@ RSpec.describe JobSpec, :type => :model do
 
   it { should validate_uniqueness_of(:name) }
   it { should validate_presence_of(:name) }
-  it { should ensure_inclusion_of(:job_template_type).in_array(JobSpec::JOB_TEMPLATE_TYPES) }
+
+  context "using a copy to get around ensure_inclusion_of bug" do
+    before { @job_spec_dup = @job_spec.dup }
+    subject { @job_spec_dup }
+
+    it { should ensure_inclusion_of(:job_template_type).in_array(JobSpec::JOB_TEMPLATE_TYPES) }
+  end
 
   it { should belong_to(:job_template) }
+  it { should accept_nested_attributes_for(:job_template) }
   
   it { should be_valid }
 
 
-
   describe "default values" do
-    specify { expect(@job_spec.enabled).to eq false }
-  end
-
-  describe "when name already exists" do
-    before do
-      job_spec_dup = @job_spec.dup
-      job_spec_dup.save
-      @job_spec.save
+    specify "enabled has correct default" do
+      expect(@job_spec.enabled).to eq false
     end
-
-    it { should_not be_valid }
   end
 
-  describe "job_template associations" do
-    before { @job_spec.save }
+  it "should fail when name already exists" do
+    expect(@job_spec.dup).not_to be_valid
+  end
+
+  describe "associated JobTemplate" do
     let(:job_template_id) { @job_spec.job_template.id }
 
-    describe "existence of job_template" do
-      specify { expect(job_template_id).not_to be_nil }
+    it "exists when the JobSpec is created" do
+      expect(job_template_id).not_to be_nil
     end
 
-    describe "destroying a job_spec" do
-      specify {
-        expect { @job_spec.destroy }
-          .to change(@job_spec.job_template_type.constantize, :count).by(-1) 
-      }
+    it "is destroyed when the JobSpec is destroyed" do
+      expect { @job_spec.destroy }
+        .to change(@job_spec.job_template_type.constantize, :count).by(-1) 
     end
   end
+
 end
