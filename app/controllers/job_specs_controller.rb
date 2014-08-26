@@ -1,7 +1,3 @@
-module JobSpecs
-  JOB_SPEC_PERMITTED = [:id, :name, :enabled]
-end
-
 class JobSpecsController < ApplicationController
 
   def index
@@ -19,8 +15,10 @@ class JobSpecsController < ApplicationController
   def create
     @job_spec = JobSpec.new(job_spec_params)
     if @job_spec.save
+      flash[:success] = "Success! Job Spec created."
       redirect_to @job_spec
     else
+      flash[:danger] = "Error! Job Spec not created: #{@job_spec.errors.full_messages}"
       render 'new'
     end
   end
@@ -30,8 +28,6 @@ class JobSpecsController < ApplicationController
 
   def update
   end
-
-
 
   private
 

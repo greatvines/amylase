@@ -11,7 +11,9 @@ class TplBirstDuplicateSpace < ActiveRecord::Base
   validates_presence_of :from_space_id_str, :to_space_name
   has_one :job_spec, as: :job_template
 
-  validates_format_of :from_space_id_str, with: /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/
+  validates_format_of :from_space_id_str, 
+                      with: /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/, 
+                      message: "space id must be a UUID (e.g., 5efddbea-3481-46fd-b7c1-4e04046cefb7)"
  
   after_initialize :defaults, unless: :persisted?
   

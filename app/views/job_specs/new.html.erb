@@ -24,7 +24,7 @@
             <div class="panel-heading">TplBirstSoapGenericCommand</div>
             <div class="panel-body">
 
-              <%= f.simple_fields_for :job_template_attributes do |tpl| %>
+              <%= f.simple_fields_for :job_template_attributes, form_job_template_object(@job_spec, 'TplBirstSoapGenericCommand') do |tpl| %>
                 <%= tpl.input :command %>
                 <%= tpl.input :argument_json %>
               <% end %>
@@ -36,7 +36,7 @@
             <div class="panel-heading">TplBirstDuplicateSpace</div>
             <div class="panel-body">
 
-              <%= f.simple_fields_for :job_template_attributes do |tpl| %>
+              <%= f.simple_fields_for :job_template_attributes, form_job_template_object(@job_spec, 'TplBirstDuplicateSpace') do |tpl| %>
                 <%= tpl.input :from_space_id_str %>
                 <%= tpl.input :to_space_name %>
 
