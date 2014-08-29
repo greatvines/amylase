@@ -1,5 +1,9 @@
 Rails.application.routes.draw do
   
+  resources :job_schedules
+
+  resources :job_schedule_groups
+
   root 'static_pages#home'
   match '/home', to: 'static_pages#home', via: 'get'
   match '/help', to: 'static_pages#help', via: 'get'

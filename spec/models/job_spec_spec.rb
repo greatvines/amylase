@@ -5,11 +5,6 @@ RSpec.describe JobSpec, :type => :model do
   before { @job_spec = FactoryGirl.create(:job_spec) }
   subject { @job_spec }
 
-  it "should do something" do
-    puts @job_spec.inspect
-    puts @job_spec.job_template.inspect
-  end
-
   it { should respond_to(:name) }
   it { should respond_to(:enabled) }
   it { should respond_to(:job_template) }
