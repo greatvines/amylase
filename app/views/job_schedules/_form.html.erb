@@ -1,0 +1,14 @@
+<%= simple_form_for(@job_schedule) do |f| %>
+  <%= f.error_notification %>
+
+  <div class="form-inputs">
+    <%= f.input :schedule_method %>
+    <%= f.input :schedule_time %>
+    <%= f.input :first_at %>
+    <%= f.input :last_at %>
+  </div>
+
+  <div class="form-actions">
+    <%= f.button :submit %>
+  </div>
+<% end %>

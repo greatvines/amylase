@@ -35,6 +35,9 @@ gem 'autoprefixer-rails', '~> 2.2.0'
 # Simple form generation - this is the one that provides better compatbility with bootstrap 3.2
 gem 'simple_form', '3.1.0.rc2'
 
+# Scheduling solution
+gem 'rufus-scheduler', '~> 3.0'
+
 group :development, :test do
   gem 'rspec-rails', '~> 3.0'
   gem 'factory_girl_rails', '~> 4.4'

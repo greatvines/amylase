@@ -1,0 +1,24 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Schedule method:</strong>
+  <%= @job_schedule.schedule_method %>
+</p>
+
+<p>
+  <strong>Schedule time:</strong>
+  <%= @job_schedule.schedule_time %>
+</p>
+
+<p>
+  <strong>First at:</strong>
+  <%= @job_schedule.first_at %>
+</p>
+
+<p>
+  <strong>Last at:</strong>
+  <%= @job_schedule.last_at %>
+</p>
+
+<%= link_to 'Edit', edit_job_schedule_path(@job_schedule) %> |
+<%= link_to 'Back', job_schedules_path %>
