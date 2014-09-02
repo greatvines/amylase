@@ -1,20 +1,20 @@
 Rails.application.routes.draw do
   
-  resources :job_schedules
-
-  resources :job_schedule_groups
 
   root 'static_pages#home'
   match '/home', to: 'static_pages#home', via: 'get'
   match '/help', to: 'static_pages#help', via: 'get'
 
-  resources :job_specs, only: [:index, :show, :new, :create] do
+  resources :job_specs do
   end
 
   namespace :job_specs do
     resources :job_templates, only: [:show]
     resources :tpl_birst_soap_generic_commands, only: [:show, :new, :create]
   end
+
+  resources :job_schedule_groups
+#  resources :job_schedules
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

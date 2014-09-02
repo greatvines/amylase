@@ -1,9 +1,31 @@
 <p id="notice"><%= notice %></p>
+<h3 class="text-left"> <strong>Schedule Group:</strong> <%= @job_schedule_group.name %> </h3>
 
-<p>
-  <strong>Name:</strong>
-  <%= @job_schedule_group.name %>
-</p>
+<table id="datatable" class="table">
+  <thead>
+    <tr>
+      <th>id</th>
+      <th>schedule_method</th>
+      <th>schedule_time</th>
+      <th>first_at</th>
+      <th>last_at</th>
+      <th>number_of_times</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @job_schedule_group.job_schedules.each do |job_schedule| %>
+      <tr>
+        <td> <%= job_schedule.id %> </td>
+        <td> <%= job_schedule.schedule_method %> </td>
+        <td> <%= job_schedule.schedule_time %> </td>
+        <td> <%= job_schedule.first_at %> </td>
+        <td> <%= job_schedule.last_at %> </td>
+        <td> <%= job_schedule.number_of_times %> </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
 
 <%= link_to 'Edit', edit_job_schedule_group_path(@job_schedule_group) %> |
 <%= link_to 'Back', job_schedule_groups_path %>
