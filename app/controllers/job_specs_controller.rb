@@ -1,11 +1,11 @@
 class JobSpecsController < ApplicationController
+  before_action :set_job_spec, only: [:show, :edit, :update, :destroy]
 
   def index
-    @job_specs = JobSpec.all.as_json( { include: :job_template } )
+    @job_specs = JobSpec.all
   end
 
   def show
-    @job_spec = JobSpec.find(params[:id]).as_json( { include: :job_template } )
   end
 
   def new
@@ -31,6 +31,13 @@ class JobSpecsController < ApplicationController
 
   private
 
+  private
+    # Use callbacks to share common setup or constraints between actions.
+    def set_job_spec
+      @job_spec = JobSpec.find(params[:id])
+    end
+
+    # Never trust parameters from the scary internet, only allow the white list through.
     def job_spec_params
       tpl_attributes = (
         TplBirstSoapGenericCommand::JOB_SPEC_PERMITTED_ATTRIBUTES +
