@@ -25,12 +25,13 @@ class JobScheduleGroupsController < ApplicationController
   # POST /job_schedule_groups.json
   def create
     @job_schedule_group = JobScheduleGroup.new(job_schedule_group_params)
-
     respond_to do |format|
       if @job_schedule_group.save
+        flash[:success] = "Success! JobScheduleGroup created!"
         format.html { redirect_to @job_schedule_group, notice: 'Job schedule group was successfully created.' }
         format.json { render :show, status: :created, location: @job_schedule_group }
       else
+        flash[:danger] = "Error! JobScheduleGroup not created: #{@job_schedule_group.errors.full_messages}"
         format.html { render :new }
         format.json { render json: @job_schedule_group.errors, status: :unprocessable_entity }
       end
@@ -42,9 +43,11 @@ class JobScheduleGroupsController < ApplicationController
   def update
     respond_to do |format|
       if @job_schedule_group.update(job_schedule_group_params)
+        flash[:success] = "Success! JobScheduleGroup updated!"
         format.html { redirect_to @job_schedule_group, notice: 'Job schedule group was successfully updated.' }
         format.json { render :show, status: :ok, location: @job_schedule_group }
       else
+        flash[:danger] = "Error! JobScheduleGroup not updated: #{@job_schedule_group.errors.full_messages}"
         format.html { render :edit }
         format.json { render json: @job_schedule_group.errors, status: :unprocessable_entity }
       end
@@ -69,6 +72,6 @@ class JobScheduleGroupsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def job_schedule_group_params
-      params.require(:job_schedule_group).permit(:name, job_schedule_attributes: [:id, :job_schedule_group_id, :_destroy, :schedule_method, :schedule_time, :first_at, :last_at, :number_of_times])
+      params.require(:job_schedule_group).permit(:name, job_schedules_attributes: [:id, :job_schedule_group_id, :_destroy, :schedule_method, :schedule_time, :first_at, :last_at, :number_of_times])
     end
 end

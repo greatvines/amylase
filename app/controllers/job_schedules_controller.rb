@@ -1,5 +1,6 @@
 class JobSchedulesController < ApplicationController
   before_action :set_job_schedule, only: [:show, :edit, :update, :destroy]
+  before_action :set_job_schedule_group
 
   # GET /job_schedules
   # GET /job_schedules.json
@@ -15,6 +16,7 @@ class JobSchedulesController < ApplicationController
   # GET /job_schedules/new
   def new
     @job_schedule = JobSchedule.new
+#    @job_schedule = @job_schedule_group.job_schedules.build
   end
 
   # GET /job_schedules/1/edit
@@ -25,13 +27,14 @@ class JobSchedulesController < ApplicationController
   # POST /job_schedules.json
   def create
     @job_schedule = JobSchedule.new(job_schedule_params)
+#    @job_schedule = @job_schedule_group.job_schedules.build(job_schedule_params)
 
     respond_to do |format|
       if @job_schedule.save
         format.html { redirect_to @job_schedule, notice: 'Job schedule was successfully created.' }
         format.json { render :show, status: :created, location: @job_schedule }
       else
-        format.html { render :new }
+        format.html { render :new, notice: 'HOLY SHIT - error in job_schedules_controller' }
         format.json { render json: @job_schedule.errors, status: :unprocessable_entity }
       end
     end
@@ -64,11 +67,17 @@ class JobSchedulesController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_job_schedule
-      @job_schedule = JobSchedule.find(params[:id])
+#      @job_schedule = JobSchedule.find(params[:id])
+      @job_schedule = JobSchedule.new
+    end
+
+    # Use callbacks to share common setup or constraints between actions.
+    def set_job_schedule_group
+      @job_schedule_group = JobScheduleGroup.find(params[:job_schedule_group_id])
     end
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def job_schedule_params
-      params.require(:job_schedule).permit(:schedule_method, :schedule_time, :first_at, :last_at)
+      params.require(:job_schedule).permit(:job_schedule_group_id, :schedule_method, :schedule_time, :first_at, :last_at)
     end
 end
