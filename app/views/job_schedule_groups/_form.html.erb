@@ -14,14 +14,16 @@
 
           <%= f.input :name %>
 
-          <h4> Attach up to three schedules to this group </h4>
+          <h4> Attach schedules to this group </h4>
 
 
           <div id="job_schedules">
-          <%= f.simple_fields_for :job_schedules do |s| %>
-            <%= render 'job_schedule_fields', :f => s %>
+          <%= f.simple_fields_for :job_schedules do |job_schedule| %>
+            <%= render 'job_schedule_fields', :f => job_schedule %>
           <% end %>
-          <%= link_to_add_association "add schedule", f, :job_schedules %>
+          <%= link_to_add_association f, :job_schedules, { class: "btn btn-primary btn-sm" } do %>
+            <span class="glyphicon glyphicon-plus"></span> Add Job Schedule
+          <% end %>
           </div>
 
           <%= f.button :submit %>

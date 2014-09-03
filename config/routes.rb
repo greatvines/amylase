@@ -13,8 +13,9 @@ Rails.application.routes.draw do
     resources :tpl_birst_soap_generic_commands, only: [:show, :new, :create]
   end
 
-  resources :job_schedule_groups
-#  resources :job_schedules
+  resources :job_schedule_groups do
+#    resources :job_schedules
+  end
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

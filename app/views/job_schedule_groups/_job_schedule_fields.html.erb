@@ -1,8 +1,14 @@
-<div class="nested-from">
-  <%= f.input :schedule_method, collection: JobSchedule::SCHEDULE_METHODS, include_blank: false %>
-  <%= f.input :schedule_time %>
-  <%= f.input :first_at %>
-  <%= f.input :last_at %>
-  <%= f.input :number_of_times %>
-  <%= link_to_remove_association "remove schedule", f %>
+<div class="panel panel-primary nested-fields">
+  <div class="panel-heading">JobSchedule</div>
+  <div class="panel-body">
+
+      <%= f.input :schedule_method, collection: JobSchedule::SCHEDULE_METHODS, include_blank: false %>
+      <%= f.input :schedule_time %>
+      <%= f.input :first_at %>
+      <%= f.input :last_at %>
+      <%= f.input :number_of_times %>
+      <%= link_to_remove_association f, { class: "btn btn-danger btn-sm" } do %>
+        <span class="glyphicon glyphicon-remove"></span> Remove Job Schedule      
+      <% end %>
+  </div>
 </div>
