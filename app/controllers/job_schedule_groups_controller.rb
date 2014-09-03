@@ -69,6 +69,6 @@ class JobScheduleGroupsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def job_schedule_group_params
-      params.require(:job_schedule_group).permit(:name)
+      params.require(:job_schedule_group).permit(:name, job_schedule_attributes: [:id, :job_schedule_group_id, :_destroy, :schedule_method, :schedule_time, :first_at, :last_at, :number_of_times])
     end
 end
