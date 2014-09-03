@@ -4,3 +4,5 @@
   <%= "#{@job_spec.as_json({ include: :job_template }).to_yaml}" %>
 </pre>
 
+<%= link_to 'Edit', edit_job_spec_path(@job_spec) %> |
+<%= link_to 'Back', job_spec_path %>
