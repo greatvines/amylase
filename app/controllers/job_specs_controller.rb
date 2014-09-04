@@ -55,8 +55,8 @@ class JobSpecsController < ApplicationController
   def destroy
     @job_spec.destroy
     respond_to do |format|
-      flash[:success] = "Success! JobSpec destroyed"
-      format.html { redirect_to job_spec_url, notice: flash[:success] }
+      flash[:success] = 'Success! JobSpec destroyed.'
+      format.html { redirect_to job_specs_url }
       format.json { head :no_content }
     end
   end
