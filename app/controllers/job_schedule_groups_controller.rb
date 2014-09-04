@@ -27,8 +27,8 @@ class JobScheduleGroupsController < ApplicationController
     @job_schedule_group = JobScheduleGroup.new(job_schedule_group_params)
     respond_to do |format|
       if @job_schedule_group.save
-        flash[:success] = "Success! JobScheduleGroup created!"
-        format.html { redirect_to @job_schedule_group, notice: 'Job schedule group was successfully created.' }
+        flash[:success] = "Success! JobScheduleGroup created."
+        format.html { redirect_to @job_schedule_group }
         format.json { render :show, status: :created, location: @job_schedule_group }
       else
         flash[:danger] = "Error! JobScheduleGroup not created: #{@job_schedule_group.errors.full_messages}"
@@ -43,8 +43,8 @@ class JobScheduleGroupsController < ApplicationController
   def update
     respond_to do |format|
       if @job_schedule_group.update(job_schedule_group_params)
-        flash[:success] = "Success! JobScheduleGroup updated!"
-        format.html { redirect_to @job_schedule_group, notice: 'Job schedule group was successfully updated.' }
+        flash[:success] = "Success! JobScheduleGroup updated."
+        format.html { redirect_to @job_schedule_group }
         format.json { render :show, status: :ok, location: @job_schedule_group }
       else
         flash[:danger] = "Error! JobScheduleGroup not updated: #{@job_schedule_group.errors.full_messages}"
