@@ -59,7 +59,8 @@ class JobScheduleGroupsController < ApplicationController
   def destroy
     @job_schedule_group.destroy
     respond_to do |format|
-      format.html { redirect_to job_schedule_groups_url, notice: 'Job schedule group was successfully destroyed.' }
+      flash[:success] = 'Success! JobScheduleGroup destroyed.'
+      format.html { redirect_to job_schedule_groups_url }
       format.json { head :no_content }
     end
   end

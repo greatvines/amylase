@@ -147,7 +147,7 @@ RSpec.describe JobSpecsController, :type => :controller do
     it "redirects to the job_spec list" do
       job_spec = JobSpec.create! valid_attributes
       delete :destroy, {:id => job_spec.to_param}, valid_session
-      expect(response).to redirect_to(job_spec_url)
+      expect(response).to redirect_to(job_specs_url)
     end
   end
 end
