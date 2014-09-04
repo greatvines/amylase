@@ -23,11 +23,23 @@ RSpec.describe JobScheduleGroupsController, :type => :controller do
   # This should return the minimal set of attributes required to create a valid
   # JobScheduleGroup. As you add validations to JobScheduleGroup, be sure to
   # adjust the attributes here as well.
-  let(:valid_attributes) { FactoryGirl.attributes_for(:job_schedule_group) }
+  let(:valid_attributes) do
+    valid_build = FactoryGirl.build(:job_schedule_group_with_schedules)
+    valid_attributes = valid_build.attributes
+    valid_attributes[:job_schedules_attributes] = {}
+    idx = 0
+    valid_build.job_schedules.each do |s|
+      valid_attributes[:job_schedules_attributes][idx] = s.attributes
+      idx += 1
+   end
+    valid_attributes
+  end
 
-  let(:invalid_attributes) {
-    skip("Add a hash of attributes invalid for your model")
-  }
+  let(:invalid_attributes) do
+    invalid_attributes = valid_attributes.clone
+    invalid_attributes[:job_schedules_attributes][0][:schedule_time] = '* *'
+    invalid_attributes
+  end
 
   # This should return the minimal set of values that should be in the session
   # in order to pass any filters (e.g. authentication) defined in
@@ -71,6 +83,7 @@ RSpec.describe JobScheduleGroupsController, :type => :controller do
         expect {
           post :create, {:job_schedule_group => valid_attributes}, valid_session
         }.to change(JobScheduleGroup, :count).by(1)
+
       end
 
       it "assigns a newly created job_schedule_group as @job_schedule_group" do
@@ -87,6 +100,9 @@ RSpec.describe JobScheduleGroupsController, :type => :controller do
 
     describe "with invalid params" do
       it "assigns a newly created but unsaved job_schedule_group as @job_schedule_group" do
+        puts "invalid_attributes: #{invalid_attributes}"
+        q = JobScheduleGroup.create! invalid_attributes
+        puts "invalid q: #{q}"
         post :create, {:job_schedule_group => invalid_attributes}, valid_session
         expect(assigns(:job_schedule_group)).to be_a_new(JobScheduleGroup)
       end
