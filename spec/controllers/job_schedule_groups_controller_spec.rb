@@ -25,11 +25,11 @@ RSpec.describe JobScheduleGroupsController, :type => :controller do
   # adjust the attributes here as well.
   let(:valid_attributes) do
     valid_build = FactoryGirl.build(:job_schedule_group_with_schedules)
-    valid_attributes = valid_build.attributes
+    valid_attributes = valid_build.attributes.with_indifferent_access
     valid_attributes[:job_schedules_attributes] = {}
     idx = 0
     valid_build.job_schedules.each do |s|
-      valid_attributes[:job_schedules_attributes][idx] = s.attributes
+      valid_attributes[:job_schedules_attributes][idx.to_s.to_sym] = s.attributes
       idx += 1
    end
     valid_attributes
@@ -37,7 +37,8 @@ RSpec.describe JobScheduleGroupsController, :type => :controller do
 
   let(:invalid_attributes) do
     invalid_attributes = valid_attributes.clone
-    invalid_attributes[:job_schedules_attributes][0][:schedule_time] = '* *'
+    invalid_attributes[:name] = "MyInvalidJobScheduleGroup"
+    invalid_attributes[:job_schedules_attributes][0.to_s.to_sym][:schedule_time] = '* *'
     invalid_attributes
   end
 
@@ -99,10 +100,14 @@ RSpec.describe JobScheduleGroupsController, :type => :controller do
     end
 
     describe "with invalid params" do
+      it "does not save the new JobScheduleGroup" do
+        test = JobScheduleGroup.new invalid_attributes
+        expect {
+          post :create, job_schedule_group: invalid_attributes
+        }.not_to change(JobScheduleGroup, :count)
+      end
+
       it "assigns a newly created but unsaved job_schedule_group as @job_schedule_group" do
-        puts "invalid_attributes: #{invalid_attributes}"
-        q = JobScheduleGroup.create! invalid_attributes
-        puts "invalid q: #{q}"
         post :create, {:job_schedule_group => invalid_attributes}, valid_session
         expect(assigns(:job_schedule_group)).to be_a_new(JobScheduleGroup)
       end
@@ -116,25 +121,35 @@ RSpec.describe JobScheduleGroupsController, :type => :controller do
 
   describe "PUT update" do
     describe "with valid params" do
+      let(:job_schedule_group) { JobScheduleGroup.create! valid_attributes }
       let(:new_attributes) {
-        skip("Add a hash of attributes valid for your model")
+        # Rebuild the nested attributes for the persisted object
+        new_attributes = job_schedule_group.attributes.with_indifferent_access
+        new_attributes[:job_schedules_attributes] = {}
+        idx = 0
+        job_schedule_group.job_schedules.each do |s|
+          new_attributes[:job_schedules_attributes][idx.to_s.to_sym] = s.attributes
+          idx += 1
+        end
+
+        # Append a new schedule
+        new_schedule = FactoryGirl.build(:job_schedule, job_schedule_group: job_schedule_group, schedule_time: '06 06 06 * * America/Los_Angeles').attributes.with_indifferent_access
+        new_attributes[:job_schedules_attributes][666.to_s.to_sym] = new_schedule
+
+        new_attributes
       }
 
-      it "updates the requested job_schedule_group" do
-        job_schedule_group = JobScheduleGroup.create! valid_attributes
+      it "updates the requested job_schedule_group by appending a job_schedule" do
         put :update, {:id => job_schedule_group.to_param, :job_schedule_group => new_attributes}, valid_session
-        job_schedule_group.reload
-        skip("Add assertions for updated state")
+        expect { job_schedule_group.reload }.to change { job_schedule_group.job_schedules.length }.by(1)
       end
 
       it "assigns the requested job_schedule_group as @job_schedule_group" do
-        job_schedule_group = JobScheduleGroup.create! valid_attributes
         put :update, {:id => job_schedule_group.to_param, :job_schedule_group => valid_attributes}, valid_session
         expect(assigns(:job_schedule_group)).to eq(job_schedule_group)
       end
 
       it "redirects to the job_schedule_group" do
-        job_schedule_group = JobScheduleGroup.create! valid_attributes
         put :update, {:id => job_schedule_group.to_param, :job_schedule_group => valid_attributes}, valid_session
         expect(response).to redirect_to(job_schedule_group)
       end
