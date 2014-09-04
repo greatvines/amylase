@@ -18,7 +18,7 @@ feature "User creates a JobSpec" do
     scenario "the creation was successful" do
       click_button 'Create Job spec'
 
-      expect(page).to have_content 'Success! Job Spec created.'
+      expect(page).to have_content 'Success! JobSpec created.'
       expect(page).to have_content 'the_george_job'
       expect(page).to have_content 'job_template_type: TplBirstDuplicateSpace'
     end
@@ -29,7 +29,7 @@ feature "User creates a JobSpec" do
       fill_in 'From space id str', with: 'not a valid UUI'
       click_button 'Create Job spec'
 
-      expect(page).to have_content 'Error! Job Spec not created'
+      expect(page).to have_content 'Error! JobSpec not created'
       expect(page).to have_content 'space id must be a UUID'
     end
   end

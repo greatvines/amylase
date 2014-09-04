@@ -19,7 +19,8 @@ require 'rails_helper'
 # that an instance is receiving a specific message.
 
 RSpec.describe JobSchedulesController, :type => :controller do
-
+# No independent controller for job_schedules - all access via job_schedule_group (probably not RESTful?)
+=begin
   # This should return the minimal set of attributes required to create a valid
   # JobSchedule. As you add validations to JobSchedule, be sure to
   # adjust the attributes here as well.
@@ -155,5 +156,5 @@ RSpec.describe JobSchedulesController, :type => :controller do
       expect(response).to redirect_to(job_schedules_url)
     end
   end
-
+=end
 end

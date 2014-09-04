@@ -25,7 +25,7 @@ class JobSpecsController < ApplicationController
     respond_to do |format|
       if @job_spec.save
         flash[:success] = "Success! JobSpec created."
-        format.html { redirect_to @job_spec, notice: flash[:success] }
+        format.html { redirect_to @job_spec }
         format.json { render :show, status: :created, location: @job_spec }
       else
         flash[:danger] = "Error! JobSpec not created: #{@job_spec.errors.full_messages}"
@@ -39,8 +39,8 @@ class JobSpecsController < ApplicationController
   def update
     respond_to do |format|
       if @job_spec.update(job_spec_params)
-        flash[:success] = "Success! JobSpec updated"
-        format.html { redirect_to @job_spec, notice: 'JobSpec was successfully updated.' }
+        flash[:success] = "Success! JobSpec updated."
+        format.html { redirect_to @job_spec }
         format.json { render :show, status: :ok, location: @job_spec }
       else
         flash[:danger] = "Error! JobSpec not updated: #{@job_spec.errors.full_messages}"

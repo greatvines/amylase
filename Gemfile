@@ -50,10 +50,12 @@ group :development, :test do
   gem 'rspec-rails', '~> 3.0'
   gem 'factory_girl_rails', '~> 4.4'
   gem 'shoulda-matchers', '~> 2.6'
+  gem 'database_cleaner', '~> 1.3'
 end
 
 group :test do
   gem 'selenium-webdriver', '~> 2.13'
+  gem 'capybara-webkit', '~> 1.3'
   gem 'capybara', '~> 2.4'
   gem 'faker', '~> 1.4'
   gem 'launchy', '~> 2.4'
