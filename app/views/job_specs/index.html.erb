@@ -7,6 +7,7 @@
       <th>Name</th>
       <th>Enabled</th>
       <th>Job Template Type</th>
+      <th>Job Schedule Group</th>
       <th></th>
     </tr>
   </thead>
@@ -18,6 +19,7 @@
         <td><%= job_spec.name %></td>
         <td><%= job_spec.enabled %></td>
         <td><%= job_spec.job_template_type %></td>
+        <td><%= link_to_if(job_spec.job_schedule_group, job_spec.job_schedule_group.try(:name), job_spec.job_schedule_group) %></td>
         <td class="text-right"><%= link_to 'Show', job_spec %> /
         <%= link_to 'Edit', edit_job_spec_path(job_spec) %> /
         <%= link_to 'Destroy', job_spec, method: :delete, data: { confirm: 'Are you sure?' } %></td>
