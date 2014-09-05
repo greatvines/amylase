@@ -8,6 +8,8 @@ class JobSpec < ActiveRecord::Base
   belongs_to :job_template, polymorphic: true, dependent: :destroy
   accepts_nested_attributes_for :job_template, reject_if: :all_blank
 
+  belongs_to :job_schedule_group
+
   after_initialize :defaults, unless: :persisted?
   
   def defaults

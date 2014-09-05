@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe JobSpecsController, :type => :controller do
 
   let(:valid_attributes) { ControllerMacros.attributes_with_foreign_keys(:job_spec) }
-  let(:invalid_attributes) { ControllerMacros.attributes_with_foreign_keys(:job_spec) }
+  let(:invalid_attributes) { valid_attributes }
 
   # This should return the minimal set of values that should be in the session
   # in order to pass any filters (e.g. authentication) defined in
@@ -72,6 +72,17 @@ RSpec.describe JobSpecsController, :type => :controller do
         post :create, { job_spec: valid_attributes }, valid_session
         expect(response).to redirect_to JobSpec.last
       end
+
+      it "is associated with a job_template" do
+        post :create, { job_spec: valid_attributes }, valid_session
+        expect(assigns(:job_spec).job_template).to be_a(TplBirstSoapGenericCommand)
+      end
+
+      it "is associated with a job_schedule" do
+        post :create, { job_spec: valid_attributes }, valid_session
+        expect(assigns(:job_spec).job_schedule_group).to be_a(JobScheduleGroup)
+      end
+
     end
 
     context "with invalid params" do

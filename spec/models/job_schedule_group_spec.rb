@@ -10,6 +10,7 @@ RSpec.describe JobScheduleGroup, :type => :model do
   it { should validate_uniqueness_of(:name) }
   it { should ensure_length_of(:name).is_at_least(3).is_at_most(255) }
   it { should have_many(:job_schedules).dependent(:destroy) }
+  it { should have_many(:job_specs) }
   it { should accept_nested_attributes_for(:job_schedules) }
   it { should be_valid }
 end

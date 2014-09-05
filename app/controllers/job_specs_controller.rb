@@ -75,7 +75,7 @@ class JobSpecsController < ApplicationController
         TplBirstDuplicateSpace::JOB_SPEC_PERMITTED_ATTRIBUTES
       )
 
-      params.require(:job_spec).permit(:name, :enabled, :job_template_type, job_template_attributes: tpl_attributes.uniq)
+      params.require(:job_spec).permit(:name, :enabled, :job_template_type, :job_template_id, :job_schedule_group_id, job_template_attributes: tpl_attributes.uniq)
     end
 
 end

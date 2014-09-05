@@ -8,6 +8,7 @@ RSpec.describe JobSpec, :type => :model do
   it { should respond_to(:name) }
   it { should respond_to(:enabled) }
   it { should respond_to(:job_template) }
+  it { should respond_to(:job_schedule_group) }
 
   it { should validate_uniqueness_of(:name) }
   it { should validate_presence_of(:name) }
@@ -19,6 +20,7 @@ RSpec.describe JobSpec, :type => :model do
     it { should ensure_inclusion_of(:job_template_type).in_array(JobSpec::JOB_TEMPLATE_TYPES) }
   end
 
+  it { should belong_to(:job_schedule_group) }
   it { should belong_to(:job_template) }
   it { should accept_nested_attributes_for(:job_template) }
   

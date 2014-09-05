@@ -8,4 +8,6 @@ class JobScheduleGroup < ActiveRecord::Base
   has_many :job_schedules, dependent: :destroy, inverse_of: :job_schedule_group
   accepts_nested_attributes_for :job_schedules, reject_if: :all_blank, allow_destroy: true
 
+  has_many :job_specs
+
 end
