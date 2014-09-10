@@ -26,13 +26,51 @@ class JobScheduler
   end
 
   # Public: Starts up the Rufus job scheduler.  Schedules a shutdown
-  # job if the timeout is set.  TODO: Load all enabled jobs.
+  # job if the timeout is set.  
+  # TODO: Load all enabled jobs.
   #
   # Returns nothing.
   def start_scheduler
     @rufus = Rufus::Scheduler.new
     schedule_shutdown_job if self.timeout
+    schedule_job_specs
   end
+
+
+  # Public: NEEDS DESCRIPTION
+  #
+  # Returns nothing.
+  def schedule_job_specs
+    JobSpec.where(enabled: true).each do |job_spec|
+      job_schedule_group = job_spec.job_schedule_group
+      next unless job_schedule_group
+
+      job_schedule_group.job_schedules.each do |job_schedule|
+        @rufus.send(job_schedule.schedule_method, job_schedule.schedule_time, JobHandler.new(job_spec), job_schedule.rufus_options)
+      end
+    end
+  end
+
+  # Public: NEEDS DESCRIPTION
+  class JobHandler
+    def initialize(job_spec)
+      @job_spec = job_spec
+    end
+
+    def call(rjob, time)
+      Rails.logger.info "Scheduling job #{@job_spec.name} at time #{time}"
+      Rails.logger.info JobSpecSerializer.new(@job_spec).as_json.to_yaml
+      puts JobSpecSerializer.new(@job_spec).as_json.to_yaml
+
+      begin
+        @job_spec.job_template.run_job
+      rescue => err
+        Rails.logger.error "Backtrace: #{$!}\n\t#{err.backtrace.join("\n\t")}"
+        raise err
+      end
+    end
+  end
+
 
   # Public: Execution of the Ruby script will wait until the Rufus job scheduler
   # is shut down.  This is mostly useful for testing.

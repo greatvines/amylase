@@ -10,7 +10,6 @@ RSpec.describe JobSchedule, :type => :model do
   it { should respond_to(:schedule_time) }
   it { should respond_to(:first_at) }
   it { should respond_to(:last_at) }
-  it { should respond_to(:last_at) }
   it { should respond_to(:number_of_times) }
 
   it { should validate_presence_of(:job_schedule_group) }

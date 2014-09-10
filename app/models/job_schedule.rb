@@ -21,6 +21,18 @@ class JobSchedule < ActiveRecord::Base
     end
   end
 
+  # Public: Converts JobSchedule attributes into an options hash needed by the
+  # Rufus scheduler.
+  #
+  # Returns: A hash with Rufus options.
+  def rufus_options
+    opts = {}
+    [:first_at, :last_at, :number_of_times].each do |opt|
+      opts[opt] = self.send(opt) if self.send(opt)
+    end
+    opts
+  end
+
   class << self
     def parses_cron(value)
       Rufus::Scheduler.parse_cron(value, {}) rescue nil
