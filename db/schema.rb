@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140904225530) do
+ActiveRecord::Schema.define(version: 20140910160147) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -64,6 +64,12 @@ ActiveRecord::Schema.define(version: 20140904225530) do
   create_table "tpl_birst_soap_generic_commands", force: true do |t|
     t.string   "command",       limit: 80
     t.string   "argument_json", limit: 1024
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "tpl_dev_tests", force: true do |t|
+    t.string   "argument",   null: false
     t.datetime "created_at"
     t.datetime "updated_at"
   end

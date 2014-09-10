@@ -24,7 +24,7 @@ RSpec.describe JobScheduleGroupsController, :type => :controller do
   # JobScheduleGroup. As you add validations to JobScheduleGroup, be sure to
   # adjust the attributes here as well.
   let(:valid_attributes) do
-    valid_build = FactoryGirl.build(:job_schedule_group_with_schedules)
+    valid_build = FactoryGirl.build(:job_schedule_group, :schedule_maintenance)
     valid_attributes = valid_build.attributes.with_indifferent_access
     valid_attributes[:job_schedules_attributes] = {}
     idx = 0

@@ -3,9 +3,9 @@
 FactoryGirl.define do
   factory :job_spec do
     name          "factorygirl_job_spec"
-    association :job_template, factory: :tpl_birst_soap_generic_command
+    association :job_template, factory: :tpl_dev_test
 
-    # Template associations
+    # Other template associations
 
     trait :tpl_birst_soap_generic_command do
       association :job_template, factory: :tpl_birst_soap_generic_command
@@ -24,8 +24,4 @@ FactoryGirl.define do
 
   end
 
-  factory :tpl_birst_soap_generic_command do
-    command "list_spaces"
-    argument_json ""
-  end
 end

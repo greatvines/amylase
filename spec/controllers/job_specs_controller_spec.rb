@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe JobSpecsController, :type => :controller do
 
-  let(:valid_attributes) { ControllerMacros.attributes_with_foreign_keys(:job_spec) }
+  let(:valid_attributes) { ControllerMacros.attributes_with_foreign_keys(:job_spec, :schedule_in_1s) }
   let(:invalid_attributes) { valid_attributes }
 
   # This should return the minimal set of values that should be in the session
@@ -55,7 +55,7 @@ RSpec.describe JobSpecsController, :type => :controller do
 
 
   describe "POST create" do
-    context "with valid parrams" do
+    context "with valid params" do
       it "creates a new JobSpec" do
         expect {
           post :create, { job_spec: valid_attributes }, valid_session
@@ -75,7 +75,7 @@ RSpec.describe JobSpecsController, :type => :controller do
 
       it "is associated with a job_template" do
         post :create, { job_spec: valid_attributes }, valid_session
-        expect(assigns(:job_spec).job_template).to be_a(TplBirstSoapGenericCommand)
+        expect(assigns(:job_spec).job_template).to be_a(TplDevTest)
       end
 
       it "is associated with a job_schedule" do
