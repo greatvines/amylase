@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe JobScheduler, :type => :model do
-  before { @job_scheduler = JobScheduler.new timeout: 1 }
+  before { @job_scheduler = JobScheduler.new timeout: 2 }
   after { @job_scheduler.destroy }
   subject { @job_scheduler }
 
@@ -35,17 +35,18 @@ RSpec.describe JobScheduler, :type => :model do
 
   context "with a job to schedule" do
     before do 
-      FactoryGirl.create(:job_spec, enabled: true)
+      FactoryGirl.create(:job_spec, :schedule_in_1s, enabled: true)
       @job_scheduler.start_scheduler
     end
     after { @job_scheduler.destroy }
 
     it "schedules JobSpecs that are enabled" do
       puts @job_scheduler.job_list.to_yaml
+      @job_scheduler.wait_for_shutdown
     end
 
 
-    it "runs a JobSpec that is enabled and returns a result" do
-    end
+#    it "runs a JobSpec that is enabled and returns a result" do
+#    end
   end
 end

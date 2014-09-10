@@ -1,14 +1,31 @@
 # spec/factories/job_specs.rb
 
 FactoryGirl.define do
-  factory :job_spec do |f|
-    f.name          "factorygirl_job_spec"
-    f.association :job_template, factory: :tpl_birst_soap_generic_command
-    f.association :job_schedule_group, factory: :job_schedule_group
+  factory :job_spec do
+    name          "factorygirl_job_spec"
+    association :job_template, factory: :tpl_birst_soap_generic_command
+
+    # Template associations
+
+    trait :tpl_birst_soap_generic_command do
+      association :job_template, factory: :tpl_birst_soap_generic_command
+    end
+
+
+    # Schedule associations
+
+    trait :schedule_maintenance do
+      association :job_schedule_group, factory: :job_schedule_group_with_schedules
+    end
+    
+    trait :schedule_in_1s do
+      association :job_schedule_group, :in_1s
+    end
+
   end
 
-  factory :tpl_birst_soap_generic_command do |f|
-    f.command "list_spaces"
-    f.argument_json ""
+  factory :tpl_birst_soap_generic_command do
+    command "list_spaces"
+    argument_json ""
   end
 end
