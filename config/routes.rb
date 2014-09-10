@@ -4,13 +4,8 @@ Rails.application.routes.draw do
   match '/home', to: 'static_pages#home', via: 'get'
   match '/help', to: 'static_pages#help', via: 'get'
 
-  resources :job_specs do
-  end
-
-  namespace :job_specs do
-    resources :job_templates, only: [:show]
-    resources :tpl_birst_soap_generic_commands, only: [:show, :new, :create]
-  end
+  resources :job_specs
+  resources :tpl_dev_tests, only: [:index, :show, :edit, :update]
 
   resources :job_schedule_groups do
 #    resources :job_schedules

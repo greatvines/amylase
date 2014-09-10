@@ -1,5 +1,10 @@
 class JobSpec < ActiveRecord::Base
-  JOB_TEMPLATE_TYPES = %w(TplBirstSoapGenericCommand TplBirstDuplicateSpace)
+
+  job_template_types_prod = %w(TplBirstSoapGenericCommand TplBirstDuplicateSpace)
+  job_template_types_test = %w(TplDevTest)
+  JOB_TEMPLATE_TYPES = job_template_types_prod if Rails.env.production?
+  JOB_TEMPLATE_TYPES = (job_template_types_prod + job_template_types_test).uniq if !Rails.env.production?
+
   validates_inclusion_of :job_template_type, in: JOB_TEMPLATE_TYPES, allow_nil: false
 
   validates_uniqueness_of :name

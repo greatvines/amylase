@@ -16,6 +16,9 @@ RSpec.describe TplBirstDuplicateSpace, :type => :model do
   it { should respond_to(:with_data) }
   it { should respond_to(:with_datastore) }
 
+  it { should validate_presence_of(:from_space_id_str) }
+  it { should validate_presence_of(:to_space_name) }
+
   it { should have_one(:job_spec) }
 
   it { should be_valid }
