@@ -46,6 +46,9 @@ gem 'jquery-datatables-rails', '~> 2.2'
 # Dynamic nested forms
 gem 'cocoon', '~> 1.2'
 
+# JSON serialization
+gem 'active_model_serializers', '~> 0.9'
+
 group :development, :test do
   gem 'rspec-rails', '~> 3.0'
   gem 'factory_girl_rails', '~> 4.4'
