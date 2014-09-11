@@ -11,7 +11,9 @@ RSpec.configure do |config|
     DatabaseCleaner.strategy = :transaction
   end
 
-  config.before(:each, :js => true) do
+  # Rufus jobs run in a separate database connection and so, like javascript,
+  # needs to use the truncation strategy.
+  config.before(:each, [:js => true, :rufus_job => true]) do
     DatabaseCleaner.strategy = :truncation
   end
 

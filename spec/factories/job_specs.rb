@@ -2,7 +2,7 @@
 
 FactoryGirl.define do
   factory :job_spec do
-    name          "factorygirl_job_spec"
+    sequence(:name) { |n| "job_spec_collection-#{n}" }
     association :job_template, factory: :tpl_dev_test
 
     # Other template associations
@@ -22,6 +22,8 @@ FactoryGirl.define do
       association :job_schedule_group, :in_1s
     end
 
+    trait :schedule_interval_1s do
+      association :job_schedule_group, :interval_1s
+    end
   end
-
 end
