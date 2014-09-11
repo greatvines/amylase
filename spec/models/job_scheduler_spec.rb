@@ -22,31 +22,47 @@ RSpec.describe JobScheduler, :type => :model do
     expect(@job_scheduler.running).to be false
 
     @job_scheduler.start_scheduler
+
     expect(@job_scheduler.running).to be true
     expect(@job_scheduler.started_at).not_to be nil
     expect(@job_scheduler.uptime).not_to be nil
     expect(@job_scheduler.threads).not_to be nil
     expect(@job_scheduler.job_list).not_to be_empty
-    
+
     @job_scheduler.wait_for_shutdown
+
     expect(@job_scheduler.running).to be false
   end
 
 
-  context "with a job to schedule" do
+  context "with a job to schedule", :rufus_job => true do
     before do 
-      FactoryGirl.create(:job_spec, :schedule_in_1s, enabled: true)
+      FactoryGirl.create(:job_spec, :schedule_interval_1s, name: "MyTestSpec", enabled: true)
+      FactoryGirl.create_list(:job_spec, 2, :schedule_in_1s, enabled: true)
+      FactoryGirl.create_list(:job_spec, 3, :schedule_in_1s, enabled: false)
+
       @job_scheduler.start_scheduler
     end
     after { @job_scheduler.destroy }
 
+
     it "schedules JobSpecs that are enabled" do
-      puts @job_scheduler.job_list.to_yaml
-      @job_scheduler.wait_for_shutdown
+      enabled = JobSpec.where(enabled: true).collect { |j| j.name }
+
+      scheduled = @job_scheduler.job_list.collect do |j|
+        j[:name] if j[:name] != "JobScheduler::ShutdownJobSpec"
+      end.compact
+
+      expect(scheduled).to match_array enabled
     end
 
 
-#    it "runs a JobSpec that is enabled and returns a result" do
-#    end
+    it "runs a JobSpec that is enabled" do
+      last_time = lambda { @job_scheduler.job_list.select { |j| j[:name] == "MyTestSpec" }.pop[:last_time] }
+
+      expect(last_time.call).to be_nil
+      @job_scheduler.wait_for_shutdown
+      expect(last_time.call).to be_a(Time)
+    end
   end
 end

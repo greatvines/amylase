@@ -2,18 +2,27 @@
 
 FactoryGirl.define do
   factory :job_schedule_group do
-    name "MyScheduleGroup"
+    sequence(:name) { |n| "MyScheduleGroup-#{n}" }
 
     trait :in_1s do
-      name "MyScheduleGroupIn1s"
+      sequence(:name) { |n| "MyScheduleGroupIn1s-#{n}" }
 
       after(:build) do |job_schedule_group, evaluator|
         job_schedule_group.job_schedules << build_list(:job_schedule, 1, :in_1s, job_schedule_group: job_schedule_group)
       end
     end
 
+    trait :interval_1s do
+      sequence(:name) { |n| "MyScheduleGroupInterval1s-#{n}" }
+
+      after(:build) do |job_schedule_group, evaluator|
+        job_schedule_group.job_schedules << build_list(:job_schedule, 1, :interval_1s, job_schedule_group: job_schedule_group)
+      end
+    end
+
     trait :schedule_maintenance do
-      name "MyScheduleGroupWithMaintenanceSchedules"
+      sequence(:name) { |n| "MyScheduleGroupWithMaintenanceSchedules-#{n}" }
+
 
       after(:build) do |job_schedule_group, evaluator|
         job_schedule_group.job_schedules << build_list(:job_schedule, 1, :cron_term, job_schedule_group: job_schedule_group)
@@ -54,6 +63,12 @@ FactoryGirl.define do
     # A simple job used to test actual scheduling
     trait :in_1s do
       schedule_method 'in'
+      schedule_time   '1s'
+    end
+
+    # A simple job used to test actual scheduling
+    trait :interval_1s do
+      schedule_method 'interval'
       schedule_time   '1s'
     end
   end

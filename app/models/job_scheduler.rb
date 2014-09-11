@@ -21,8 +21,12 @@ class JobScheduler
   #
   # Returns nothing.
   def destroy
-    @rufus.shutdown if @rufus
+    shutdown
     @@job_scheduler_instance = nil
+  end
+
+  def shutdown(opt=:kill)
+    @rufus.shutdown(opt) if @rufus
   end
 
   # Public: Starts up the Rufus job scheduler.  Schedules a shutdown
@@ -46,7 +50,9 @@ class JobScheduler
       next unless job_schedule_group
 
       job_schedule_group.job_schedules.each do |job_schedule|
-        @rufus.send(job_schedule.schedule_method, job_schedule.schedule_time, JobHandler.new(job_spec), job_schedule.rufus_options)
+        job_spec.job_template
+        opts = job_schedule.rufus_options
+        @rufus.send(job_schedule.schedule_method, job_schedule.schedule_time, JobHandler.new(job_spec), opts)
       end
     end
   end
@@ -57,13 +63,14 @@ class JobScheduler
       @job_spec = job_spec
     end
 
+    attr_reader :job_spec, :status
+
     def call(rjob, time)
       Rails.logger.info "Scheduling job #{@job_spec.name} at time #{time}"
-      Rails.logger.info JobSpecSerializer.new(@job_spec).as_json.to_yaml
-      puts JobSpecSerializer.new(@job_spec).as_json.to_yaml
+      Rails.logger.info JobSpecSerializer.new(@job_spec).as_json.to_yaml unless @job_spec.job_template_type == 'TplSchedulerShutdown'
 
       begin
-        @job_spec.job_template.run_job
+        @job_spec.job_template.run_job(@status)
       rescue => err
         Rails.logger.error "Backtrace: #{$!}\n\t#{err.backtrace.join("\n\t")}"
         raise err
@@ -115,10 +122,12 @@ class JobScheduler
   # Returns an array of job hashes.
   def job_list
     return nil unless @rufus
+    return @saved_job_list if !running
 
     jobs = []
     @rufus.jobs.each do |job|
       jobs << {
+                :name => job.handler.job_spec.name,
                 :running => job.running?,
                 :last_time => job.last_time,
                 :next_time => job.next_time,
@@ -132,6 +141,10 @@ class JobScheduler
               }
     end
     jobs
+  end
+
+  def save_job_list
+    @saved_job_list = job_list
   end
 
 
@@ -157,6 +170,35 @@ class JobScheduler
 
   private
 
+    # Private: Struct that mimics a job_template that is used to shutdown the scheduler.
+    # There is no reason to allow users to to set this up, so no need for a full MVC.
+    TplSchedulerShutdown = Struct.new(:job_scheduler) do
+      def run_job(*args)
+        job_scheduler.save_job_list
+        job_scheduler.shutdown(:kill)
+      end
+    end
+    private_constant :TplSchedulerShutdown
+
+    # Private: Struct that mimics a job_spec that is used to shutdown the scheduler.
+    # There is no reason to allow users to to set this up, so no need for a full MVC.
+    ShutdownJobSpec = Struct.new(:job_scheduler) do
+      def name
+        self.class.name
+      end
+
+      def job_template_type
+        'TplSchedulerShutdown'
+      end
+
+      def job_template
+        TplSchedulerShutdown.new(job_scheduler)
+      end
+    end
+    private_constant :ShutdownJobSpec
+
+
+
     # Private: Shuts down the Rufus scheduler after a given amount of time
     # has elapsed.  Note that this will not destroy the JobScheduler instance.
     #
@@ -165,10 +207,7 @@ class JobScheduler
     #
     # Returns nothing.
     def schedule_shutdown_job(timeout_interval = self.timeout)
-      @rufus.in timeout_interval, :blocking => true, :overlap => false do
-        Rails.logger.info "Shutting down scheduler on request."
-        @rufus.shutdown
-      end
+      @rufus.in timeout_interval, JobHandler.new(ShutdownJobSpec.new(self)), :blocking => true, :overlap => false
     end
-
 end
+
