@@ -23,9 +23,7 @@ RSpec.describe JobSchedulersController, :type => :controller do
   # This should return the minimal set of attributes required to create a valid
   # JobScheduler. As you add validations to JobScheduler, be sure to
   # adjust the attributes here as well.
-  let(:valid_attributes) {
-    skip("Add a hash of attributes valid for your model")
-  }
+  let(:valid_attributes) { { :timeout => '1' } }
 
   let(:invalid_attributes) {
     skip("Add a hash of attributes invalid for your model")
@@ -36,7 +34,9 @@ RSpec.describe JobSchedulersController, :type => :controller do
   # JobSchedulersController. Be sure to keep this updated too.
   let(:valid_session) { {} }
 
-  describe "GET index" do
+  after { JobScheduler.find.destroy if JobScheduler.find }
+
+  describe "GET index", skip: "No GET index route" do
     it "assigns all job_schedulers as @job_schedulers" do
       job_scheduler = JobScheduler.create! valid_attributes
       get :index, {}, valid_session
@@ -53,13 +53,13 @@ RSpec.describe JobSchedulersController, :type => :controller do
   end
 
   describe "GET new" do
-    it "assigns a new job_scheduler as @job_scheduler" do
+    it "assigns a job_scheduler as @job_scheduler" do
       get :new, {}, valid_session
-      expect(assigns(:job_scheduler)).to be_a_new(JobScheduler)
+      expect(assigns(:job_scheduler)).to be_a(JobScheduler)
     end
   end
 
-  describe "GET edit" do
+  describe "GET edit", skip: "No GET edit route" do
     it "assigns the requested job_scheduler as @job_scheduler" do
       job_scheduler = JobScheduler.create! valid_attributes
       get :edit, {:id => job_scheduler.to_param}, valid_session
@@ -69,25 +69,23 @@ RSpec.describe JobSchedulersController, :type => :controller do
 
   describe "POST create" do
     describe "with valid params" do
-      it "creates a new JobScheduler" do
-        expect {
-          post :create, {:job_scheduler => valid_attributes}, valid_session
-        }.to change(JobScheduler, :count).by(1)
+      it "starts the scheduler" do
+        post :create, {:job_scheduler => valid_attributes}, valid_session
+        expect(assigns(:job_scheduler).running).to be
       end
 
       it "assigns a newly created job_scheduler as @job_scheduler" do
         post :create, {:job_scheduler => valid_attributes}, valid_session
         expect(assigns(:job_scheduler)).to be_a(JobScheduler)
-        expect(assigns(:job_scheduler)).to be_persisted
       end
 
       it "redirects to the created job_scheduler" do
         post :create, {:job_scheduler => valid_attributes}, valid_session
-        expect(response).to redirect_to(JobScheduler.last)
+        expect(response).to redirect_to(job_scheduler_url(JobScheduler.find))
       end
     end
 
-    describe "with invalid params" do
+    describe "with invalid params", skip: "There are no invalid parameters" do
       it "assigns a newly created but unsaved job_scheduler as @job_scheduler" do
         post :create, {:job_scheduler => invalid_attributes}, valid_session
         expect(assigns(:job_scheduler)).to be_a_new(JobScheduler)
@@ -100,7 +98,7 @@ RSpec.describe JobSchedulersController, :type => :controller do
     end
   end
 
-  describe "PUT update" do
+  describe "PUT update", skip: "No PUT update route" do
     describe "with valid params" do
       let(:new_attributes) {
         skip("Add a hash of attributes valid for your model")
@@ -146,13 +144,13 @@ RSpec.describe JobSchedulersController, :type => :controller do
       job_scheduler = JobScheduler.create! valid_attributes
       expect {
         delete :destroy, {:id => job_scheduler.to_param}, valid_session
-      }.to change(JobScheduler, :count).by(-1)
+      }.to change(JobScheduler, :find).to(nil)
     end
 
-    it "redirects to the job_schedulers list" do
+    it "redirects to the job_scheduler path" do
       job_scheduler = JobScheduler.create! valid_attributes
       delete :destroy, {:id => job_scheduler.to_param}, valid_session
-      expect(response).to redirect_to(job_schedulers_url)
+      expect(response).to redirect_to(job_scheduler_path)
     end
   end
 

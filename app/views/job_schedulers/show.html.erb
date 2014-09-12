@@ -1,29 +1,36 @@
 <p id="notice"><%= notice %></p>
 
-<p>
-  <strong>Down:</strong>
-  <%= @job_scheduler.down %>
-</p>
+<% if @job_scheduler %>
+  <p>
+    <strong>Running:</strong>
+    <%= @job_scheduler.running %>
+  </p>
 
-<p>
-  <strong>Started at:</strong>
-  <%= @job_scheduler.started_at %>
-</p>
+  <p>
+    <strong>Started at:</strong>
+    <%= @job_scheduler.started_at %>
+  </p>
 
-<p>
-  <strong>Uptime:</strong>
-  <%= @job_scheduler.uptime %>
-</p>
+  <p>
+    <strong>Uptime:</strong>
+    <%= @job_scheduler.uptime %>
+  </p>
 
-<p>
-  <strong>Threads:</strong>
-  <%= @job_scheduler.threads %>
-</p>
+  <p>
+    <strong>Threads:</strong>
+    <%= @job_scheduler.threads %>
+  </p>
 
-<p>
-  <strong>Job list:</strong>
-  <%= @job_scheduler.job_list %>
-</p>
+  <p>
+    <strong>Job list:</strong>
+    <pre>
+    <%= @job_scheduler.job_list %>
+    </pre>
+  </p>
 
-<%= link_to 'Edit', edit_job_scheduler_path(@job_scheduler) %> |
-<%= link_to 'Back', job_schedulers_path %>
+  <%= link_to 'Destroy', job_scheduler_url(@job_scheduler), method: :delete, data: { confirm: 'Are you sure?' } %>
+
+<% else %>
+  <%= link_to 'New Job scheduler', new_job_scheduler_path %>
+<% end %>
+
