@@ -1,0 +1,31 @@
+# Birst_Command default session settings
+birst_command:
+  session:
+    wsdl:           "https://app2102.bws.birst.com/CommandWebService.asmx?WSDL"
+    endpoint:       "https://app2102.bws.birst.com/CommandWebService.asmx"
+    username:       <%= ENV['BIRST_USER'] %>
+    password:       <%= ENV['BIRST_PWD'] %>
+    soap_log:       true
+    soap_log_level: debug
+
+# Birst Web Services config 
+bws:
+
+  # Job wait timeout
+  wait_timeout: 12h
+
+  # Job wait check status frequency
+  wait_every: 60s
+
+  # Job wait rufus frequency (needed mostly for testing)
+  wait_rufus_freq: 0.3
+
+  # Maximum number of times to retry BWS job monitoring when encountering an unexpected error
+  wait_max_retry: 5
+
+  # Maximum size of chunk (in kB) to send to Birst during data upload
+  data_chunk_size: 1000
+
+s3_log:
+  # Maximum number of lines to buffer before writing to s3
+  max_log_lines: 100000
