@@ -28,8 +28,9 @@ class JobSchedulersController < ApplicationController
 
     respond_to do |format|
       if @job_scheduler.save
-        format.html { redirect_to @job_scheduler, notice: 'Job scheduler was successfully created.' }
-        format.json { render :show, status: :created, location: @job_scheduler }
+        flash[:success] = "Success! JobScheduler created."
+        format.html { redirect_to job_scheduler_url(@job_scheduler) }
+        format.json { render :show, status: :created, location: job_scheduler_url(@job_scheduler) }
       else
         format.html { render :new }
         format.json { render json: @job_scheduler.errors, status: :unprocessable_entity }
@@ -55,10 +56,8 @@ class JobSchedulersController < ApplicationController
   # DELETE /job_schedulers/1.json
   def destroy
     @job_scheduler.destroy
-    respond_to do |format|
-      format.html { redirect_to job_schedulers_url, notice: 'Job scheduler was successfully destroyed.' }
-      format.json { head :no_content }
-    end
+    flash[:success] = "Success! JobScheduler destroyed."      
+    redirect_to job_scheduler_path
   end
 
   private
@@ -69,6 +68,6 @@ class JobSchedulersController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def job_scheduler_params
-      params.require(:job_scheduler).permit(:down, :started_at, :uptime, :threads, :job_list)
+      params.require(:job_scheduler).permit(:id, :timeout)
     end
 end

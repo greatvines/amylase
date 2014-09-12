@@ -1,12 +1,8 @@
-<%= simple_form_for(@job_scheduler) do |f| %>
+<%= simple_form_for(@job_scheduler, url: job_scheduler_path) do |f| %>
   <%= f.error_notification %>
 
   <div class="form-inputs">
-    <%= f.input :down %>
-    <%= f.input :started_at %>
-    <%= f.input :uptime %>
-    <%= f.input :threads %>
-    <%= f.input :job_list %>
+    <%= f.input :timeout %>
   </div>
 
   <div class="form-actions">
