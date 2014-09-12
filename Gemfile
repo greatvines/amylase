@@ -49,6 +49,9 @@ gem 'cocoon', '~> 1.2'
 # JSON serialization
 gem 'active_model_serializers', '~> 0.9'
 
+# Configuration control
+gem 'rails_config', '~> 0.4'
+
 group :development, :test do
   gem 'rspec-rails', '~> 3.0'
   gem 'factory_girl_rails', '~> 4.4'
