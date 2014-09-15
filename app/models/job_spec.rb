@@ -10,7 +10,7 @@ class JobSpec < ActiveRecord::Base
   validates_uniqueness_of :name
   validates_presence_of :name
 
-  belongs_to :job_template, polymorphic: true, dependent: :destroy
+  belongs_to :job_template, polymorphic: true, dependent: :destroy, inverse_of: :job_spec
   accepts_nested_attributes_for :job_template, reject_if: :all_blank
 
   belongs_to :job_schedule_group

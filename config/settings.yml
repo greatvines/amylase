@@ -1,10 +1,11 @@
 # Birst_Command default session settings
-birst_command:
+birst_soap:
   session:
     wsdl:           "https://app2102.bws.birst.com/CommandWebService.asmx?WSDL"
     endpoint:       "https://app2102.bws.birst.com/CommandWebService.asmx"
     username:       <%= ENV['BIRST_USER'] %>
     password:       <%= ENV['BIRST_PWD'] %>
+    soap_logger:    Rails.logger
     soap_log:       true
     soap_log_level: debug
 
@@ -26,6 +27,13 @@ bws:
   # Maximum size of chunk (in kB) to send to Birst during data upload
   data_chunk_size: 1000
 
-s3_log:
+# AWS configuration settings
+aws:
+  aws_access_key_id: <%= ENV['AWS_ACCESS_KEY_ID'] %>
+  aws_secret_key:    <%= ENV['AWS_SECRET_KEY'] %>
+  s3_region:         us-west-2
+
+s3_logger:
   # Maximum number of lines to buffer before writing to s3
   max_log_lines: 100000
+
