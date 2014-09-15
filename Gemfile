@@ -52,6 +52,13 @@ gem 'active_model_serializers', '~> 0.9'
 # Configuration control
 gem 'rails_config', '~> 0.4'
 
+# Envcrypt for password decryption
+gem 'envcrypt', '~> 0.1'
+
+# Execute SOAP commands
+gem 'savon', '~> 2.5'
+gem 'httpclient', '~> 2.3'
+
 group :development, :test do
   gem 'rspec-rails', '~> 3.0'
   gem 'factory_girl_rails', '~> 4.4'
@@ -61,8 +68,8 @@ end
 
 group :test do
   gem 'selenium-webdriver', '~> 2.13'
-  gem 'capybara-webkit', '~> 1.3'
   gem 'capybara', '~> 2.4'
+  gem 'capybara-webkit', '~> 1.3'
   gem 'faker', '~> 1.4'
   gem 'launchy', '~> 2.4'
   gem 'guard-rspec', '~> 4.3'
