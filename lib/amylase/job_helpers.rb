@@ -25,15 +25,18 @@ module Amylase
         @job_log.error "Backtrace: #{err.class.name}: #{$!}\n\t#{err.backtrace.join("\n\t")}"
         raise err
       ensure
-        save_log
+        close_job
         nil
       end
     end
 
 
+    private
 
     def initialize_job
-      initialize_job_log
+      self.class.job_initializers.each do |job_initializer|
+        self.send(job_initializer)
+      end
     end
 
     def initialize_job_log
@@ -51,6 +54,10 @@ module Amylase
       @job_log.info "Logging to file #{@log_file}"
     end
 
+    def close_job
+      save_log
+    end
+
 
     def save_log
       return unless Settings.logging.save_logs_to_s3
@@ -61,8 +68,6 @@ module Amylase
 
       File.delete(@log_file)
     end
-
-    private
 
     # Private: Set the base name of the log file.
     #
