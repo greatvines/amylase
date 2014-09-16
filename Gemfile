@@ -59,6 +59,9 @@ gem 'envcrypt', '~> 0.1'
 gem 'savon', '~> 2.5'
 gem 'httpclient', '~> 2.3'
 
+# AWS Utilities
+gem 'aws-sdk', '~> 1'
+
 group :development, :test do
   gem 'rspec-rails', '~> 3.0'
   gem 'factory_girl_rails', '~> 4.4'
