@@ -1,13 +1,22 @@
 module Amylase
+
+  # Public: Base methods needed to interface with Birst Web Services SOAP API.
   module BirstSoap
+
+    puts "LIB NESTING: #{Module.nesting.inspect}"
 
     # Public: Gets the authorization cookie
     attr_reader :auth_cookie
-    
+
+    # Public: Initializes any instance variables before running the job.
+    #
+    # Returns nothing.
     def initialize_birst_soap
       @auth_cookie = nil
     end
 
+    # Public: Hook that adds the initialize_birst_soap method to any class it is
+    # included in.
     def self.included(klass)
       klass.job_initializers << :initialize_birst_soap
     end
@@ -29,7 +38,7 @@ module Amylase
       end
     end
 
-    # Public: Simple workflow job to list all spaces owned by user.
+    # Public: Simple job to list all spaces owned by user.
     #
     # Returns array of hashes, one element per space.
     def list_spaces
