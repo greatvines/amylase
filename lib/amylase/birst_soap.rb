@@ -10,6 +10,7 @@ module Amylase
     #
     # Returns nothing.
     def birst_soap_session(opts = {}, &block)
+      @bc_opts = { :soap_logger => @job_log } # THIS ISNT A GOOD WAY TO DO THIS - NEED A BIRST_SOAP OPTIONS THAT GETS INITIALIZED
       Session.new @bc_opts.merge(opts) do |bc|
         @bc_opts[:auth_cookie] = bc.auth_cookie if @bc_opts[:auth_cookie].nil?
         block.call bc

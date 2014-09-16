@@ -21,6 +21,9 @@ class JobSpec < ActiveRecord::Base
     self.enabled = false if self.enabled.nil?
   end
 
+  def run_job(*args)
+    self.job_template.run_job(*args)
+  end
 
   def build_job_template(params)
     raise "Unknown job_template_type: #{job_template_type}" unless JOB_TEMPLATE_TYPES.include?(job_template_type)

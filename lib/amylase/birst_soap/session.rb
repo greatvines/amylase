@@ -8,8 +8,8 @@ module Amylase
       # wsdl           - URL of soap WSDL (default: Settings.session.wsdl)
       # endpoint       - URL of soap endpoint (default: Settings.session.endpoint)
       # soap_log       - Boolean switch indicating whether logging should be performed (default: Settings.session.soap_log)
-      # soap_logger    - Logger instance used to write log messages (default: Settings.session.soap_logger)
-      # soap_log_level - Logging level (default: Settings.session.soap_log_level)
+      # soap_logger    - Logger instance used to write log messages (default: Rails.logger)
+      # soap_log_level - Logging level (default: debug)
       # username       - Username to use to login to Birst Web Services (default: Settings.session.username)
       # password       - Encrypted password for username (default: Settings.session.password)
       # auth_cookie    - Use a previously generated authorization cookie
@@ -85,8 +85,8 @@ module Amylase
         @wsdl           = opts[:wsdl]           || Settings.birst_soap.session.wsdl
         @endpoint       = opts[:endpoint]       || Settings.birst_soap.session.endpoint
         @soap_log       = opts[:soap_log]       || Settings.birst_soap.session.soap_log
-        @soap_logger    = opts[:soap_logger]    || eval(Settings.birst_soap.session.soap_logger)
-        @soap_log_level = opts[:soap_log_level] || Settings.birst_soap.session.soap_log_level.to_sym
+        @soap_logger    = opts[:soap_logger]    || Rails.logger
+        @soap_log_level = opts[:soap_log_level] || :debug
         @username       = opts[:username]       || Settings.birst_soap.session.username
         @password       = opts[:password]       || Settings.birst_soap.session.password
         @auth_cookie    = opts[:auth_cookie]    || nil

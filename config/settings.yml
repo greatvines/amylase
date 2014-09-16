@@ -8,32 +8,31 @@ birst_soap:
     soap_logger:    Rails.logger
     soap_log:       true
     soap_log_level: debug
+    
+  wait:
+    # Job wait timeout
+    timeout: 12h
 
-# Birst Web Services config 
-bws:
+    # Job wait check status frequency
+    every: 60s
 
-  # Job wait timeout
-  wait_timeout: 12h
+    # Job wait rufus frequency (needed mostly for testing)
+    rufus_freq: 0.3
 
-  # Job wait check status frequency
-  wait_every: 60s
-
-  # Job wait rufus frequency (needed mostly for testing)
-  wait_rufus_freq: 0.3
-
-  # Maximum number of times to retry BWS job monitoring when encountering an unexpected error
-  wait_max_retry: 5
+    # Maximum number of times to retry BWS job monitoring when encountering an unexpected error
+    max_retry: 5
 
   # Maximum size of chunk (in kB) to send to Birst during data upload
   data_chunk_size: 1000
 
 # AWS configuration settings
 aws:
-  aws_access_key_id: <%= ENV['AWS_ACCESS_KEY_ID'] %>
-  aws_secret_key:    <%= ENV['AWS_SECRET_KEY'] %>
-  s3_region:         us-west-2
+  access_key_id: <%= ENV['AWS_ACCESS_KEY_ID'] %>
+  secret_key:    <%= ENV['AWS_SECRET_KEY'] %>
+  region:        us-west-2
 
-s3_logger:
-  # Maximum number of lines to buffer before writing to s3
-  max_log_lines: 100000
+logging:
+  save_logs_to_s3: true
+  s3_bucket:       greatvines-amylase-logs
+  s3_root_folder:  <%= Rails.env %>
 

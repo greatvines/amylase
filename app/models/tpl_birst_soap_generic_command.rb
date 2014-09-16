@@ -7,9 +7,9 @@ class TplBirstSoapGenericCommand < ActiveRecord::Base
   include Amylase::JobHelpers
   include Amylase::BirstSoap
 
-  def run_job(*args)
+  def run_template(*args)
     result = nil
-    Amylase::BirstSoap::Session.new do |bws|
+    birst_soap_session do |bws|
       result = bws.send(command)
     end
     result

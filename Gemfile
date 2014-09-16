@@ -59,6 +59,9 @@ gem 'envcrypt', '~> 0.1'
 gem 'savon', '~> 2.5'
 gem 'httpclient', '~> 2.3'
 
+# Logging utility
+gem 'logging', '~> 1.8'
+
 # AWS Utilities
 gem 'aws-sdk', '~> 1'
 
