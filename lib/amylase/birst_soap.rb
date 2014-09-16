@@ -1,6 +1,18 @@
 module Amylase
   module BirstSoap
 
+    # Public: Gets the authorization cookie
+    attr_reader :auth_cookie
+    
+    def initialize_birst_soap
+      @auth_cookie = nil
+    end
+
+    def self.included(klass)
+      klass.job_initializers << :initialize_birst_soap
+    end
+
+
     # Public: Launches a Birst_Command session.  This class is needed to facilitate
     # keeping certain Birst_Command settings, like logs, common to all sessions
     # within a workflow.
@@ -10,9 +22,9 @@ module Amylase
     #
     # Returns nothing.
     def birst_soap_session(opts = {}, &block)
-      @bc_opts = { :soap_logger => @job_log } # THIS ISNT A GOOD WAY TO DO THIS - NEED A BIRST_SOAP OPTIONS THAT GETS INITIALIZED
-      Session.new @bc_opts.merge(opts) do |bc|
-        @bc_opts[:auth_cookie] = bc.auth_cookie if @bc_opts[:auth_cookie].nil?
+      default_opts = { :soap_logger => @job_log }
+      Session.new default_opts.merge(opts) do |bc|
+        @auth_cookie = bc.auth_cookie if @auth_cookie.nil?
         block.call bc
       end
     end

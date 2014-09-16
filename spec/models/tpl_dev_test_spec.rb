@@ -31,7 +31,7 @@ RSpec.describe TplDevTest, :type => :model do
       before { @job_spec.run_job }
 
       it "logs the start of a job" do
-        expect(@log_output.readline.strip.chomp).to eq 'INFO  JobLog : Starting job job_spec_collection-\d+ using template TplDevTest'
+        expect(@log_output.readline.strip.chomp).to match /INFO  JobLog : Starting job job_spec_collection-\d+ using template TplDevTest/
       end
     end
 

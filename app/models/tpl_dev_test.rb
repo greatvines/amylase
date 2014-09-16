@@ -4,6 +4,7 @@ class TplDevTest < ActiveRecord::Base
   validates_presence_of :argument
   has_one :job_spec, as: :job_template
 
+  extend Amylase::TemplateHelpers
   include Amylase::JobHelpers
 
   def run_template(*args)
