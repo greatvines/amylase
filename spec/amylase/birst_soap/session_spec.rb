@@ -1,7 +1,8 @@
 require 'rails_helper'
-require_relative 'birst_soap_helper'
 
 describe Amylase::BirstSoap::Session do
+  include BirstSoapSupport
+  Session = Amylase::BirstSoap::Session
 
   before { Settings.birst_soap.soap_log_level = :debug }
 
@@ -77,7 +78,7 @@ describe Amylase::BirstSoap::Session do
 
       context "mock list spaces" do
         before do
-          mock_login_and_out { savon.expects(:list_spaces).with(message: { :token => SpecFixtures.login_token }).returns(SpecFixtures.list_spaces) }
+          mock_login_and_out { savon.expects(:list_spaces).with(message: { :token => BirstSoapFixtures.login_token }).returns(BirstSoapFixtures.list_spaces) }
         end
         it_behaves_like "list spaces"
       end
@@ -85,8 +86,8 @@ describe Amylase::BirstSoap::Session do
       context "mock list users in spaces" do
         let(:spaceID) { "b7f3df39-438c-4ec7-bd29-489f41afde14" }
         before do
-          message = { :token => SpecFixtures.login_token, :spaceID => spaceID }
-          mock_login_and_out { savon.expects(:list_users_in_space).with(message: message).returns(SpecFixtures.list_users_in_space) }
+          message = { :token => BirstSoapFixtures.login_token, :spaceID => spaceID }
+          mock_login_and_out { savon.expects(:list_users_in_space).with(message: message).returns(BirstSoapFixtures.list_users_in_space) }
         end
         it_behaves_like "list users in space"
       end
