@@ -13,11 +13,11 @@ RSpec.describe JobSpec, :type => :model do
   it { should validate_uniqueness_of(:name) }
   it { should validate_presence_of(:name) }
 
-  context "using a copy to get around ensure_inclusion_of bug" do
+  context "using a copy to get around validate_inclusion_of bug" do
     before { @job_spec_dup = @job_spec.dup }
     subject { @job_spec_dup }
 
-    it { should ensure_inclusion_of(:job_template_type).in_array(JobSpec::JOB_TEMPLATE_TYPES) }
+    it { should validate_inclusion_of(:job_template_type).in_array(JobSpec::JOB_TEMPLATE_TYPES) }
   end
 
   it { should belong_to(:job_schedule_group) }

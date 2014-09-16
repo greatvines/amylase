@@ -18,7 +18,7 @@ RSpec.describe JobSchedule, :type => :model do
 
   it { should belong_to(:job_schedule_group) }
 
-  it { should ensure_inclusion_of(:schedule_method).in_array(JobSchedule::SCHEDULE_METHODS) }
+  it { should validate_inclusion_of(:schedule_method).in_array(JobSchedule::SCHEDULE_METHODS) }
 
   [:first_at, :last_at, :schedule_time].each do |field|
     it { should allow_value('2014-09-14 18:22:00 Asia/Shanghai').for(field) }
