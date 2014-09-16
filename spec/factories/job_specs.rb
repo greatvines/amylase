@@ -7,10 +7,13 @@ FactoryGirl.define do
 
     # Other template associations
 
-    trait :tpl_birst_soap_generic_command do
+    trait :template_tpl_birst_soap_generic_command do
       association :job_template, factory: :tpl_birst_soap_generic_command
     end
 
+    trait :template_tpl_dev_test do
+      association :job_template, factory: :tpl_dev_test
+    end
 
     # Schedule associations
 
