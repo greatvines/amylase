@@ -1,7 +1,7 @@
 require 'rails_helper'
-require_relative 'birst_soap_helper'
 
 describe "Copying a space", skip: "not yet" do
+  include BirstSoapSupport
 
   before do
     Settings.bws_wait_timeout = '10s'

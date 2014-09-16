@@ -3,8 +3,6 @@ module Amylase
   # Public: Base methods needed to interface with Birst Web Services SOAP API.
   module BirstSoap
 
-    puts "LIB NESTING: #{Module.nesting.inspect}"
-
     # Public: Gets the authorization cookie
     attr_reader :auth_cookie
 
@@ -18,6 +16,7 @@ module Amylase
     # Public: Hook that adds the initialize_birst_soap method to any class it is
     # included in.
     def self.included(klass)
+      return unless klass.respond_to? :job_initializers
       klass.job_initializers << :initialize_birst_soap
     end
 

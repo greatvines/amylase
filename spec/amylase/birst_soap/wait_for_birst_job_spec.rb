@@ -1,7 +1,7 @@
 require 'rails_helper'
-require_relative 'birst_soap_helper'
 
 describe "wait_for_birst_job", skip: "Need to get logging to work first" do
+  include BirstSoapSupport
 
   before do
     savon.mock!
