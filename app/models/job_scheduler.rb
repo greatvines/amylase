@@ -132,7 +132,8 @@ class JobScheduler
       Rails.logger.info JobSpecSerializer.new(@job_spec).as_json.to_yaml unless @job_spec.job_template_type == 'TplSchedulerShutdown'
 
       begin
-        @job_spec.job_template.run_job(@status)
+        launched_job = LaunchedJob.new(job_spec: @job_spec)
+        launched_job.launch_job
       rescue => err
         Rails.logger.error "Backtrace: #{$!}\n\t#{err.backtrace.join("\n\t")}"
         raise err
