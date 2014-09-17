@@ -1,4 +1,5 @@
 class JobSpec < ActiveRecord::Base
+  after_initialize :defaults, unless: :persisted?
 
   job_template_types_prod = %w(TplBirstSoapGenericCommand TplBirstDuplicateSpace)
   job_template_types_test = %w(TplDevTest)
@@ -15,8 +16,9 @@ class JobSpec < ActiveRecord::Base
 
   belongs_to :job_schedule_group
 
-  after_initialize :defaults, unless: :persisted?
-  
+  has_many :launched_jobs
+
+
   def defaults
     self.enabled = false if self.enabled.nil?
   end
