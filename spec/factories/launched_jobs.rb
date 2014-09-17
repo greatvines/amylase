@@ -2,12 +2,11 @@
 
 FactoryGirl.define do
   factory :launched_job do
-    job_spec nil
-    start_time "2014-09-17 09:40:53"
-    end_time "2014-09-17 09:40:53"
-#    status nil # use default
-    status_message "MyString"
-    result_data "MyString"
-    log_file "MyString"
+    # use defaults for everything
+
+    trait :with_tpl_dev_test_job_spec do
+      association :job_spec, factory: [:job_spec, :template_tpl_dev_test]
+    end
+
   end
 end

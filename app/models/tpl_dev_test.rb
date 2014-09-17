@@ -7,7 +7,8 @@ class TplDevTest < ActiveRecord::Base
   extend Amylase::TemplateHelpers
   include Amylase::JobHelpers
 
-  def run_template(*args)
+  def run_template(launched_job, *args)
+    launched_job.update(status_message: "Running TplDevTest job")
     result = true
   end
 end

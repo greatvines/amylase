@@ -23,11 +23,14 @@ module Amylase
     # that is defined in and specific to individual job template
     # models.
     #
+    # launched_job - An instance of LaunchedJob that tracks the status
+    #                of the running job.
+    #
     # Returns nothing.
-    def run_job
+    def run_job(launched_job)
       begin
         initialize_job
-        self.run_template
+        self.run_template(launched_job)
       rescue => err
         @job_log.error "Backtrace: #{err.class.name}: #{$!}\n\t#{err.backtrace.join("\n\t")}"
         raise err
