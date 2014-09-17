@@ -13,6 +13,8 @@ Rails.application.routes.draw do
 
   resource :job_scheduler, only: [:show, :new, :create, :destroy]
 
+  resources :launched_jobs
+
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 

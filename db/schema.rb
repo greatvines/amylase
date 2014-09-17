@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140910160147) do
+ActiveRecord::Schema.define(version: 20140917164053) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -50,6 +50,20 @@ ActiveRecord::Schema.define(version: 20140910160147) do
   add_index "job_specs", ["job_schedule_group_id"], name: "index_job_specs_on_job_schedule_group_id", using: :btree
   add_index "job_specs", ["job_template_id"], name: "index_job_specs_on_job_template_id", using: :btree
   add_index "job_specs", ["name"], name: "index_job_specs_on_name", unique: true, using: :btree
+
+  create_table "launched_jobs", force: true do |t|
+    t.integer  "job_spec_id"
+    t.datetime "start_time"
+    t.datetime "end_time"
+    t.text     "status"
+    t.text     "status_message"
+    t.text     "result_data"
+    t.text     "log_file"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "launched_jobs", ["job_spec_id"], name: "index_launched_jobs_on_job_spec_id", using: :btree
 
   create_table "tpl_birst_duplicate_spaces", force: true do |t|
     t.string   "from_space_id_str", limit: 36

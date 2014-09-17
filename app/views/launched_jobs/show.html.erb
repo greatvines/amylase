@@ -1,0 +1,39 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Job spec:</strong>
+  <%= @launched_job.job_spec %>
+</p>
+
+<p>
+  <strong>Start time:</strong>
+  <%= @launched_job.start_time %>
+</p>
+
+<p>
+  <strong>End time:</strong>
+  <%= @launched_job.end_time %>
+</p>
+
+<p>
+  <strong>Status:</strong>
+  <%= @launched_job.status %>
+</p>
+
+<p>
+  <strong>Status message:</strong>
+  <%= @launched_job.status_message %>
+</p>
+
+<p>
+  <strong>Result data:</strong>
+  <%= @launched_job.result_data %>
+</p>
+
+<p>
+  <strong>Log file:</strong>
+  <%= @launched_job.log_file %>
+</p>
+
+<%= link_to 'Edit', edit_launched_job_path(@launched_job) %> |
+<%= link_to 'Back', launched_jobs_path %>
