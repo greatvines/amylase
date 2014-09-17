@@ -5,7 +5,7 @@ FactoryGirl.define do
     job_spec nil
     start_time "2014-09-17 09:40:53"
     end_time "2014-09-17 09:40:53"
-    status "MyString"
+#    status nil # use default
     status_message "MyString"
     result_data "MyString"
     log_file "MyString"
