@@ -11,6 +11,7 @@ module Amylase
     # Returns nothing.
     def initialize_birst_soap
       @auth_cookie = nil
+      @job_log = self.launched_job.job_log
     end
 
     # Public: Hook that adds the initialize_birst_soap method to any class it is
