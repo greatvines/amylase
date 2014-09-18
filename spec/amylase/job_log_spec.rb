@@ -35,7 +35,10 @@ describe Amylase::JobLog do
       s3_bucket.objects[Settings.logging.s3_root_folder + '/' + @job_log_base_name]
     end
 
-    after { Settings.logging.save_logs_to_s3 = @save_log_settings }
+    after do
+      Settings.logging.save_logs_to_s3 = @save_log_settings
+      s3_obj.delete
+    end
 
 
     context "successful save to s3" do
