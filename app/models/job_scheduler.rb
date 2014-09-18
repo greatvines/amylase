@@ -41,6 +41,9 @@ class JobScheduler
     end
   end
 
+  # Public: Saves a new instance of the job_scheduler with the given attributes.
+  #
+  # Returns the created instance of the job_scheduler.
   def self.create!(attributes={})
     job_scheduler = self.new(attributes)
     job_scheduler.save!
@@ -99,56 +102,10 @@ class JobScheduler
       job_schedule_group.job_schedules.each do |job_schedule|
         job_spec.job_template
         opts = job_schedule.rufus_options
-        @rufus.send(job_schedule.schedule_method, job_schedule.schedule_time, JobHandler.new(job_spec), opts)
+        @rufus.send(job_schedule.schedule_method, job_schedule.schedule_time, LaunchedJob.new(job_spec: job_spec), opts)
       end
     end
   end
-
-  # Public: The JobHandler class is used for encapsulating Rufus jobs.  It is
-  # used to log the launching and termination of jobs and track status.
-  class JobHandler
-    
-    # Public: Initialize the JobHandler.
-    #
-    # job_spec - Expects a JobSpec object that contains a complete description of
-    #            the job to be executed.
-    #
-    # Returns nothing.
-    def initialize(job_spec)
-      @job_spec = job_spec
-    end
-
-    attr_reader :job_spec, :status
-
-    # Public: Rufus executes the call method when the job starts.
-    #
-    # rjob - A Rufus job object that contains various metadata about the status
-    #        of a job.
-    # time - The time when the job got cleared for triggering.
-    #
-    # Returns nothing.
-    def call(rjob, time)
-      Rails.logger.info "Scheduling job #{@job_spec.name} at time #{time}"
-      if @job_spec.job_template_type  == 'TplSchedulerShutdown'
-        call_shutdown
-        return
-      end
-
-      begin
-        Rails.logger.info JobSpecSerializer.new(@job_spec).as_json.to_yaml
-        launched_job = LaunchedJob.new(job_spec: @job_spec)
-        launched_job.launch_job
-      rescue => err
-        Rails.logger.error "Backtrace: #{$!}\n\t#{err.backtrace.join("\n\t")}"
-        raise err
-      end
-    end
-
-    def call_shutdown
-      @job_spec.job_template.run_job
-    end
-  end
-
 
   # Public: Execution of the Ruby script will wait until the Rufus job scheduler
   # is shut down.  This is mostly useful for testing.
@@ -198,7 +155,7 @@ class JobScheduler
     jobs = []
     @rufus.jobs.each do |job|
       jobs << {
-                :name => job.handler.job_spec.name,
+                :name => (job.tags.include? 'SchedulerTimeout') ? 'SchedulerTimeout' : job.handler.job_spec.name,
                 :running => job.running?,
                 :last_time => job.last_time,
                 :next_time => job.next_time,
@@ -251,35 +208,6 @@ class JobScheduler
 
   private
 
-    # Private: Struct that mimics a job_template that is used to shutdown the scheduler.
-    # There is no reason to allow users to to set this up, so no need for a full MVC.
-    TplSchedulerShutdown = Struct.new(:job_scheduler) do
-      def run_job(*args)
-        job_scheduler.save_job_list
-        job_scheduler.shutdown(:kill)
-      end
-    end
-    private_constant :TplSchedulerShutdown
-
-    # Private: Struct that mimics a job_spec that is used to shutdown the scheduler.
-    # There is no reason to allow users to to set this up, so no need for a full MVC.
-    ShutdownJobSpec = Struct.new(:job_scheduler) do
-      def name
-        self.class.name
-      end
-
-      def job_template_type
-        'TplSchedulerShutdown'
-      end
-
-      def job_template
-        TplSchedulerShutdown.new(job_scheduler)
-      end
-    end
-    private_constant :ShutdownJobSpec
-
-
-
     # Private: Shuts down the Rufus scheduler after a given amount of time
     # has elapsed.  Note that this will not destroy the JobScheduler instance.
     #
@@ -288,7 +216,11 @@ class JobScheduler
     #
     # Returns nothing.
     def schedule_shutdown_job(timeout_interval = self.timeout)
-      @rufus.in timeout_interval, JobHandler.new(ShutdownJobSpec.new(self)), :blocking => true, :overlap => false
+      puts "Scheduling the shutdown job"
+      @rufus.in timeout_interval, :blocking => true, :overlap => false, :tag => 'SchedulerTimeout' do
+        self.save_job_list
+        self.shutdown(:kill)
+      end      
     end
 end
 

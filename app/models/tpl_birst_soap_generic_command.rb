@@ -5,10 +5,9 @@ class TplBirstSoapGenericCommand < ActiveRecord::Base
   has_one :job_spec, as: :job_template
 
   extend Amylase::TemplateHelpers
-  include Amylase::JobHelpers
   include Amylase::BirstSoap
 
-  def run_template(launched_job, *args)
+  def run_template(job, *args)
     result = nil
     birst_soap_session do |bws|
       result = bws.send(command)
