@@ -26,6 +26,19 @@ class LaunchedJob < ActiveRecord::Base
     (self.end_time || Time.now) - self.start_time
   end
 
+  # Public: This method allows the LaunchedJob class to act as a job handler
+  # for the Rufus scheduler.  At present it is just a wrapper for run_job,
+  # but it may be worthwhile to make some information stored in rjob available
+  # to the launched_job.
+  #
+  # rjob - A Rufus job object that contains various metadata about the status
+  #        of a job.
+  # time - The time when the job got cleared for triggering.
+  #
+  # Returns nothing.
+  def call(rjob, time)
+    run_job
+  end
 
   # Public: This is the method that is called when the job is to be
   # executed.  It wraps the run_template job that is defined in and

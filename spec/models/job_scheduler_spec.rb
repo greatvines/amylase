@@ -50,7 +50,7 @@ RSpec.describe JobScheduler, :type => :model do
       enabled = JobSpec.where(enabled: true).collect { |j| j.name }
 
       scheduled = @job_scheduler.job_list.collect do |j|
-        j[:name] if j[:name] != "JobScheduler::ShutdownJobSpec"
+        j[:name] if j[:name] != "SchedulerTimeout"
       end.compact
 
       expect(scheduled).to match_array enabled
