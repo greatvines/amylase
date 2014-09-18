@@ -10,7 +10,7 @@ module Amylase
   #     include Amylase::JobHelpers
   #     include Amylase::BirstSoap
   #   end
-  module TemplateHelpers
+  module JobInitializers
     
     # Public: Gets/sets the list of job initializers to call before running a job.
     attr_accessor :job_initializers
