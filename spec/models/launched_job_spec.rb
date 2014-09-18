@@ -24,82 +24,171 @@ RSpec.describe LaunchedJob, :type => :model do
   end
 
 
-  describe "the job lifecycle a job" do
+  describe "the job lifecycle" do
     before { @launched_job = FactoryGirl.build(:launched_job, :with_tpl_dev_test_job_spec) }
 
-    context "initial launch" do
-      let(:launch_job) { @launched_job.launch_job }
+    context "initialization" do
+      before { @launched_job.send(:initialize_job) }
+      let(:log_result) { @log_output.read }
+
+      it "initializes the job log" do
+        expect(log_result).to match /INFO  JobLog : Logging temporary output to .*#{@launched_job.job_log_base_name}.*/
+      end
+    end
+
+    context "initial status" do
+      before { @launched_job.send(:initialize_job) }
+      let(:set_initial_status) { @launched_job.send(:set_initial_status) }
 
       it "saves the launched job instance" do
-        expect { launch_job }.to change { @launched_job.persisted? }.from(false).to(true)
+        expect { set_initial_status }.to change { LaunchedJob.count }.by(1)
       end
 
       it "sets the status to running" do
-        expect { launch_job }.to change { @launched_job.status }.from(LaunchedJob::UNKNOWN).to(LaunchedJob::RUNNING)
+        expect { set_initial_status }.to change { @launched_job.status }.from(LaunchedJob::UNKNOWN).to(LaunchedJob::RUNNING)
       end
 
       it "sets the start time to now (within 1 sec)" do
-        expect { launch_job }.to change { @launched_job.start_time }.from(nil).to(be_within(1.0).of(Time.now))
+        expect { set_initial_status }.to change { @launched_job.start_time }.from(nil).to(be_within(1.0).of(Time.now))
       end
     end
 
-    context "actively running" do
-      let(:running_job) { @launched_job.launch_job }
+    context "running the job template" do
+      before do
+        @launched_job.send(:initialize_job)
+        @launched_job.send(:set_initial_status)
+      end
+      let(:run_job_template) { @launched_job.send(:run_job_template) }
+
       it "allows status message updates while running" do
-        expect { running_job }.to change { @launched_job.status_message }.from(nil).to("Running TplDevTest job")
+        expect { run_job_template }.to change { @launched_job.status_message }.from(nil).to("Running TplDevTest job")
       end
 
       it "does not have an end time" do
-        expect(running_job.end_time).to be_nil
+        run_job_template
+        expect(@launched_job.end_time).to be_nil
       end
 
       it "reports a valid run_time" do
-        expect(running_job.run_time).to be > 0
+        run_job_template
+        expect(@launched_job.run_time).to be > 0
       end
     end
 
-    context "termination" do
-      before { @launched_job.launch_job }
-      let(:terminated_job) { @launched_job.terminate_job }
+    context "handling an error" do
+      before do
+        @launched_job.send(:initialize_job)
+        @launched_job.send(:set_initial_status)
+      end
+      let(:err) {
+        err = RuntimeError.new("some error")
+        err.set_backtrace(Array("dummy backtrace"))
+        err
+      }
+      let(:job_error_handler) { @launched_job.send(:job_error_handler, err) }
 
-      shared_examples "a terminated job" do
+      it "updates the status to error" do
+        expect{ job_error_handler rescue nil }.to change { @launched_job.status }.from(LaunchedJob::RUNNING).to(LaunchedJob::ERROR)
+      end
+
+      it "re-raises the error" do
+        expect{ job_error_handler }.to raise_error('some error')
+      end
+    end
+
+    context "closing the job" do
+      before do
+        @launched_job.send(:initialize_job)
+        @launched_job.send(:set_initial_status)
+        @launched_job.send(:run_job_template)
+      end
+      let(:close_job) { @launched_job.send(:close_job) }
+
+      shared_examples "all closed jobs" do
         it "sets the end time to now (within 1 sec)" do
-          expect { terminated_job }.to change { @launched_job.end_time }.from(nil).to(be_within(1.0).of(Time.now))
+          expect { close_job }.to change { @launched_job.end_time }.from(nil).to(be_within(1.0).of(Time.now))
+        end
+        
+        context "saving logs" do
+          before do
+            @save_log_settings = Settings.logging.save_logs_to_s3
+            Settings.logging.save_logs_to_s3 = true
+            close_job
+          end
+
+          let(:s3_obj) do
+            s3_bucket = AWS::S3.new.buckets[Settings.logging.s3_bucket]
+            s3_bucket.objects[Settings.logging.s3_root_folder + '/' + @launched_job.job_log_base_name]
+          end
+
+          after do
+            Settings.logging.save_logs_to_s3 = @save_log_settings
+            s3_obj.delete
+          end
+
+          it "saves the log to s3" do
+            expect(s3_obj).to exist
+          end
         end
       end
-      
-      shared_examples "a failed terminated job" do
-        it "changes the status to ERROR" do
-          expect { terminated_job }.to change { @launched_job.status }.from(termination_status).to(LaunchedJob::ERROR)
-        end
 
-        it "prepends an error message" do
-          expect(terminated_job.status_message).to match(/#{termination_status} job terminated\|/)
-        end
-      end
 
-      context "terminating a successful job" do
-        before { @launched_job.update(status: LaunchedJob::SUCCESS) }
-        it_behaves_like "a terminated job"
-      end
-
-      context "terminating a running job" do
+      context "closing a RUNNING job" do
         before { @launched_job.update(status: LaunchedJob::RUNNING) }
-        let(:termination_status) { LaunchedJob::RUNNING }
+        it_behaves_like "all closed jobs"
 
-        it_behaves_like "a terminated job"
-        it_behaves_like "a failed terminated job"
+        it "changes the status to SUCCESS" do
+          expect { close_job }.to change { @launched_job.status }.from(LaunchedJob::RUNNING).to(LaunchedJob::SUCCESS)
+        end
 
+        it "sets the status message to indicate success" do
+          expect { close_job }.to change { @launched_job.status_message }.to("Completed successfully")
+        end
       end
 
-      context "terminating an unknown job" do
-        before { @launched_job.update(status: LaunchedJob::UNKNOWN) }
-        let(:termination_status) { LaunchedJob::UNKNOWN }
+      context "closing an ERROR job" do
+        before { @launched_job.update(status: LaunchedJob::ERROR, status_message: "some error") }
+        it_behaves_like "all closed jobs"
+      end
 
-        it_behaves_like "a terminated job"
-        it_behaves_like "a failed terminated job"
+      context "closing an UNKNOWN job" do
+        before { @launched_job.update(status: LaunchedJob::UNKNOWN, status_message: "something") }
+        it_behaves_like "all closed jobs"
+
+        it "changes the status to ERROR" do
+          expect { close_job }.to change { @launched_job.status }.from(LaunchedJob::UNKNOWN).to(LaunchedJob::ERROR)
+        end
+
+        it "sets the status message to indicate unknown" do
+          expect { close_job }.to change { @launched_job.status_message }.to("UNKNOWN job terminated")
+        end
       end
     end
 
+    context "the full lifecycle" do
+      let(:run_job) { @launched_job.run_job }
+
+      it "runs as expected without an error" do
+        expect(@launched_job).to receive(:initialize_job).once.and_call_original
+        expect(@launched_job).to receive(:set_initial_status).once.and_call_original
+        expect(@launched_job).to receive(:run_job_template).once.and_call_original
+        expect(@launched_job).not_to receive(:job_error_handler).and_call_original
+        expect(@launched_job).to receive(:close_job).once.and_call_original
+        run_job
+      end
+
+      it "calls the error handler when there is an error" do
+        allow(@launched_job).to receive(:run_job_template) { raise "some error" }
+
+        expect(@launched_job).to receive(:initialize_job).once.and_call_original
+        expect(@launched_job).to receive(:set_initial_status).once.and_call_original
+        expect(@launched_job).to receive(:run_job_template).once
+        expect(@launched_job).to receive(:job_error_handler).and_call_original
+        expect(@launched_job).to receive(:close_job).once.and_call_original
+        run_job rescue nil
+      end
+
+
+    end
   end
 end
