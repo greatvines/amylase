@@ -66,11 +66,40 @@ class LaunchedJob < ActiveRecord::Base
   end
 
 
-  # Private: This method is run before the specific run_template method is executed.
-  # It is used to intialize any instance variables that may need to be set before
-  # running the job.  Any modules included the job template model that need
-  # initialization should append the name of the initialization method to 
-  # the job template class job_initializers.
+  # Private: This method is run before the specific run_template
+  # method is executed.  It is used to intialize any instance
+  # variables that may need to be set before running the job (at
+  # either the launched_job or job_template level).
+  #
+  # Returns nothing.
+  def initialize_job
+    launched_job_initializers
+    job_template_initializers
+  end
+
+  # Private: Initializes any modules defined at the launched_job level.
+  # Any modules included in the LaunchedJob that need initialization should
+  # append the name of the initialization method to the job_initializers
+  # class variable.
+  #
+  # Examples
+  #
+  #   module JobLog
+  #     def self.included(klass)
+  #       klass.job_initializers << :initialize_job_log
+  #     end
+  #   end
+  def launched_job_initializers
+    self.class.job_initializers.each do |job_initializer|
+      self.send(job_initializer)
+    end
+  end
+
+
+  # Private: Associates the job template instance with this launched_job instance.
+  # Initializes any modules defined at the job template level.  Any modules
+  # included in the job template that need initialization should append the
+  # name of the initialization method to tje job_initializers class variable.
   #
   # Examples
   #
@@ -81,13 +110,12 @@ class LaunchedJob < ActiveRecord::Base
   #   end
   #
   # Returns nothing.
-  def initialize_job
-    self.class.job_initializers.each do |job_initializer|
-      self.send(job_initializer)
-    end
+  def job_template_initializers
+    job_template = self.job_spec.job_template
+    job_template.launched_job = self
 
-    self.job_spec.job_template.class.job_initializers.each do |job_initializer|
-      self.job_spec.job_template.send(job_initializer)
+    job_template.class.job_initializers.each do |job_initializer|
+      job_template.send(job_initializer)
     end
   end
 
@@ -102,7 +130,7 @@ class LaunchedJob < ActiveRecord::Base
   #
   # Returns the result of running the job template.
   def run_job_template
-    self.job_spec.job_template.run_template(self)
+    self.job_spec.job_template.run_template
   end
 
   # Private: Log error message to the log, update the status of the launched job,
