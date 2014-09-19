@@ -85,7 +85,7 @@ class JobScheduler
   # Returns nothing.
   def start_scheduler
     @rufus = Rufus::Scheduler.new
-    schedule_shutdown_job if self.timeout
+    schedule_shutdown_job if !self.timeout.blank?
     schedule_job_specs
   end
 
