@@ -1,0 +1,31 @@
+<h1>Listing job_schedules</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Schedule method</th>
+      <th>Schedule time</th>
+      <th>First at</th>
+      <th>Last at</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @job_schedules.each do |job_schedule| %>
+      <tr>
+        <td><%= job_schedule.schedule_method %></td>
+        <td><%= job_schedule.schedule_time %></td>
+        <td><%= job_schedule.first_at %></td>
+        <td><%= job_schedule.last_at %></td>
+        <td><%= link_to 'Show', job_schedule %></td>
+        <td><%= link_to 'Edit', edit_job_schedule_path(job_schedule) %></td>
+        <td><%= link_to 'Destroy', job_schedule, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Job schedule', new_job_schedule_path %>

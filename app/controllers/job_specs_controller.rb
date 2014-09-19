@@ -1,43 +1,81 @@
 class JobSpecsController < ApplicationController
+  before_action :set_job_spec, only: [:show, :edit, :update, :destroy]
 
+  # GET /job_specs
   def index
-    @job_specs = JobSpec.all.as_json( { include: :job_template } )
+    @job_specs = JobSpec.all
   end
 
+  # GET /job_specs/1
   def show
-    @job_spec = JobSpec.find(params[:id]).as_json( { include: :job_template } )
   end
 
+  # GET /job_specs/new
   def new
     @job_spec = JobSpec.new
   end
 
-  def create
-    @job_spec = JobSpec.new(job_spec_params)
-    if @job_spec.save
-      flash[:success] = "Success! Job Spec created."
-      redirect_to @job_spec
-    else
-      flash[:danger] = "Error! Job Spec not created: #{@job_spec.errors.full_messages}"
-      render 'new'
-    end
-  end
-
+  # GET /job_specs/1/edit
   def edit
   end
 
-  def update
+  #  POST /job_specs
+  def create
+    @job_spec = JobSpec.new(job_spec_params)
+    respond_to do |format|
+      if @job_spec.save
+        flash[:success] = "Success! JobSpec created."
+        format.html { redirect_to @job_spec }
+        format.json { render :show, status: :created, location: @job_spec }
+      else
+        flash[:danger] = "Error! JobSpec not created: #{@job_spec.errors.full_messages}"
+        format.html { render :new }
+        format.json { render json: @job_spec.errors, status: :unprocessable_entity }
+      end
+    end
   end
 
-  private
+  # PATCH/PUT /job_specs/1
+  def update
+    respond_to do |format|
+      if @job_spec.update(job_spec_params)
+        flash[:success] = "Success! JobSpec updated."
+        format.html { redirect_to @job_spec }
+        format.json { render :show, status: :ok, location: @job_spec }
+      else
+        flash[:danger] = "Error! JobSpec not updated: #{@job_spec.errors.full_messages}"
+        format.html { render :edit }
+        format.json { render json: @job_spec.errors, status: :unprocessable_entity }
+      end
+    end
+  end
 
+  # DELETE /job_schedule_groups/1
+  # DELETE /job_schedule_groups/1.json
+  def destroy
+    @job_spec.destroy
+    respond_to do |format|
+      flash[:success] = 'Success! JobSpec destroyed.'
+      format.html { redirect_to job_specs_url }
+      format.json { head :no_content }
+    end
+  end
+
+
+  private
+    # Use callbacks to share common setup or constraints between actions.
+    def set_job_spec
+      @job_spec = JobSpec.find(params[:id])
+    end
+
+    # Never trust parameters from the scary internet, only allow the white list through.
     def job_spec_params
       tpl_attributes = (
         TplBirstSoapGenericCommand::JOB_SPEC_PERMITTED_ATTRIBUTES +
         TplBirstDuplicateSpace::JOB_SPEC_PERMITTED_ATTRIBUTES
       )
 
-      params.require(:job_spec).permit(:name, :enabled, :job_template_type, job_template_attributes: tpl_attributes.uniq)
+      params.require(:job_spec).permit(:name, :enabled, :job_template_type, :job_template_id, :job_schedule_group_id, job_template_attributes: tpl_attributes.uniq)
     end
 
 end

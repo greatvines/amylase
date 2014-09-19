@@ -1,6 +1,8 @@
 <h1>JobSpecs#show</h1>
 <p>Find me in app/views/job_specs/show.html.erb</p>
 <pre>
-  <%= "#{@job_spec.to_yaml}" %>
+  <%= "#{@job_spec.as_json({ include: :job_template }).to_yaml}" %>
 </pre>
 
+<%= link_to 'Edit', edit_job_spec_path(@job_spec) %> |
+<%= link_to 'Back', job_specs_path %>

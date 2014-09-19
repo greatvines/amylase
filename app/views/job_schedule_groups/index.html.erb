@@ -1,0 +1,23 @@
+<h1>JobScheduleGroups#index</h1>
+
+<table id="datatable" class="table">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @job_schedule_groups.each do |job_schedule_group| %>
+      <tr>
+        <td><%= job_schedule_group.name %></td>
+        <td class="text-right"><%= link_to 'Show', job_schedule_group %> /
+        <%= link_to 'Edit', edit_job_schedule_group_path(job_schedule_group) %> /
+        <%= link_to 'Destroy', job_schedule_group, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<%= link_to 'New Job schedule group', new_job_schedule_group_path, { class: "btn btn-default" } %>
