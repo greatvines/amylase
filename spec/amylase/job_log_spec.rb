@@ -42,7 +42,7 @@ describe Amylase::JobLog do
 
 
     context "successful save to s3" do
-      before { save_log }
+      before { close_job_log }
 
       it "saves the log to s3" do
         expect(s3_obj).to exist
@@ -55,8 +55,8 @@ describe Amylase::JobLog do
 
     context "unsuccessful save to s3" do
       before do
-        allow(AWS::S3).to receive(:new) { raise "some error" }
-        save_log rescue nil
+        allow(self).to receive(:save_log) { raise "some error" }
+        close_job_log rescue nil
       end
 
       it "does not remove the local temporary file" do

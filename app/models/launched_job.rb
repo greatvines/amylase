@@ -161,7 +161,7 @@ class LaunchedJob < ActiveRecord::Base
       @job_log.error error_message(err)
       raise err
     ensure
-      save_log
+      close_job_log
     end
 
     nil

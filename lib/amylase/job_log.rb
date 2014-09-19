@@ -33,9 +33,16 @@ module Amylase
       @job_log.info "Logging temporary output to #{@log_file}"
     end
 
+    # Private: Save the log and delete any local temporary files.
+    #
+    # Returns nothing.
+    def close_job_log
+      save_log
+      delete_local_log_file
+    end
+
 
     # Private: Save any generated logs to a location in S3 specified in settings.
-    # If the file is transferred successfully, the local temporary file is deleted.
     #
     # Returns nothing.
     def save_log
@@ -44,7 +51,12 @@ module Amylase
       s3_bucket = AWS::S3.new.buckets[Settings.logging.s3_bucket]
       obj = s3_bucket.objects[Settings.logging.s3_root_folder + '/' + @job_log_base_name]
       obj.write(Pathname.new(@log_file))
+    end
 
+    # Private: Delete the local temporary file log.
+    #
+    # Returns nothing.
+    def delete_local_log_file
       File.delete(@log_file)
     end
 
