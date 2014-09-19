@@ -181,6 +181,27 @@ module BirstSoapFixtures
       EOT
     end
 
+    def create_new_space_request
+      {
+        :token     => login_token,
+        :spaceName => "SomeNewSpace",
+        :comments  => "Duplicated from #{space_id_1}",
+        :automatic => "false"
+      }
+    end
+
+    def create_new_space_response
+      <<-EOT.unindent
+      <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+        <soap:Body>
+          <createNewSpaceResponse xmlns="http://www.birst.com/">
+            <createNewSpaceResult>#{space_id_2}</createNewSpaceResult>
+          </createNewSpaceResponse>
+        </soap:Body>
+      </soap:Envelope>
+      EOT
+    end
+
     def extract_salesforce_data_response
       <<-EOT.unindent
       <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
