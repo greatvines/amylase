@@ -7,10 +7,6 @@ describe "wait_for_birst_job" do
 
 
   before do
-    @job_log = Logging.logger['JobLog']
-    @job_log.level = :debug
-    @job_log.add_appenders(Logging.appenders.stdout)
-
     savon.mock!
     Settings.birst_soap.wait.timeout = '5s'
     Settings.birst_soap.wait.every = '0.3s'
@@ -34,7 +30,14 @@ describe "wait_for_birst_job" do
   end
 
   context "running too long" do
-    before { mock_is_job_complete(false,2) }
+    before do 
+      # Having trouble with Savon expectations, so I have to make it timeout between wait calls
+      Settings.birst_soap.wait.timeout = '2s'
+      Settings.birst_soap.wait.every = '1.1s'
+      mock_is_job_complete(false)
+    end
+
+    after { Settings.reload! }
 
     it "raises a timeout error" do
       expect { wait_task }.to raise_error Amylase::BirstSoap::BWSWaitTimeoutError

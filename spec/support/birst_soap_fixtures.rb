@@ -89,7 +89,7 @@ module BirstSoapFixtures
       }
     end
 
-    def copy_space
+    def copy_space_response
       <<-EOT.unindent
       <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
         <soap:Body>
