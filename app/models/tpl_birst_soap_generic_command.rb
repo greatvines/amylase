@@ -10,8 +10,9 @@ class TplBirstSoapGenericCommand < ActiveRecord::Base
 
   def run_template
     birst_soap_session do |bws|
-      result = bws.send(command)
-      launched_job.result_data = (JSON.pretty_generate result rescue result)
+      result = BirstSoapResult.new("#{command} complete", bws.send(command))
+      launched_job.status_message = result.status_message
+      launched_job.result_data = result.result_data_json
     end
   end
 end
