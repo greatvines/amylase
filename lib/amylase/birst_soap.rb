@@ -43,6 +43,7 @@ module Amylase
     class BWSWaitTimeoutError    < StandardError; end
     class BWSInvalidTokenError   < StandardError; end
     class BWSServerRequestError  < StandardError; end
+    class BWSCopySpaceError      < StandardError; end
 
     # Public: Gets the authorization cookie
     attr_reader :auth_cookie
@@ -61,6 +62,29 @@ module Amylase
       return unless klass.respond_to? :job_initializers
       klass.job_initializers << :initialize_birst_soap
     end
+
+
+    # These are all of the components available for copy, some have optional
+    # parameters (see Birst Doc).
+    ALL_COPY_COMPONENTS = [
+      "data",                 # Staging data (e.g., from CSV/SalesForce/Birst Connect)
+      "datastore",            # Processed data
+      "settings-permissions", # User permissions
+      "settings-membership",  # User group assignments
+      "repository",           # Data model & variables & more
+      "birst-connect",        # Birst connect settings
+      "custom-subject-areas", # All custom subject areas
+      "dashboardstyles",      # Untested
+      "salesforce",           # Salesforce config - will overwrite SF credentials
+      "catalog",              # All report catalog
+      "CustomGeoMaps.xml",    # Untested
+      "spacesettings.xml",    # Untested
+      "SavedExpressions.xml", # All saved expressions
+      "DrillMaps.xml",        # Untested
+      "connectors",           # Data connectors - essentially the same as salesforce
+      "settings-basic",       # Version, etc
+      "useunloadfeature"      # Set this to allow copy between spaces on different servers
+    ]
 
 
     # Public: Launches a Birst Web Services session.  This wrapper is needed to maintian
@@ -414,37 +438,18 @@ module Amylase
     #                   exclude from copy (Default: none).
     # mode            - Copy mode is either "copy" or "replicate" (Default: "replicate").
     # wait_timeout    - Maximum time to wait for copy command to complete
-    #                   (e.g., '1m', '5h') (Default: Settings.bws_wait_timeout).
+    #                   (e.g., '1m', '5h') (Default: Settings.birst_soap.wait.timeout).
     #
     # Returns a BirstSoapResult.
-    def copy_space(from_id: nil, to_id: nil, components_keep: nil, components_drop: [], mode: "replicate", wait_timeout: Settings.bws_wait_timeout)
-      components_all = [
-        "data",                 # Staging data (e.g., from CSV/SalesForce/Birst Connect)
-        "datastore",            # Processed data
-        "settings-permissions", # User permissions
-        "settings-membership",  # User group assignments
-        "repository",           # Data model & variables & more
-        "birst-connect",        # Birst connect settings
-        "custom-subject-areas", # All custom subject areas
-        "dashboardstyles",      # Untested
-        "salesforce",           # Salesforce config - will overwrite SF credentials
-        "catalog",              # All report catalog
-        "CustomGeoMaps.xml",    # Untested
-        "spacesettings.xml",    # Untested
-        "SavedExpressions.xml", # All saved expressions
-        "DrillMaps.xml",        # Untested
-        "connectors",           # Data connectors - essentially the same as salesforce
-        "settings-basic",       # Version, etc
-        "useunloadfeature"      # Set this to allow copy between spaces on different servers
-      ]
+    def copy_space(from_id: nil, 
+      to_id: nil, 
+      components_keep: ALL_COPY_COMPONENTS, 
+      components_drop: [], 
+      mode: "replicate", 
+      wait_timeout: Settings.birst_soap.wait.timeout
+    )
 
-      copy_components = []
-      (components_all + (components_keep || [])).uniq.each do |c|
-        next if components_drop.include? c
-        next unless components_keep.nil? or components_keep.include? c
-        copy_components << c
-      end
-
+      copy_components = (components_keep - components_drop).uniq
 
       result = {}
       birst_soap_session do |bc|
@@ -462,10 +467,10 @@ module Amylase
         token_name:   :jobToken,
         job_token:    result[:token],
         wait_timeout: wait_timeout
-      ))
+      ).result_data)
 
-      status_message = result[:status_message][:status_code]
-      raise BWSCopySpaceError,  status_message if status_message != 'Complete'
+      final_status = result[:final_status][:status_code]
+      raise BWSCopySpaceError,  final_status if final_status != 'Complete'
 
       BirstSoapResult.new("copy complete", result)
     end
@@ -550,7 +555,7 @@ module Amylase
 
 
           # Some errors get shut down immediately
-          if [BWSInvalidTokenError].include? bws_err.class
+          if [BWSInvalidTokenError, Savon::ExpectationError].include? bws_err.class
             @job_log.error "Unrecoverable error detected: #{bws_err.class.name}: #{bws_err}"
 
             waiter_err = bws_err

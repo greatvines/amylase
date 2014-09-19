@@ -3,6 +3,13 @@ require 'savon/mock/spec_helper'
 module BirstSoapSupport
   include Savon::SpecHelper
 
+  def initialize(*args, &block)
+    super
+    @job_log = Logging.logger['JobLog']
+    @job_log.level = :debug
+    @job_log.add_appenders(Logging.appenders.stdout)
+  end
+
   def mock_login(&block)
     crypt = Envcrypt::Envcrypter.new
 
