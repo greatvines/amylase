@@ -1,0 +1,34 @@
+<div class="row">
+  <div class="col-md-10">
+    <div class="panel panel-default">
+      <div class="panel-heading">Job Schedule Group</div>
+      <div class="panel-body">
+
+        <%= simple_form_for @job_schedule_group, 
+            html: { class: 'form-horizontal' },
+            wrapper: :horizontal_form,
+            wrapper_mappings: { 
+              boolean: :horizontal_boolean
+            } do |f| %>
+
+
+          <%= f.input :name %>
+
+          <h4> Attach schedules to this group </h4>
+
+
+          <div id="job_schedules">
+          <%= f.simple_fields_for :job_schedules do |job_schedule| %>
+            <%= render 'job_schedule_fields', :f => job_schedule %>
+          <% end %>
+          <%= link_to_add_association f, :job_schedules, { class: "btn btn-primary btn-sm" } do %>
+            <span class="glyphicon glyphicon-plus"></span> Add Job Schedule
+          <% end %>
+          </div>
+
+          <%= f.button :submit %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

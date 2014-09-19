@@ -5,27 +5,26 @@ RSpec.describe JobSpec, :type => :model do
   before { @job_spec = FactoryGirl.create(:job_spec) }
   subject { @job_spec }
 
-  it "should do something" do
-    puts @job_spec.inspect
-    puts @job_spec.job_template.inspect
-  end
-
   it { should respond_to(:name) }
   it { should respond_to(:enabled) }
   it { should respond_to(:job_template) }
+  it { should respond_to(:job_schedule_group) }
 
   it { should validate_uniqueness_of(:name) }
   it { should validate_presence_of(:name) }
 
-  context "using a copy to get around ensure_inclusion_of bug" do
+  context "using a copy to get around validate_inclusion_of bug" do
     before { @job_spec_dup = @job_spec.dup }
     subject { @job_spec_dup }
 
-    it { should ensure_inclusion_of(:job_template_type).in_array(JobSpec::JOB_TEMPLATE_TYPES) }
+    it { should validate_inclusion_of(:job_template_type).in_array(JobSpec::JOB_TEMPLATE_TYPES) }
   end
 
+  it { should belong_to(:job_schedule_group) }
   it { should belong_to(:job_template) }
   it { should accept_nested_attributes_for(:job_template) }
+
+  it { should have_many(:launched_jobs) }
   
   it { should be_valid }
 

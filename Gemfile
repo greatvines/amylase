@@ -20,6 +20,8 @@ gem 'coffee-rails', '~> 4.0.0'
 gem 'jquery-rails'
 # Turbolinks makes following links in your web application faster. Read more: https://github.com/rails/turbolinks
 gem 'turbolinks'
+gem 'jquery-turbolinks'
+
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 gem 'jbuilder', '~> 2.0'
 # bundle exec rake doc:rails generates the API under doc/api.
@@ -35,15 +37,45 @@ gem 'autoprefixer-rails', '~> 2.2.0'
 # Simple form generation - this is the one that provides better compatbility with bootstrap 3.2
 gem 'simple_form', '3.1.0.rc2'
 
+# Scheduling solution
+gem 'rufus-scheduler', '~> 3.0'
+
+# Dynamic table displays
+gem 'jquery-datatables-rails', '~> 2.2'
+
+# Dynamic nested forms
+gem 'cocoon', '~> 1.2'
+
+# JSON serialization
+gem 'active_model_serializers', '~> 0.9'
+
+# Configuration control
+gem 'rails_config', '~> 0.4'
+
+# Envcrypt for password decryption
+gem 'envcrypt', '~> 0.1'
+
+# Execute SOAP commands
+gem 'savon', '~> 2.5'
+gem 'httpclient', '~> 2.3'
+
+# Logging utility
+gem 'logging', '~> 1.8'
+
+# AWS Utilities
+gem 'aws-sdk', '~> 1'
+
 group :development, :test do
   gem 'rspec-rails', '~> 3.0'
   gem 'factory_girl_rails', '~> 4.4'
   gem 'shoulda-matchers', '~> 2.6'
+  gem 'database_cleaner', '~> 1.3'
 end
 
 group :test do
   gem 'selenium-webdriver', '~> 2.13'
   gem 'capybara', '~> 2.4'
+  gem 'capybara-webkit', '~> 1.3'
   gem 'faker', '~> 1.4'
   gem 'launchy', '~> 2.4'
   gem 'guard-rspec', '~> 4.3'

@@ -1,58 +1,6 @@
 <h1>JobSpecs#new</h1>
-<p>Find me in app/views/job_specs/new.html.erb</p>
 
-<div class="row">
-  <div class="col-md-10">
-    <div class="panel panel-default">
-      <div class="panel-heading">Job Spec</div>
-      <div class="panel-body">
-      
-        <%= simple_form_for @job_spec, 
-            html: { class: 'form-horizontal' },
-            wrapper: :horizontal_form,
-            wrapper_mappings: { 
-              boolean: :horizontal_boolean
-            } do |f| %>
+<%= render 'form' %>
 
-          <%= f.input :name %>
-          <%= f.input :enabled %>
-          <%= f.input :job_template_type, collection: ['TplBirstSoapGenericCommand','TplBirstDuplicateSpace'], :include_blank => false %>
+<%= link_to 'Back', job_specs_path %>
 
-          <h4> Now fill out parameters for the selected job template type</h4>
-
-          <div class="panel panel-primary">
-            <div class="panel-heading">TplBirstSoapGenericCommand</div>
-            <div class="panel-body">
-
-              <%= f.simple_fields_for :job_template_attributes, form_job_template_object(@job_spec, 'TplBirstSoapGenericCommand') do |tpl| %>
-                <%= tpl.input :command %>
-                <%= tpl.input :argument_json %>
-              <% end %>
-
-            </div>
-          </div>
-
-          <div class="panel panel-primary">
-            <div class="panel-heading">TplBirstDuplicateSpace</div>
-            <div class="panel-body">
-
-              <%= f.simple_fields_for :job_template_attributes, form_job_template_object(@job_spec, 'TplBirstDuplicateSpace') do |tpl| %>
-                <%= tpl.input :from_space_id_str %>
-                <%= tpl.input :to_space_name %>
-
-
-                <%= tpl.input :with_membership, as: :boolean, wrapper: :horizontal_boolean %>
-                <%= tpl.input :with_data, as: :boolean, wrapper: :horizontal_boolean %>
-                <%= tpl.input :with_datastore, as: :boolean, wrapper: :horizontal_boolean %>
-              <% end %>
-
-            </div>
-          </div>
-
-          <%= f.button :submit %>
-        <% end %>
-
-      </div>
-    </div>
-  </div>
-</div>

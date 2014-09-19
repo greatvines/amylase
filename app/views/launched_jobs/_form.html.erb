@@ -1,0 +1,17 @@
+<%= simple_form_for(@launched_job) do |f| %>
+  <%= f.error_notification %>
+
+  <div class="form-inputs">
+    <%= f.association :job_spec %>
+    <%= f.input :start_time %>
+    <%= f.input :end_time %>
+    <%= f.input :status %>
+    <%= f.input :status_message %>
+    <%= f.input :result_data %>
+    <%= f.input :log_file %>
+  </div>
+
+  <div class="form-actions">
+    <%= f.button :submit %>
+  </div>
+<% end %>
