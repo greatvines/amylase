@@ -3,6 +3,47 @@ module Amylase
   # Public: Base methods needed to interface with Birst Web Services SOAP API.
   module BirstSoap
 
+    # Public: Successful Birst soap commands should return an instance
+    # of this BirstSoapResult struct.  The values should then be
+    # mapped into the LaunchedJob status_message and result_data.
+    #
+    # status_message - A string that describes the result and should
+    #                  be mapped to LaunchedJob#status_message.
+    # result_data    - May be a string, hash, or array that represents
+    #                  the response of the SOAP request.  Note that
+    #                  LaunchedJob#result_data expects a string (JSON), so
+    #                  this should NOT be used to map to LaunchedJob#result_data.
+    #                  Instead, use the method result_data_json, which formats
+    #                  result_data as a JSON string.
+    BirstSoapResult = Struct.new(:status_message, :result_data) do
+
+      # Public: Formats the SOAP request response as a JSON string.
+      #
+      # Returns a string.
+      def result_data_json
+        JSON.pretty_generate result_data rescue result_data
+      end
+
+      
+      # Public: Formats the SOAP request response as a YAML string.
+      # Yes, I'm converting to JSON, parsing as JSON, then converting
+      # to YAML!  There is an issue with the way that strings are
+      # generated in Savon that returns them as StringWithAttributes
+      # objects instead of strings that doesn't play nice with
+      # to_yaml.  This side-steps that issue.
+      #
+      # Returns a string.
+      def result_data_yaml
+        JSON.parse(result_data_json).to_yaml
+      end
+    end
+
+    class BWSCreateNewSpaceError < StandardError; end
+    class BWSCopySpaceError      < StandardError; end
+    class BWSWaitTimeoutError    < StandardError; end
+    class BWSInvalidTokenError   < StandardError; end
+    class BWSServerRequestError  < StandardError; end
+
     # Public: Gets the authorization cookie
     attr_reader :auth_cookie
 
@@ -22,12 +63,11 @@ module Amylase
     end
 
 
-    # Public: Launches a Birst_Command session.  This class is needed to facilitate
-    # keeping certain Birst_Command settings, like logs, common to all sessions
-    # within a workflow.
+    # Public: Launches a Birst Web Services session.  This wrapper is needed to maintian
+    # session settings (like logs) common to all sessions within a job.
     #
-    # opts  - Additional options passed to a Birst_Command session block (Default: {}).
-    # block - The block that is to be passed to the Birst_Command session block.
+    # opts  - Additional options passed to a BWS session block (Default: {}).
+    # block - The block that is to be passed to the Birst SOAP session block.
     #
     # Returns nothing.
     def birst_soap_session(opts = {}, &block)
@@ -40,13 +80,13 @@ module Amylase
 
     # Public: Simple job to list all spaces owned by user.
     #
-    # Returns array of hashes, one element per space.
+    # Returns a BirstSoapResult
     def list_spaces
-      spaces = nil
-      birst_command_session do |bc|
-        spaces = bc.list_spaces
+      result = nil
+      birst_soap_session do |bc|
+        result = bc.list_spaces
       end
-      spaces
+      BirstSoapResult.new("list_spaces complete", result)
     end
 
     # Public: Used to lookup the id for a space name for all spaces
@@ -56,7 +96,7 @@ module Amylase
     # values are the space ids.  
     def get_space_name_to_id
       my_spaces = {}
-      birst_command_session do |bc|
+      birst_soap_session do |bc|
         bc.list_spaces.each do |s|
           my_spaces[s[:name]] = s[:id]
         end
@@ -71,7 +111,7 @@ module Amylase
     # values are the space names.  
     def get_space_id_to_name
       my_spaces = {}
-      birst_command_session do |bc|
+      birst_soap_session do |bc|
         bc.list_spaces.each do |s|
           my_spaces[s[:id]] = s[:name]
         end
@@ -85,22 +125,19 @@ module Amylase
     # name     - Name of the new space.
     # comments - Optional comments/description.
     #
-    # Returns the new space_id.
+    # Returns a BirstSoapResult
     def create_new_space(name, comments = "A new space")
-      result = {}
-      birst_command_session do |bc|
-        result[:space_id] = bc.create_new_space(
+      result = nil
+      birst_soap_session do |bc|
+        result = bc.create_new_space(
           spaceName: name,
           comments:  comments,
           automatic: "false"
         )
       end
 
-      @job_status.message = "#{result[:space_id]}"
-      @job_status.data = JSON.parse(result.to_json)
-      raise BWSError::BWSCreateNewSpaceError, @job_status.message unless @job_status.message =~ /^[0-9a-f]{8}-([0-9a-f]{4}-){3}[0-9a-f]{12}/
-
-      result[:space_id]
+      raise BWSCreateNewSpaceError, result unless result =~ /^[0-9a-f]{8}-([0-9a-f]{4}-){3}[0-9a-f]{12}/
+      BirstSoapResult.new("create_new_space complete", result)
     end
 
 
@@ -113,7 +150,7 @@ module Amylase
     def delete_all_data(space_id = nil)
       result = {}
 
-      birst_command_session do |bc|
+      birst_soap_session do |bc|
         result[:token] = bc.delete_all_data_from_space(:spaceID => space_id)
       end
 
@@ -142,7 +179,7 @@ module Amylase
     def extract_space(space_id = nil, connector_name: "Salesforce", extract_groups: nil)
       result = {}
 
-      birst_command_session do |bc|
+      birst_soap_session do |bc|
         result[:token] = bc.extract_connector_data(
           :spaceID       => space_id,
           :connectorName => connector_name,
@@ -177,7 +214,7 @@ module Amylase
     def process_space(space_id = nil, timestamp: Time.now(), process_groups: nil)
       result = {}
 
-      birst_command_session do |bc|
+      birst_soap_session do |bc|
         result[:token] = bc.publish_data(
           :spaceID   => space_id,
           :date      => timestamp.strftime("%Y-%m-%dT%H:%M:%S%:z"),
@@ -209,7 +246,7 @@ module Amylase
     def swap_spaces(space1_id = nil, space2_id = nil)
       result = {}
 
-      birst_command_session do |bc|
+      birst_soap_session do |bc|
         result[:token] = bc.swap_space_contents(:sp1ID => space1_id, :sp2ID => space2_id)
       end
 
@@ -244,8 +281,9 @@ module Amylase
     #                 :publishingToken.
     # token         - The job token to be checked.
     #
-    # Returns the result which may be a Booleon for :is_job_complete calls
-    # or a hash for :get_job_status calls.
+    # Returns a BirstSoapResult.  The BirstSoapResult#result_data may
+    # be a Booleon for :is_job_complete calls or a hash for
+    # :get_job_status calls.
     def check_job_token(
       auth_cookie:   @auth_cookie,
       check_command: :is_job_complete,
@@ -253,11 +291,11 @@ module Amylase
       token:         nil
     )
       result = nil
-      birst_command_session do |bc|
+      birst_soap_session do |bc|
         result = bc.send(check_command, { token_name => token })
       end
 
-      result
+      BirstSoapResult.new("#{check_command} complete", result)
     end
 
 
@@ -274,7 +312,7 @@ module Amylase
     # Returns a result hash.
     def upload_data_source(space_id = nil, name = nil, data_source = nil, max_upload_retry: 8)
       result = {}
-      birst_command_session do |bc|        
+      birst_soap_session do |bc|        
         result[:upload_token] = bc.begin_data_upload(
           :spaceID    => space_id,
           :sourceName => name
@@ -282,7 +320,7 @@ module Amylase
       end
 
       # Required for uploading new sources per ticket #00066142
-      birst_command_session do |bc|
+      birst_soap_session do |bc|
         bc.set_data_upload_options(
           :dataUploadToken => result[:upload_token],
           :options         => { "string" => ["ConsolidateIdenticalStructures=false"] }
@@ -294,7 +332,7 @@ module Amylase
       # logs at the error level for this step.
       job_log_data = @job_log.dup
 
-      birst_command_session :soap_logger => job_log_data, :soap_log_level => :error do |bc|
+      birst_soap_session :soap_logger => job_log_data, :soap_log_level => :error do |bc|
         data_source.each_chunk do |chunk|
           @job_log.debug "Uploading chunk of size #{chunk.bytesize}"
 
@@ -309,7 +347,7 @@ module Amylase
         end
       end
 
-      birst_command_session do |bc|
+      birst_soap_session do |bc|
         bc.finish_data_upload(:dataUploadToken => result[:upload_token])
       end
 
@@ -378,7 +416,7 @@ module Amylase
     # wait_timeout    - Maximum time to wait for copy command to complete
     #                   (e.g., '1m', '5h') (Default: Settings.bws_wait_timeout).
     #
-    # Returns nothing.
+    # Returns a BirstSoapResult.
     def copy_space(from_id: nil, to_id: nil, components_keep: nil, components_drop: [], mode: "replicate", wait_timeout: Settings.bws_wait_timeout)
       components_all = [
         "data",                 # Staging data (e.g., from CSV/SalesForce/Birst Connect)
@@ -409,7 +447,7 @@ module Amylase
 
 
       result = {}
-      birst_command_session do |bc|
+      birst_soap_session do |bc|
         result[:token] = bc.copy_space(
           :spFromID => from_id,
           :spToID   => to_id,
@@ -426,11 +464,10 @@ module Amylase
         wait_timeout: wait_timeout
       ))
 
-      @job_status.message = "#{result[:status_message][:status_code]}"
-      @job_status.data = JSON.parse(result.to_json)
-      raise BWSError::BWSCopySpaceError, @job_status.message if @job_status.message != "Complete"
+      status_message = result[:status_message][:status_code]
+      raise BWSCopySpaceError,  status_message if status_message != 'Complete'
 
-      nil
+      BirstSoapResult.new("copy complete", result)
     end
 
 
@@ -453,27 +490,27 @@ module Amylase
     #                  :publishingToken.
     # job_token      - The job token to be checked.
     # wait_every     - How frequently should the status be checked
-    #                  (Default: Settings.bws_wait_every).
+    #                  (Default: Settings.birst_soap.wait.every).
     # wait_timeout   - The maximum time allowed for a job to run before
     #                  terminating abnormally (Default:
-    #                  Settings.bws_wait_timeout).
+    #                  Settings.birst_soap.wait_timeout).
     # wait_max_retry - Maximum number of times to retry BWS job
     #                  monitoring when encountering an unexpected
-    #                  error.
+    #                  error (Default: Settings.birst_soap.wait.max_retry).
     #
-    # Returns a result hash.
+    # Returns a BirstSoapResult.
     def wait_for_birst_job(
       auth_cookie:    @auth_cookie,
       complete:       :is_job_complete, 
       status:         :get_job_status,
       token_name:     :jobToken,
       job_token:      nil,
-      wait_every:     Settings.bws_wait_every,
-      wait_timeout:   Settings.bws_wait_timeout,
-      wait_max_retry: Settings.bws_wait_max_retry
+      wait_every:     Settings.birst_soap.wait.every,
+      wait_timeout:   Settings.birst_soap.wait.timeout,
+      wait_max_retry: Settings.birst_soap.wait.max_retry
     )
 
-      waiter = Rufus::Scheduler.new(:frequency => Settings.bws_wait_rufus_freq)
+      waiter = Rufus::Scheduler.new(:frequency => Settings.birst_soap.rufus_freq)
 
       def waiter.on_error(job, error)
         @job_log.error "intercepted error in #{job.id}: #{error}"
@@ -495,7 +532,7 @@ module Amylase
           @job_log.debug "Checking #{complete} - #{job.count} - #{job.threads}"
           @job_log.debug "retry_counter: #{retry_counter}"
           @job_log.debug "#{complete}, #{token_name}, #{job_token}"
-          is_complete = check_job_token(check_command: complete, token_name: token_name, token: job_token)
+          is_complete = check_job_token(check_command: complete, token_name: token_name, token: job_token).result_data
           @job_log.debug "is_complete = #{is_complete} - #{Time.now() - save_time}"
 
           waiter.shutdown if is_complete
@@ -508,16 +545,17 @@ module Amylase
           @job_log.warn "Error detected, possibly recoverable - #{err.class.name} - #{err}"
           @job_log.warn "#{$!}\n\t#{err.backtrace.join("\n\t")}"
 
-          bws_err = BWSError.parse_soap_fault(err)
+          bws_err = parse_soap_fault(err)
           puts "BWS_ERR: #{bws_err.class}"
 
 
           # Some errors get shut down immediately
-          if [GVBirstWF::BWSError::BWSInvalidTokenError].include? bws_err.class
-            @job_log.error "Fatal error detected: #{bws_err.class.name}: #{bws_err}"
+          if [BWSInvalidTokenError].include? bws_err.class
+            @job_log.error "Unrecoverable error detected: #{bws_err.class.name}: #{bws_err}"
 
             waiter_err = bws_err
             waiter.shutdown
+            raise bws_err
           end
 
           # All other errors retry
@@ -534,11 +572,10 @@ module Amylase
         end
       end
       
-
       # Launch a job that stops Rufus if job has been running too long
       waiter.in wait_timeout, :blocking => true, :overlap => false do
         begin
-          waiter_err = BWSError::BWSWaitTimeoutError.new "Birst job wait timed out after #{wait_timeout}"
+          waiter_err = BWSWaitTimeoutError.new "Birst job wait timed out after #{wait_timeout}"
           @job_log.error waiter_err
         ensure
           waiter.shutdown
@@ -547,17 +584,33 @@ module Amylase
 
       waiter.join
 
-
       # Re-raise any errors that might have happened during the wait task
       raise waiter_err unless waiter_err.nil?
 
-      result[:status_message] = check_job_token(
+      result[:final_status] = check_job_token(
         check_command: status,
         token_name:    token_name,
         token:         job_token
-      )
+      ).result_data
 
-      result
+      BirstSoapResult.new("#{complete} waiter complete", result)
+    end
+
+    def parse_soap_fault(error)
+      if error.class == Savon::SOAPFault
+        error_message = error.to_hash[:fault][:faultstring]
+      else
+        error_message = error.message
+      end
+
+      case error_message
+      when /: token [0-9a-f]{32} is not valid or has expired/
+        BWSInvalidTokenError.new error_message
+      when /Server was unable to process request/
+        BWSServerRequestError.new error_message
+      else
+        error
+      end
     end
 
   end

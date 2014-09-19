@@ -95,14 +95,12 @@ module BirstSoapSupport
   end
 
 
-  def wait_job
-    job = JobTemplate.new
-    result = job.wait_for_birst_job(
+  def wait_task
+    wait_for_birst_job(
       complete:     :is_job_complete,
       status:       :get_job_status,
       token_name:   :jobToken,
       job_token:    BirstSoapFixtures.job_token
     )
-    result
   end
 end
