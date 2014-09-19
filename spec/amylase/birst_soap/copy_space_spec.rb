@@ -43,13 +43,7 @@ describe "Copying a space" do
   context "selecting space components to include/exclude" do
 
     it "includes all components by default" do
-      mock_login_and_out do 
-        savon.expects(:copy_space)
-          .with(message: BirstSoapFixtures.copy_space_message(options: Amylase::BirstSoap::ALL_COPY_COMPONENTS.join(';')))
-          .returns(BirstSoapFixtures.copy_space_response)
-      end
-      mock_is_job_complete(true)
-      mock_job_status("Complete")
+      mock_copy_space(options: Amylase::BirstSoap::ALL_COPY_COMPONENTS.join(';'))
 
       copy_space(
         from_id:         BirstSoapFixtures.space_id_1,
@@ -59,13 +53,7 @@ describe "Copying a space" do
     end
       
     it "keeps only selected components from the list" do
-      mock_login_and_out do 
-        savon.expects(:copy_space)
-          .with(message: BirstSoapFixtures.copy_space_message(options: "data;catalog;salesforce"))
-          .returns(BirstSoapFixtures.copy_space_response)
-      end
-      mock_is_job_complete(true)
-      mock_job_status("Complete")
+      mock_copy_space(options: "data;catalog;salesforce")
 
       copy_space(
         from_id:         BirstSoapFixtures.space_id_1,
@@ -76,13 +64,7 @@ describe "Copying a space" do
     end
 
     it "keeps listed components not in the list" do
-      mock_login_and_out do 
-        savon.expects(:copy_space)
-          .with(message: BirstSoapFixtures.copy_space_message(options: "data;catalog:shared/GreatVines Package"))
-          .returns(BirstSoapFixtures.copy_space_response)
-      end
-      mock_is_job_complete(true)
-      mock_job_status("Complete")
+      mock_copy_space(options: "data;catalog:shared/GreatVines Package")
 
       copy_space(
         from_id:         BirstSoapFixtures.space_id_1,
@@ -93,13 +75,7 @@ describe "Copying a space" do
     end
 
     it "drops components in the drop list" do
-      mock_login_and_out do 
-        savon.expects(:copy_space)
-          .with(message: BirstSoapFixtures.copy_space_message(options: (Amylase::BirstSoap::ALL_COPY_COMPONENTS - ["data", "datastore"]).join(';')))
-          .returns(BirstSoapFixtures.copy_space_response)
-      end
-      mock_is_job_complete(true)
-      mock_job_status("Complete")
+      mock_copy_space(options: (Amylase::BirstSoap::ALL_COPY_COMPONENTS - ["data", "datastore"]).join(';'))
 
       copy_space(
         from_id:         BirstSoapFixtures.space_id_1,

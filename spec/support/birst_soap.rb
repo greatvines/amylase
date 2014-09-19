@@ -110,4 +110,14 @@ module BirstSoapSupport
       job_token:    BirstSoapFixtures.job_token
     )
   end
+
+  def mock_copy_space(options: "data;datastore")
+    mock_login_and_out do 
+      savon.expects(:copy_space)
+        .with(message: BirstSoapFixtures.copy_space_message(options: options))
+        .returns(BirstSoapFixtures.copy_space_response)
+    end
+    mock_is_job_complete(true)
+    mock_job_status("Complete")
+  end
 end
