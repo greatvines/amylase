@@ -1,20 +1,18 @@
 require 'rails_helper'
 
-describe "wait_for_birst_job" do
+describe "wait_for_birst_job", :birst_soap_mock => true do
   extend Amylase::JobInitializers
   include Amylase::BirstSoap
   include BirstSoapSupport
 
 
   before do
-    savon.mock!
     Settings.birst_soap.wait.timeout = '5s'
     Settings.birst_soap.wait.every = '0.3s'
     Settings.birst_soap.rufus_freq = '0.1s'
   end
 
   after do 
-    savon.unmock!
     Settings.reload!
   end
 
