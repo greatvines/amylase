@@ -1,4 +1,19 @@
+# spec/support/birst_soap.rb
 require 'savon/mock/spec_helper'
+
+RSpec.configure do |config|
+  config.before(:each, :birst_soap_mock => true) do
+    savon.mock!
+
+    stub_request(:get, "https://app2102.bws.birst.com/CommandWebService.asmx?WSDL")
+      .with(:headers => {'Accept'=>'*/*', 'User-Agent'=>'HTTPClient/1.0 (2.4.0, ruby 2.0.0 (2013-11-22))'})
+      .to_return(:status => 200, :body => File.open(File.join(Rails.root, 'spec/support/birst_soap_wsdl_app2102_5_13.xml')).read, :headers => {})
+  end
+
+  config.after(:each, :birst_soap_mock => true) do
+    savon.unmock!
+  end
+end
 
 module BirstSoapSupport
   include Savon::SpecHelper

@@ -66,10 +66,7 @@ describe Amylase::BirstSoap::Session do
 
   describe "simple birst web service calls with mock objects" do
 
-    context "with mock objects" do
-
-      before { savon.mock! }
-      after { savon.unmock! }
+    context "with mock objects", :birst_soap_mock => true do
 
       context "mock log in and out" do
         before { mock_login_and_out }
