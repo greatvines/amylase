@@ -1,18 +1,15 @@
 require 'rails_helper'
 
-describe "Copying a space" do
+describe "Copying a space", :birst_soap_mock => true do
   extend Amylase::JobInitializers
   include Amylase::BirstSoap
   include BirstSoapSupport
 
   before do
-    savon.mock!
     Settings.birst_soap.wait.timeout = '5s'
     Settings.birst_soap.wait.every = '0.3s'
     Settings.birst_soap.rufus_freq = '0.1s'
   end
-
-  after { savon.unmock! }
 
   context "successful copy, wait, complete cycle" do
     before do

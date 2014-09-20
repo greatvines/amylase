@@ -48,10 +48,7 @@ RSpec.describe TplBirstSoapGenericCommand, :type => :model do
       end
     end
 
-    describe "capturing result data" do
-      before { savon.mock! }
-      after { savon.unmock! }
-
+    describe "capturing result data", :birst_soap_mock => true do
       it "captured some data" do
         mock_login_and_out do
           savon.expects(:list_spaces)
