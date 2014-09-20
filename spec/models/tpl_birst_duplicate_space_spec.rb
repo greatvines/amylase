@@ -32,7 +32,7 @@ RSpec.describe TplBirstDuplicateSpace, :type => :model do
 
   include BirstSoapSupport
 
-  describe "running birst duplicate space as a job" do
+  describe "running birst duplicate space as a job", :birst_soap_mock => true do
     before do
       job_spec = FactoryGirl.build(:job_spec, :template_tpl_birst_duplicate_space)
       @job_template = job_spec.job_template
@@ -40,13 +40,10 @@ RSpec.describe TplBirstDuplicateSpace, :type => :model do
       @launched_job = FactoryGirl.build(:launched_job, job_spec: job_spec)
       @launched_job.send(:initialize_job)
 
-      savon.mock!
       Settings.birst_soap.wait.timeout = '5s'
       Settings.birst_soap.wait.every = '0.3s'
       Settings.birst_soap.rufus_freq = '0.1s'
     end
-
-    after { savon.unmock! }
 
     let(:run_template) { @job_template.run_template }
 
