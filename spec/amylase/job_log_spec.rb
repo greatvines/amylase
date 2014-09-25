@@ -24,6 +24,11 @@ describe Amylase::JobLog do
     expect(log_result).to match /INFO  JobLog : Logging temporary output to .*#{@job_log_base_name}.*/
   end
 
+  it "logs messages to file with the date enclosed in brackets" do
+    expect(File.read(@job_log_file)).to match /\[\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\] INFO/
+  end
+  
+
   describe "saving logs to s3" do
     before do
       @save_log_settings = Settings.logging.save_logs_to_s3
@@ -49,7 +54,7 @@ describe Amylase::JobLog do
       end
 
       it "removes the local temporary file after a save" do
-        expect(Pathname.new(@log_file)).not_to exist
+        expect(Pathname.new(@job_log_file)).not_to exist
       end
     end
 
@@ -60,7 +65,7 @@ describe Amylase::JobLog do
       end
 
       it "does not remove the local temporary file" do
-        expect(Pathname.new(@log_file)).to exist
+        expect(Pathname.new(@job_log_file)).to exist
       end
       
     end
