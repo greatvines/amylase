@@ -59,6 +59,7 @@ module Amylase
     #
     # Returns nothing.
     def close_job_log
+      @job_log.info "Closing log"
       save_log
       delete_local_log_file
     end
