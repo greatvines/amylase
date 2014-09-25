@@ -65,9 +65,6 @@ gem 'logging', '~> 1.8'
 # AWS Utilities
 gem 'aws-sdk', '~> 1'
 
-# Mock web reponses
-gem 'webmock', '~> 1.18'
-
 group :development, :test do
   gem 'rspec-rails', '~> 3.0'
   gem 'factory_girl_rails', '~> 4.4'
@@ -82,6 +79,9 @@ group :test do
   gem 'faker', '~> 1.4'
   gem 'launchy', '~> 2.4'
   gem 'guard-rspec', '~> 4.3'
+
+  # Mock web reponses
+  gem 'webmock', '~> 1.18'
 end
 
 group :production do
