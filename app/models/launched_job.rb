@@ -37,7 +37,12 @@ class LaunchedJob < ActiveRecord::Base
   #
   # Returns nothing.
   def call(rjob, time)
-    run_job
+    # Since Rufus scheduler starts a new thread for each job, we must manage the connection
+    # pool ourselves.
+    # http://stackoverflow.com/questions/11248808/connection-pool-issue-with-activerecord-objects-in-rufus-scheduler
+    ActiveRecord::Base.connection_pool.with_connection do
+      run_job
+    end
   end
 
   # Public: This is the method that is called when the job is to be

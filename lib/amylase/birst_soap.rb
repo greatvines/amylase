@@ -548,59 +548,66 @@ module Amylase
 
       # Run the check job is complete command until it is complete
       waiter.every wait_every, :overlap => false do |job|
+        # Since Rufus scheduler starts a new thread for each job, we must manage the connection
+        # pool ourselves.
+        # http://stackoverflow.com/questions/11248808/connection-pool-issue-with-activerecord-objects-in-rufus-scheduler
+        ActiveRecord::Base.connection_pool.with_connection do
 
-        begin
-          save_time = Time.now()
-          @job_log.debug "Checking #{complete} - #{job.count} - #{job.threads}"
-          @job_log.debug "retry_counter: #{retry_counter}"
-          @job_log.debug "#{complete}, #{token_name}, #{job_token}"
-          is_complete = check_job_token(check_command: complete, token_name: token_name, token: job_token).result_data
-          @job_log.debug "is_complete = #{is_complete} - #{Time.now() - save_time}"
+          begin
+            save_time = Time.now()
+            @job_log.debug "Checking #{complete} - #{job.count} - #{job.threads}"
+            @job_log.debug "retry_counter: #{retry_counter}"
+            @job_log.debug "#{complete}, #{token_name}, #{job_token}"
+            is_complete = check_job_token(check_command: complete, token_name: token_name, token: job_token).result_data
+            @job_log.debug "is_complete = #{is_complete} - #{Time.now() - save_time}"
 
-          waiter.shutdown if is_complete
+            waiter.shutdown if is_complete
 
-          # Retry counter is reset if all above complete without error
-          retry_counter = 0
-
-
-        rescue StandardError => err
-          @job_log.warn "Error detected, possibly recoverable - #{err.class.name} - #{err}"
-          @job_log.warn "#{$!}\n\t#{err.backtrace.join("\n\t")}"
-
-          bws_err = parse_soap_fault(err)
-          puts "BWS_ERR: #{bws_err.class}"
+            # Retry counter is reset if all above complete without error
+            retry_counter = 0
 
 
-          # Some errors get shut down immediately
-          if [BWSInvalidTokenError, Savon::ExpectationError].include? bws_err.class
-            @job_log.error "Unrecoverable error detected: #{bws_err.class.name}: #{bws_err}"
+          rescue StandardError => err
+            @job_log.warn "Error detected, possibly recoverable - #{err.class.name} - #{err}"
+            @job_log.warn "#{$!}\n\t#{err.backtrace.join("\n\t")}"
 
-            waiter_err = bws_err
-            waiter.shutdown
-            raise bws_err
-          end
+            bws_err = parse_soap_fault(err)
+            puts "BWS_ERR: #{bws_err.class}"
 
-          # All other errors retry
-          retry_counter += 1
-          if retry_counter > wait_max_retry
-            @job_log.error "#{bws_err}"
-            @job_log.error "Retry exceeded"
-            waiter_err = bws_err
-            waiter.shutdown
-          else
-            @job_log.warn "#{bws_err}"
-            @job_log.warn "Will retry #{retry_counter}/#{wait_max_retry}"
+
+            # Some errors get shut down immediately
+            if [BWSInvalidTokenError, Savon::ExpectationError].include? bws_err.class
+              @job_log.error "Unrecoverable error detected: #{bws_err.class.name}: #{bws_err}"
+
+              waiter_err = bws_err
+              waiter.shutdown
+              raise bws_err
+            end
+
+            # All other errors retry
+            retry_counter += 1
+            if retry_counter > wait_max_retry
+              @job_log.error "#{bws_err}"
+              @job_log.error "Retry exceeded"
+              waiter_err = bws_err
+              waiter.shutdown
+            else
+              @job_log.warn "#{bws_err}"
+              @job_log.warn "Will retry #{retry_counter}/#{wait_max_retry}"
+            end
           end
         end
       end
       
       # Launch a job that stops Rufus if job has been running too long
       waiter.in wait_timeout, :blocking => true, :overlap => false do
-        begin
-          waiter_err = BWSWaitTimeoutError.new "Birst job wait timed out after #{wait_timeout}"
-          @job_log.error waiter_err
-        ensure
-          waiter.shutdown
+        ActiveRecord::Base.connection_pool.with_connection do
+          begin
+            waiter_err = BWSWaitTimeoutError.new "Birst job wait timed out after #{wait_timeout}"
+            @job_log.error waiter_err
+          ensure
+            waiter.shutdown
+          end
         end
       end
 
