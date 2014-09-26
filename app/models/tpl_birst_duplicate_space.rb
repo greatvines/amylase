@@ -33,9 +33,11 @@ class TplBirstDuplicateSpace < ActiveRecord::Base
       (self.with_membership ? [] : ["settings-membership"]) +
       (self.with_data       ? [] : ["data"])                +
       (self.with_datastore  ? [] : ["datastore"])
-    
+
+    launched_job.update(status_message: "Creating new space")
     new_space_id = create_new_space(self.to_space_name, comments = "Duplicated from #{self.from_space_id_str}").result_data
 
+    launched_job.update(status_message: "Replicating space #{self.from_space_id_str}")
     copy_space(
       from_id:         self.from_space_id_str,
       to_id:           new_space_id,
@@ -45,6 +47,8 @@ class TplBirstDuplicateSpace < ActiveRecord::Base
 
     # Bug with Birst 5.12 requires that we copy membership again (00065865)
     if self.with_membership
+
+      launched_job.update(status_message: "Replicating membership from #{self.from_space_id_str}")
       copy_space(
         from_id:         self.from_space_id_str,  
         to_id:           new_space_id,
