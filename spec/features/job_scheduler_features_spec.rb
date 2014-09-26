@@ -2,6 +2,16 @@
 
 require 'rails_helper'
 
+feature "Alert if the scheduler is not running" do
+  scenario "Visiting pages should show alert that scheduler is not running" do
+    visit root_path
+    expect(page).to have_content "Job scheduler not running!"
+
+    visit job_specs_path
+    expect(page).to have_content "Job scheduler not running!"
+  end
+end
+
 feature "User creates the scheduler" do
 
   before do
@@ -18,12 +28,14 @@ feature "User creates the scheduler" do
 
     expect(page).to have_content 'Success! JobScheduler created.'
     expect(page).to have_content 'Running: true'
+    expect(page).not_to have_content "Job scheduler not running!"
 
     sleep(1.5)
     expect(LaunchedJob.find_by(job_spec: @job_spec).status).to eq LaunchedJob::SUCCESS
 
     click_link 'Destroy'
     expect(page).to have_content 'Success! JobScheduler destroyed.'
+    expect(page).to have_content "Job scheduler not running!"
   end
 
   scenario "scheduler times out" do
@@ -32,6 +44,7 @@ feature "User creates the scheduler" do
     sleep(2.5)
     visit job_scheduler_path
     expect(page).to have_content 'Running: false'
+    expect(page).to have_content "Job scheduler not running!"
 
     click_link 'Destroy'
   end
