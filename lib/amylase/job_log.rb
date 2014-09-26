@@ -10,6 +10,9 @@ module Amylase
     # Public: Get the name of the log file
     attr_reader :job_log_file
 
+    # Public: Full path to the 
+    attr_reader :job_log_s3_full_path
+
     # Public: Hook that adds the initialize_job_log method to any class it is
     # included in.
     def self.included(klass)
@@ -24,7 +27,9 @@ module Amylase
     # Returns nothing.
     def initialize_job_log
       set_log_base_name
-      @job_log_file = File.join(Dir.tmpdir,@job_log_base_name)
+      @job_log_file = File.join(Dir.tmpdir, @job_log_base_name)
+      @job_log_s3_path = Settings.logging.s3_root_folder + '/' + @job_log_base_name
+      @job_log_s3_full_path = 's3://' + Settings.logging.s3_bucket + '/' + @job_log_s3_path
 
       log_pattern = '[%d] %-5l %c: %m\n'
 
@@ -72,7 +77,7 @@ module Amylase
       return unless Settings.logging.save_logs_to_s3
 
       s3_bucket = AWS::S3.new.buckets[Settings.logging.s3_bucket]
-      obj = s3_bucket.objects[Settings.logging.s3_root_folder + '/' + @job_log_base_name]
+      obj = s3_bucket.objects[@job_log_s3_path]
       obj.write(Pathname.new(@job_log_file))
     end
 

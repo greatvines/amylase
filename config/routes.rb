@@ -14,6 +14,7 @@ Rails.application.routes.draw do
   resource :job_scheduler, only: [:show, :new, :create, :destroy]
 
   resources :launched_jobs, only: [:index, :show]
+  get 'launched_jobs/:id/job_log', to: 'launched_jobs#show_job_log', as: :job_log
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
