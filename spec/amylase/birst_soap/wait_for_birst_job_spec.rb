@@ -103,4 +103,28 @@ describe "wait_for_birst_job", :birst_soap_mock => true do
 
     end
   end
+
+  context "cookie handling", :birst_soap_mock => false, :live => true do
+
+    before do
+      Settings.birst_soap.wait.timeout = '60s'
+      Settings.birst_soap.wait.every = '5s'
+
+      @new_id_1 = create_new_space('_TEST-cookie_handling-delete_me-1').result_data
+      @new_id_2 = create_new_space('_TEST-cookie_handling-delete_me-2').result_data
+      @this_auth_cookie = @auth_cookie
+    end
+
+    after do
+      delete_space(@new_id_1)
+      delete_space(@new_id_2)
+      Settings.reload!
+    end
+
+    it "persists cookies from a copy task" do
+      copy_space(from_id: @new_id_1, to_id: @new_id_2)
+    end
+  end
+
+
 end

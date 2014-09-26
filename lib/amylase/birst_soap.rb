@@ -95,7 +95,7 @@ module Amylase
     #
     # Returns nothing.
     def birst_soap_session(opts = {}, &block)
-      default_opts = { :soap_logger => @job_log }
+      default_opts = { :soap_logger => @job_log, :auth_cookie => @auth_cookie }
       Session.new default_opts.merge(opts) do |bc|
         @auth_cookie = bc.auth_cookie if @auth_cookie.nil?
         block.call bc
@@ -162,6 +162,22 @@ module Amylase
 
       raise BWSCreateNewSpaceError, result unless result =~ /^[0-9a-f]{8}-([0-9a-f]{4}-){3}[0-9a-f]{12}/
       BirstSoapResult.new("create_new_space complete", result)
+    end
+
+    # Public: Deletes an existing space.
+    #
+    # space_id - Id of the space to delte
+    #
+    # Returns a BirstSoapResult
+    def delete_space(space_id)
+      result = nil
+      birst_soap_session do |bc|
+        result = bc.delete_space(
+          spaceId: space_id
+        )
+      end
+
+      BirstSoapResult.new("delete_space complete", result)
     end
 
 
@@ -314,6 +330,7 @@ module Amylase
       token_name:    :jobToken,
       token:         nil
     )
+
       result = nil
       birst_soap_session do |bc|
         result = bc.send(check_command, { token_name => token })
