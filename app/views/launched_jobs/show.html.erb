@@ -21,6 +21,11 @@
 </p>
 
 <p>
+  <strong>Log file:</strong>
+  <%= link_to 'Download Log', job_log_path, :target => '_blank' %>
+</p>
+
+<p>
   <strong>Status message:</strong>
   <pre>
     <%= @launched_job.status_message %>
@@ -32,11 +37,6 @@
   <pre>
     <%= @launched_job.result_data %>
   </pre>
-</p>
-
-<p>
-  <strong>Log file:</strong>
-  <%= @launched_job.log_file %>
 </p>
 
 <%= link_to 'Back', launched_jobs_path %>

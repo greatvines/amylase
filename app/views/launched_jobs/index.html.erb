@@ -25,7 +25,11 @@
         <td><%= launched_job.end_time %></td>
         <td><%= pretty_print_duration(launched_job.run_time) %></td>
         <td><%= launched_job.status %></td>
-        <td class="text-center"><span class="glyphicon glyphicon-download"></span></td>
+        <td class="text-center">
+          <%= link_to job_log_path(launched_job.id), :target => '_blank' do %>
+            <span class="glyphicon glyphicon-download"></span>
+          <% end %>
+        </td>
         <td><%= link_to 'Show', launched_job %></td>
       </tr>
     <% end %>
