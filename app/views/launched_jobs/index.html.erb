@@ -1,37 +1,35 @@
 <h1>Listing launched_jobs</h1>
 
-<table>
+<table id="datatable" class="table">
   <thead>
     <tr>
-      <th>Job spec</th>
+      <th>Job id</th>
+      <th>Job Spec</th>
+      <th>Job Template Type</th>
       <th>Start time</th>
       <th>End time</th>
+      <th>Run time</th>
       <th>Status</th>
-      <th>Status message</th>
-      <th>Result data</th>
-      <th>Log file</th>
-      <th colspan="3"></th>
+      <th>log</th>
+      <th></th>
     </tr>
   </thead>
 
   <tbody>
     <% @launched_jobs.each do |launched_job| %>
       <tr>
-        <td><%= launched_job.job_spec %></td>
+        <td><%= launched_job.id %></td>
+        <td><%= link_to launched_job.job_spec.name, launched_job.job_spec %></td>
+        <td><%= launched_job.job_spec.job_template_type %></td>
         <td><%= launched_job.start_time %></td>
         <td><%= launched_job.end_time %></td>
+        <td><%= pretty_print_duration(launched_job.run_time) %></td>
         <td><%= launched_job.status %></td>
-        <td><%= launched_job.status_message %></td>
-        <td><%= launched_job.result_data %></td>
-        <td><%= launched_job.log_file %></td>
+        <td class="text-center"><span class="glyphicon glyphicon-download"></span></td>
         <td><%= link_to 'Show', launched_job %></td>
-        <td><%= link_to 'Edit', edit_launched_job_path(launched_job) %></td>
-        <td><%= link_to 'Destroy', launched_job, method: :delete, data: { confirm: 'Are you sure?' } %></td>
       </tr>
     <% end %>
   </tbody>
 </table>
 
 <br>
-
-<%= link_to 'New Launched job', new_launched_job_path %>
