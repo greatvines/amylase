@@ -24,7 +24,7 @@ RSpec.describe LaunchedJobsController, :type => :controller do
   # LaunchedJob. As you add validations to LaunchedJob, be sure to
   # adjust the attributes here as well.
   let(:valid_attributes) {
-    skip("Add a hash of attributes valid for your model")
+    FactoryGirl.build(:launched_job).attributes
   }
 
   let(:invalid_attributes) {
@@ -52,14 +52,14 @@ RSpec.describe LaunchedJobsController, :type => :controller do
     end
   end
 
-  describe "GET new" do
+  describe "GET new", skip: "No route" do
     it "assigns a new launched_job as @launched_job" do
       get :new, {}, valid_session
       expect(assigns(:launched_job)).to be_a_new(LaunchedJob)
     end
   end
 
-  describe "GET edit" do
+  describe "GET edit", skip: "No route" do
     it "assigns the requested launched_job as @launched_job" do
       launched_job = LaunchedJob.create! valid_attributes
       get :edit, {:id => launched_job.to_param}, valid_session
@@ -67,7 +67,7 @@ RSpec.describe LaunchedJobsController, :type => :controller do
     end
   end
 
-  describe "POST create" do
+  describe "POST create", skip: "No route" do
     describe "with valid params" do
       it "creates a new LaunchedJob" do
         expect {
@@ -100,7 +100,7 @@ RSpec.describe LaunchedJobsController, :type => :controller do
     end
   end
 
-  describe "PUT update" do
+  describe "PUT update", skip: "No route" do
     describe "with valid params" do
       let(:new_attributes) {
         skip("Add a hash of attributes valid for your model")
@@ -141,7 +141,7 @@ RSpec.describe LaunchedJobsController, :type => :controller do
     end
   end
 
-  describe "DELETE destroy" do
+  describe "DELETE destroy", skip: "No route" do
     it "destroys the requested launched_job" do
       launched_job = LaunchedJob.create! valid_attributes
       expect {
