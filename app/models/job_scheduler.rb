@@ -121,6 +121,7 @@ class JobScheduler
   def running
     @rufus ? !@rufus.down? : false
   end
+  alias_method :running?, :running
 
   # Public: Returns when the Rufus scheduler was started.
   #

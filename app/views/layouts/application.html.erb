@@ -11,6 +11,7 @@
     <%= render 'layouts/header' %>
 
     <div class="container master-container">
+      <%= content_tag(:div, 'Job scheduler not running!', class: 'alert alert-danger') unless (JobScheduler.find ? JobScheduler.find.running? : false) %>
       <% flash.each do |key, value| %>
         <%= content_tag(:div, value, class: "alert alert-#{key}") %>
       <% end %>
