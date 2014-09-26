@@ -85,7 +85,7 @@ class JobScheduler
   # Returns nothing.
   def start_scheduler
     @rufus = Rufus::Scheduler.new
-    schedule_shutdown_job if self.timeout
+    schedule_shutdown_job if !self.timeout.blank?
     schedule_job_specs
   end
 
@@ -121,6 +121,7 @@ class JobScheduler
   def running
     @rufus ? !@rufus.down? : false
   end
+  alias_method :running?, :running
 
   # Public: Returns when the Rufus scheduler was started.
   #

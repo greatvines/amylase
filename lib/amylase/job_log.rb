@@ -7,6 +7,9 @@ module Amylase
     # Public: Gets the base name of the log
     attr_reader :job_log_base_name
 
+    # Public: Get the name of the log file
+    attr_reader :job_log_file
+
     # Public: Hook that adds the initialize_job_log method to any class it is
     # included in.
     def self.included(klass)
@@ -21,22 +24,42 @@ module Amylase
     # Returns nothing.
     def initialize_job_log
       set_log_base_name
-      @log_file = File.join(Dir.tmpdir,@job_log_base_name)
+      @job_log_file = File.join(Dir.tmpdir,@job_log_base_name)
+
+      log_pattern = '[%d] %-5l %c: %m\n'
+
+      Logging.color_scheme( 'trafficlight',
+        :levels => {
+          :info  => :green,
+          :warn  => :yellow,
+          :error => :red,
+          :fatal => [:white, :on_red]
+        }
+      )
+
+      Logging.appenders.stdout(
+        'stdout',
+        :layout => Logging.layouts.pattern(
+          :pattern => log_pattern,
+          :color_scheme => 'trafficlight'
+        )
+      )
 
       @job_log = Logging.logger['JobLog']
       @job_log.level = :info
       @job_log.add_appenders(
           Logging.appenders.stdout,
-          Logging.appenders.file(@log_file)
+          Logging.appenders.file(@job_log_file, :layout => Logging.layouts.pattern(:pattern => log_pattern))
       )
 
-      @job_log.info "Logging temporary output to #{@log_file}"
+      @job_log.info "Logging temporary output to #{@job_log_file}"
     end
 
     # Private: Save the log and delete any local temporary files.
     #
     # Returns nothing.
     def close_job_log
+      @job_log.info "Closing log"
       save_log
       delete_local_log_file
     end
@@ -50,14 +73,14 @@ module Amylase
 
       s3_bucket = AWS::S3.new.buckets[Settings.logging.s3_bucket]
       obj = s3_bucket.objects[Settings.logging.s3_root_folder + '/' + @job_log_base_name]
-      obj.write(Pathname.new(@log_file))
+      obj.write(Pathname.new(@job_log_file))
     end
 
     # Private: Delete the local temporary file log.
     #
     # Returns nothing.
     def delete_local_log_file
-      File.delete(@log_file)
+      File.delete(@job_log_file)
     end
 
     # Private: Set the base name of the log file.
