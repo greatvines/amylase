@@ -1,5 +1,5 @@
 class LaunchedJobsController < ApplicationController
-  before_action :set_launched_job, only: [:show, :edit, :update, :destroy]
+  before_action :set_launched_job, only: [:show, :edit, :update, :destroy, :show_job_log]
 
   # GET /launched_jobs
   # GET /launched_jobs.json
@@ -18,6 +18,22 @@ class LaunchedJobsController < ApplicationController
     respond_to do |format|
       format.html # show.html.erb
       format.json { render json: @launched_job }
+    end
+  end
+
+  # GET /launched_jobs/1/job_log
+  def show_job_log
+    s3_path = @launched_job.log_file
+
+    if s3_path.blank?
+      render @launched_job
+    else
+      bucket_name = s3_path[/s3:\/\/([\w-]+)\//,1]
+      object_name = s3_path[/s3:\/\/[\w-]+\/(.*)/,1]
+
+      s3_bucket = AWS::S3.new.buckets[bucket_name]
+      obj = s3_bucket.objects[object_name]
+      redirect_to obj.url_for(:read, :expires => 2.minutes).to_s
     end
   end
 

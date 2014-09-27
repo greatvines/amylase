@@ -162,6 +162,7 @@ class LaunchedJob < ActiveRecord::Base
   def close_job
     begin
       set_close_status
+      self.update(log_file: @job_log_s3_full_path)
     rescue => err
       @job_log.error error_message(err)
       raise err
