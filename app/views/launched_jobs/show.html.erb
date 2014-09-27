@@ -2,7 +2,7 @@
 
 <p>
   <strong>Job spec:</strong>
-  <%= @launched_job.job_spec %>
+  <%= link_to @launched_job.job_spec.name, @launched_job.job_spec %>
 </p>
 
 <p>
@@ -21,19 +21,22 @@
 </p>
 
 <p>
+  <strong>Log file:</strong>
+  <%= link_to 'Download Log', job_log_path, :target => '_blank' %>
+</p>
+
+<p>
   <strong>Status message:</strong>
-  <%= @launched_job.status_message %>
+  <pre>
+    <%= @launched_job.status_message %>
+  </pre>
 </p>
 
 <p>
   <strong>Result data:</strong>
-  <%= @launched_job.result_data %>
+  <pre>
+    <%= @launched_job.result_data %>
+  </pre>
 </p>
 
-<p>
-  <strong>Log file:</strong>
-  <%= @launched_job.log_file %>
-</p>
-
-<%= link_to 'Edit', edit_launched_job_path(@launched_job) %> |
 <%= link_to 'Back', launched_jobs_path %>
