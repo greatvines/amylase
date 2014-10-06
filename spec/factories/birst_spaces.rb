@@ -2,9 +2,8 @@
 
 FactoryGirl.define do
   factory :birst_space do
-    name "MyText"
-    client nil
-    type "MyText"
-    space_id "MyString"
+    sequence(:name) { |n| "MySpace-#{n}" }
+    space_uuid '00000000-0000-0000-0000-000000000000'
+    client
   end
 end
