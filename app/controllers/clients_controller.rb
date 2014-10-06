@@ -37,9 +37,11 @@ class ClientsController < ApplicationController
 
     respond_to do |format|
       if @client.save
-        format.html { redirect_to @client, notice: 'Client was successfully created.' }
+        flash[:success] = "Success! Client created."
+        format.html { redirect_to @client }
         format.json { render json: @client, status: :created }
       else
+        flash[:danger] = "Error! Client not created: #{@client.errors.full_messages}"        
         format.html { render action: 'new' }
         format.json { render json: @client.errors, status: :unprocessable_entity }
       end
@@ -51,9 +53,11 @@ class ClientsController < ApplicationController
   def update
     respond_to do |format|
       if @client.update(client_params)
-        format.html { redirect_to @client, notice: 'Client was successfully updated.' }
+        flash[:success] = "Success! Client updated."
+        format.html { redirect_to @client }
         format.json { head :no_content }
       else
+        flash[:danger] = "Error! Client not updated: #{@client.errors.full_messages}"
         format.html { render action: 'edit' }
         format.json { render json: @client.errors, status: :unprocessable_entity }
       end
@@ -65,6 +69,7 @@ class ClientsController < ApplicationController
   def destroy
     @client.destroy
     respond_to do |format|
+      flash[:success] = 'Success! Client destroyed.'
       format.html { redirect_to clients_url }
       format.json { head :no_content }
     end
