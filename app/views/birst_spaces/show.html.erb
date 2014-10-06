@@ -1,0 +1,24 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Name:</strong>
+  <%= @birst_space.name %>
+</p>
+
+<p>
+  <strong>Client:</strong>
+  <%= @birst_space.client %>
+</p>
+
+<p>
+  <strong>Type:</strong>
+  <%= @birst_space.type %>
+</p>
+
+<p>
+  <strong>Space:</strong>
+  <%= @birst_space.space_id %>
+</p>
+
+<%= link_to 'Edit', edit_birst_space_path(@birst_space) %> |
+<%= link_to 'Back', birst_spaces_path %>
