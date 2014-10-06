@@ -1,9 +1,9 @@
-# Read about factories at https://github.com/thoughtbot/factory_girl
+# spec/factories/clients.rb
 
 FactoryGirl.define do
   factory :client do
-    name "MyText"
-    redshift_schema "MyText"
-    salesforce_username "MyText"
+    sequence(:name) { |n| "MyClient-#{n}" }
+    redshift_schema "client__stage"
+    salesforce_username "example@greatvines.com"
   end
 end

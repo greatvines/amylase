@@ -1,6 +1,5 @@
 Rails.application.routes.draw do
   
-  resources :clients
 
   root 'static_pages#home'
   match '/home', to: 'static_pages#home', via: 'get'
@@ -17,6 +16,9 @@ Rails.application.routes.draw do
 
   resources :launched_jobs, only: [:index, :show]
   get 'launched_jobs/:id/job_log', to: 'launched_jobs#show_job_log', as: :job_log
+
+  resources :clients
+
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
