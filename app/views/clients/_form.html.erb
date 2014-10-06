@@ -1,0 +1,20 @@
+<div class="row">
+  <div class="col-md-10">
+
+    <%= simple_form_for @client,
+        html: { class: 'form-horizontal' },
+        wrapper: :horizontal_form do |f| %>
+      <%= f.error_notification %>
+
+      <div class="form-inputs">
+        <%= f.input :name, as: :string %>
+        <%= f.input :redshift_schema, as: :string %>
+        <%= f.input :salesforce_username, as: :string %>
+      </div>
+
+      <div class="form-actions">
+        <%= f.button :submit %>
+      </div>
+    <% end %>
+  </div>
+</div>
