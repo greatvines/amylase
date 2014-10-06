@@ -24,11 +24,11 @@ RSpec.describe BirstSpacesController, :type => :controller do
   # BirstSpace. As you add validations to BirstSpace, be sure to
   # adjust the attributes here as well.
   let(:valid_attributes) {
-    skip("Add a hash of attributes valid for your model")
+    FactoryGirl.build(:birst_space).attributes
   }
 
   let(:invalid_attributes) {
-    skip("Add a hash of attributes invalid for your model")
+    FactoryGirl.build(:birst_space, space_uuid: 'bad-uuid').attributes
   }
 
   # This should return the minimal set of values that should be in the session
@@ -103,14 +103,14 @@ RSpec.describe BirstSpacesController, :type => :controller do
   describe "PUT update" do
     describe "with valid params" do
       let(:new_attributes) {
-        skip("Add a hash of attributes valid for your model")
+        valid_attributes.merge({ 'space_type' => 'production' })
       }
 
       it "updates the requested birst_space" do
         birst_space = BirstSpace.create! valid_attributes
         put :update, {:id => birst_space.to_param, :birst_space => new_attributes}, valid_session
         birst_space.reload
-        skip("Add assertions for updated state")
+        expect(birst_space.space_type).to eq 'production'
       end
 
       it "assigns the requested birst_space as @birst_space" do
