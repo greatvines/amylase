@@ -11,10 +11,20 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140917164053) do
+ActiveRecord::Schema.define(version: 20141006201226) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "clients", force: true do |t|
+    t.text     "name",                null: false
+    t.text     "redshift_schema"
+    t.text     "salesforce_username"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "clients", ["name"], name: "index_clients_on_name", unique: true, using: :btree
 
   create_table "job_schedule_groups", force: true do |t|
     t.string   "name",       null: false
