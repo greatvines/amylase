@@ -37,9 +37,11 @@ class BirstSpacesController < ApplicationController
 
     respond_to do |format|
       if @birst_space.save
-        format.html { redirect_to @birst_space, notice: 'Birst space was successfully created.' }
+        flash[:success] = "Success! BirstSpace created."
+        format.html { redirect_to @birst_space }
         format.json { render json: @birst_space, status: :created }
       else
+        flash[:danger] = "Error! BirstSpace not created: #{@birst_space.errors.full_messages}"
         format.html { render action: 'new' }
         format.json { render json: @birst_space.errors, status: :unprocessable_entity }
       end
@@ -51,9 +53,11 @@ class BirstSpacesController < ApplicationController
   def update
     respond_to do |format|
       if @birst_space.update(birst_space_params)
-        format.html { redirect_to @birst_space, notice: 'Birst space was successfully updated.' }
+        flash[:success] = "Success! BirstSpace updated."
+        format.html { redirect_to @birst_space }
         format.json { head :no_content }
       else
+        flash[:danger] = "Error! BirstSpace not updated: #{@birst_space.errors.full_messages}"
         format.html { render action: 'edit' }
         format.json { render json: @birst_space.errors, status: :unprocessable_entity }
       end
@@ -65,6 +69,7 @@ class BirstSpacesController < ApplicationController
   def destroy
     @birst_space.destroy
     respond_to do |format|
+      flash[:success] = 'Success! BirstSpace destroyed.'
       format.html { redirect_to birst_spaces_url }
       format.json { head :no_content }
     end
@@ -78,6 +83,6 @@ class BirstSpacesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def birst_space_params
-      params.require(:birst_space).permit(:name, :client_id, :type, :space_id)
+      params.require(:birst_space).permit(:name, :client_id, :space_type, :space_uuid)
     end
 end

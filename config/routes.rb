@@ -1,7 +1,4 @@
 Rails.application.routes.draw do
-  
-
-  resources :birst_spaces
 
   root 'static_pages#home'
   match '/home', to: 'static_pages#home', via: 'get'
@@ -20,6 +17,7 @@ Rails.application.routes.draw do
   get 'launched_jobs/:id/job_log', to: 'launched_jobs#show_job_log', as: :job_log
 
   resources :clients
+  resources :birst_spaces
 
 
   # The priority is based upon order of creation: first created -> highest priority.
