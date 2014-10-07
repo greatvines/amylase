@@ -11,10 +11,22 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141006201226) do
+ActiveRecord::Schema.define(version: 20141006234655) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "birst_spaces", force: true do |t|
+    t.text     "name",                  null: false
+    t.integer  "client_id"
+    t.text     "space_type"
+    t.string   "space_uuid", limit: 36, null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "birst_spaces", ["client_id"], name: "index_birst_spaces_on_client_id", using: :btree
+  add_index "birst_spaces", ["name"], name: "index_birst_spaces_on_name", unique: true, using: :btree
 
   create_table "clients", force: true do |t|
     t.text     "name",                null: false

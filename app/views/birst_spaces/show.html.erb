@@ -1,0 +1,24 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Name:</strong>
+  <%= @birst_space.name %>
+</p>
+
+<p>
+  <strong>Client:</strong>
+  <td><%= link_to_if(@birst_space.client, @birst_space.client.try(:name), @birst_space.client) %></td>
+</p>
+
+<p>
+  <strong>Type:</strong>
+  <%= @birst_space.space_type %>
+</p>
+
+<p>
+  <strong>Space:</strong>
+  <%= @birst_space.space_uuid %>
+</p>
+
+<%= link_to 'Edit', edit_birst_space_path(@birst_space) %> |
+<%= link_to 'Back', birst_spaces_path %>
