@@ -1,14 +1,21 @@
-<%= simple_form_for(@birst_space) do |f| %>
-  <%= f.error_notification %>
+<div class="row">
+  <div class="col-md-10">
 
-  <div class="form-inputs">
-    <%= f.input :name %>
-    <%= f.association :client %>
-    <%= f.input :type %>
-    <%= f.input :space_id %>
-  </div>
+    <%= simple_form_for @birst_space,
+        html: { class: 'form-horizontal' },
+        wrapper: :horizontal_form do |f| %>
+      <%= f.error_notification %>
 
-  <div class="form-actions">
-    <%= f.button :submit %>
+      <div class="form-inputs">
+        <%= f.input :name, as: :string %>
+        <%= f.association :client %>
+        <%= f.input :space_type, collection: BirstSpace::SPACE_TYPES, include_blank: false %>
+        <%= f.input :space_uuid %>
+      </div>
+
+      <div class="form-actions">
+        <%= f.button :submit %>
+      </div>
+    <% end %>
   </div>
-<% end %>
+</div>
