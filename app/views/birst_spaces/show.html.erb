@@ -7,17 +7,17 @@
 
 <p>
   <strong>Client:</strong>
-  <%= @birst_space.client %>
+  <td><%= link_to_if(@birst_space.client, @birst_space.client.try(:name), @birst_space.client) %></td>
 </p>
 
 <p>
   <strong>Type:</strong>
-  <%= @birst_space.type %>
+  <%= @birst_space.space_type %>
 </p>
 
 <p>
   <strong>Space:</strong>
-  <%= @birst_space.space_id %>
+  <%= @birst_space.space_uuid %>
 </p>
 
 <%= link_to 'Edit', edit_birst_space_path(@birst_space) %> |
