@@ -1,0 +1,29 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Name:</strong>
+  <%= @data_source.name %>
+</p>
+
+<p>
+  <strong>Birst filename:</strong>
+  <%= @data_source.birst_filename %>
+</p>
+
+<p>
+  <strong>Data source type:</strong>
+  <%= @data_source.data_source_type %>
+</p>
+
+<p>
+  <strong>Redshift sql:</strong>
+  <%= @data_source.redshift_sql %>
+</p>
+
+<p>
+  <strong>S3 path:</strong>
+  <%= @data_source.s3_path %>
+</p>
+
+<%= link_to 'Edit', edit_data_source_path(@data_source) %> |
+<%= link_to 'Back', data_sources_path %>
