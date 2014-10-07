@@ -1,0 +1,15 @@
+<%= simple_form_for(@data_source) do |f| %>
+  <%= f.error_notification %>
+
+  <div class="form-inputs">
+    <%= f.input :name %>
+    <%= f.input :birst_filename %>
+    <%= f.input :data_source_type %>
+    <%= f.input :redshift_sql %>
+    <%= f.input :s3_path %>
+  </div>
+
+  <div class="form-actions">
+    <%= f.button :submit %>
+  </div>
+<% end %>
