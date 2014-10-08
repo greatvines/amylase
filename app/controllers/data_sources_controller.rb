@@ -37,9 +37,11 @@ class DataSourcesController < ApplicationController
 
     respond_to do |format|
       if @data_source.save
-        format.html { redirect_to @data_source, notice: 'Data source was successfully created.' }
+        flash[:success] = "Success! DataSource created."
+        format.html { redirect_to @data_source }
         format.json { render json: @data_source, status: :created }
       else
+        flash[:danger] = "Error! DataSource not created: #{@data_source.errors.full_messages}"
         format.html { render action: 'new' }
         format.json { render json: @data_source.errors, status: :unprocessable_entity }
       end
@@ -51,9 +53,11 @@ class DataSourcesController < ApplicationController
   def update
     respond_to do |format|
       if @data_source.update(data_source_params)
-        format.html { redirect_to @data_source, notice: 'Data source was successfully updated.' }
+        flash[:success] = "Success! DataSource updated."
+        format.html { redirect_to @data_source }
         format.json { head :no_content }
       else
+        flash[:danger] = "Error! DataSource not updated: #{@data_source.errors.full_messages}"
         format.html { render action: 'edit' }
         format.json { render json: @data_source.errors, status: :unprocessable_entity }
       end
@@ -65,6 +69,7 @@ class DataSourcesController < ApplicationController
   def destroy
     @data_source.destroy
     respond_to do |format|
+      flash[:success] = 'Success! DataSource destroyed.'
       format.html { redirect_to data_sources_url }
       format.json { head :no_content }
     end

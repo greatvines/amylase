@@ -24,11 +24,11 @@ RSpec.describe DataSourcesController, :type => :controller do
   # DataSource. As you add validations to DataSource, be sure to
   # adjust the attributes here as well.
   let(:valid_attributes) {
-    skip("Add a hash of attributes valid for your model")
+    FactoryGirl.build(:data_source).attributes
   }
 
   let(:invalid_attributes) {
-    skip("Add a hash of attributes invalid for your model")
+    FactoryGirl.build(:data_source, data_source_type: 'S3DataSource', s3_path: '').attributes
   }
 
   # This should return the minimal set of values that should be in the session
@@ -103,14 +103,14 @@ RSpec.describe DataSourcesController, :type => :controller do
   describe "PUT update" do
     describe "with valid params" do
       let(:new_attributes) {
-        skip("Add a hash of attributes valid for your model")
+        valid_attributes.merge({ 'birst_filename' => 'test change' })
       }
 
       it "updates the requested data_source" do
         data_source = DataSource.create! valid_attributes
         put :update, {:id => data_source.to_param, :data_source => new_attributes}, valid_session
         data_source.reload
-        skip("Add assertions for updated state")
+        expect(data_source.birst_filename).to eq 'test change'
       end
 
       it "assigns the requested data_source as @data_source" do
