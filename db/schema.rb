@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141007172455) do
+ActiveRecord::Schema.define(version: 20141008211710) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -37,6 +37,24 @@ ActiveRecord::Schema.define(version: 20141007172455) do
   end
 
   add_index "clients", ["name"], name: "index_clients_on_name", unique: true, using: :btree
+
+  create_table "data_source_group_associations", force: true do |t|
+    t.integer  "data_source_id"
+    t.integer  "data_source_group_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "data_source_group_associations", ["data_source_group_id"], name: "index_data_source_group_associations_on_data_source_group_id", using: :btree
+  add_index "data_source_group_associations", ["data_source_id", "data_source_group_id"], name: "idx_data_source_groups_associations", unique: true, using: :btree
+
+  create_table "data_source_groups", force: true do |t|
+    t.text     "name",       null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "data_source_groups", ["name"], name: "index_data_source_groups_on_name", unique: true, using: :btree
 
   create_table "data_sources", force: true do |t|
     t.text     "name",             null: false

@@ -2,6 +2,6 @@
 
 FactoryGirl.define do
   factory :data_source_group do
-    name "MyText"
+    sequence(:name) { |n| "MyDataSourceGroup-#{n}" }
   end
 end
