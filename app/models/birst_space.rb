@@ -9,7 +9,7 @@ class BirstSpace < ActiveRecord::Base
   validates_uniqueness_of :name
 
   validates_presence_of :space_uuid
-  validates_inclusion_of :space_type, in: SPACE_TYPES, allow_nil: false
+  validates_inclusion_of :space_type, in: SPACE_TYPES, allow_blank: false
   validates_format_of :space_uuid, with: SPACE_UUID_REGEX, message: "space uuid must be a valid UUID (e.g., 5efddbea-3481-46fd-b7c1-4e04046cefb7)"
 
   belongs_to :birst_space
