@@ -13,7 +13,8 @@ class DataSource < ActiveRecord::Base
   validates_presence_of :redshift_sql, if: Proc.new { |a| a.data_source_type == 'RedshiftS3DataSource' }
   validates_presence_of :s3_path, if: Proc.new { |a| a.data_source_type == 'S3DataSource' }
 
-
+  has_many :data_source_group_associations, dependent: :destroy
+  has_many :data_sources, through: :data_source_group_associations
 
   # Public: Gets the object for the data source type.
   attr_reader :source_type_obj
