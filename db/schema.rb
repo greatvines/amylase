@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141006234655) do
+ActiveRecord::Schema.define(version: 20141007172455) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -37,6 +37,18 @@ ActiveRecord::Schema.define(version: 20141006234655) do
   end
 
   add_index "clients", ["name"], name: "index_clients_on_name", unique: true, using: :btree
+
+  create_table "data_sources", force: true do |t|
+    t.text     "name",             null: false
+    t.text     "birst_filename"
+    t.text     "data_source_type", null: false
+    t.text     "redshift_sql"
+    t.text     "s3_path"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "data_sources", ["name"], name: "index_data_sources_on_name", unique: true, using: :btree
 
   create_table "job_schedule_groups", force: true do |t|
     t.string   "name",       null: false

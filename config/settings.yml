@@ -33,6 +33,30 @@ aws:
 
 logging:
   save_logs_to_s3: true
-  s3_bucket:       greatvines-amylase-logs
+  s3_bucket:       <%= ENV['AMYLASE_LOGGING_S3_BUCKET'] %>
   s3_root_folder:  <%= Rails.env %>
 
+data_sources:
+  # Maximum chunk size (in kB) to return when chunking data
+  max_chunk_size: 1000
+
+  redshift_s3:
+    s3_staging_path: <%= ENV['AMYLASE_REDSHIFT_S3_STAGING_PATH'] %>
+    host: <%= ENV['AMYLASE_REDSHIFT_S3_HOST'] %>
+    dbname: <%= ENV['AMYLASE_REDSHIFT_S3_DBNAME'] %>
+    port: <%= ENV['AMYLASE_REDSHIFT_S3_PORT'] %>
+    user: <%= ENV['AMYLASE_REDSHIFT_S3_USER'] %>
+    password: <%= ENV['AMYLASE_REDSHIFT_S3_PASSWORD'] %>
+    sslmode: <%= ENV['AMYLASE_REDSHIFT_S3_SSLMODE'] %>
+
+
+# Some parameters only needed during test (set values in settings.local.yml)
+test:
+  # Location of an s3 file to test getting data from s3
+  s3_file: 
+
+  # Query to run against Redshift to test connection (should be relatively small, but contain detailed columns and multiple rows)
+  redshift_query: 
+
+  # Redshift schema to use with the query
+  redshift_schema:
