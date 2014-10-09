@@ -37,9 +37,11 @@ class BirstProcessGroupsController < ApplicationController
 
     respond_to do |format|
       if @birst_process_group.save
-        format.html { redirect_to @birst_process_group, notice: 'Birst process group was successfully created.' }
+        flash[:success] = "Success! BirstProcessGroup created."
+        format.html { redirect_to @birst_process_group }
         format.json { render json: @birst_process_group, status: :created }
       else
+        flash[:danger] = "Error! BirstProcessGroup not created: #{@birst_process_group.errors.full_messages}"
         format.html { render action: 'new' }
         format.json { render json: @birst_process_group.errors, status: :unprocessable_entity }
       end
@@ -51,9 +53,11 @@ class BirstProcessGroupsController < ApplicationController
   def update
     respond_to do |format|
       if @birst_process_group.update(birst_process_group_params)
-        format.html { redirect_to @birst_process_group, notice: 'Birst process group was successfully updated.' }
+        flash[:success] = "Success! BirstProcessGroup updated."
+        format.html { redirect_to @birst_process_group }
         format.json { head :no_content }
       else
+        flash[:danger] = "Error! BirstProcessGroup not updated: #{@birst_process_group.errors.full_messages}"
         format.html { render action: 'edit' }
         format.json { render json: @birst_process_group.errors, status: :unprocessable_entity }
       end
@@ -65,6 +69,7 @@ class BirstProcessGroupsController < ApplicationController
   def destroy
     @birst_process_group.destroy
     respond_to do |format|
+      flash[:success] = 'Success! BirstProcessGroup destroyed.'
       format.html { redirect_to birst_process_groups_url }
       format.json { head :no_content }
     end
