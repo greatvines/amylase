@@ -24,11 +24,11 @@ RSpec.describe BirstProcessGroupsController, :type => :controller do
   # BirstProcessGroup. As you add validations to BirstProcessGroup, be sure to
   # adjust the attributes here as well.
   let(:valid_attributes) {
-    skip("Add a hash of attributes valid for your model")
+    FactoryGirl.build(:birst_process_group).attributes
   }
 
   let(:invalid_attributes) {
-    skip("Add a hash of attributes invalid for your model")
+    FactoryGirl.create(:birst_process_group).attributes
   }
 
   # This should return the minimal set of values that should be in the session
@@ -103,14 +103,14 @@ RSpec.describe BirstProcessGroupsController, :type => :controller do
   describe "PUT update" do
     describe "with valid params" do
       let(:new_attributes) {
-        skip("Add a hash of attributes valid for your model")
+        valid_attributes.merge({ 'description' => 'some new description' })
       }
 
       it "updates the requested birst_process_group" do
         birst_process_group = BirstProcessGroup.create! valid_attributes
         put :update, {:id => birst_process_group.to_param, :birst_process_group => new_attributes}, valid_session
         birst_process_group.reload
-        skip("Add assertions for updated state")
+        expect(birst_process_group.description).to eq 'some new description'
       end
 
       it "assigns the requested birst_process_group as @birst_process_group" do
