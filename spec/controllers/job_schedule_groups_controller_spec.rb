@@ -20,19 +20,24 @@ require 'rails_helper'
 
 RSpec.describe JobScheduleGroupsController, :type => :controller do
 
+  def construct_associated_attributes(model, association)
+    attributes = model.attributes.with_indifferent_access
+    attributes["#{association}_attributes"] = {}
+    idx = 0
+    model.send(association).each do |s|
+      attributes["#{association}_attributes"][idx.to_s.to_sym] = s.attributes
+      idx += 1
+    end
+    attributes
+  end
+
+
   # This should return the minimal set of attributes required to create a valid
   # JobScheduleGroup. As you add validations to JobScheduleGroup, be sure to
   # adjust the attributes here as well.
   let(:valid_attributes) do
     valid_build = FactoryGirl.build(:job_schedule_group, :schedule_maintenance)
-    valid_attributes = valid_build.attributes.with_indifferent_access
-    valid_attributes[:job_schedules_attributes] = {}
-    idx = 0
-    valid_build.job_schedules.each do |s|
-      valid_attributes[:job_schedules_attributes][idx.to_s.to_sym] = s.attributes
-      idx += 1
-   end
-    valid_attributes
+    construct_associated_attributes(valid_build, :job_schedules)
   end
 
   let(:invalid_attributes) do
@@ -121,37 +126,30 @@ RSpec.describe JobScheduleGroupsController, :type => :controller do
 
   describe "PUT update" do
     describe "with valid params" do
-      let(:job_schedule_group) { JobScheduleGroup.create! valid_attributes }
-      let(:new_attributes) {
-        # Rebuild the nested attributes for the persisted object
-        new_attributes = job_schedule_group.attributes.with_indifferent_access
-        new_attributes[:job_schedules_attributes] = {}
-        idx = 0
-        job_schedule_group.job_schedules.each do |s|
-          new_attributes[:job_schedules_attributes][idx.to_s.to_sym] = s.attributes
-          idx += 1
-        end
+      before do
+        @job_schedule_group = JobScheduleGroup.create! valid_attributes
 
         # Append a new schedule
-        new_schedule = FactoryGirl.build(:job_schedule, job_schedule_group: job_schedule_group, schedule_time: '06 06 06 * * America/Los_Angeles').attributes.with_indifferent_access
-        new_attributes[:job_schedules_attributes][666.to_s.to_sym] = new_schedule
-
-        new_attributes
-      }
+        new_schedule = FactoryGirl.build(:job_schedule, 
+                                         job_schedule_group: @job_schedule_group, 
+                                         schedule_time: '06 06 06 * * America/Los_Angeles').attributes.with_indifferent_access
+        @updated_attributes = construct_associated_attributes(@job_schedule_group, :job_schedules)
+        @updated_attributes['job_schedules_attributes'][666.to_s.to_sym] = new_schedule
+      end
 
       it "updates the requested job_schedule_group by appending a job_schedule" do
-        put :update, {:id => job_schedule_group.to_param, :job_schedule_group => new_attributes}, valid_session
-        expect { job_schedule_group.reload }.to change { job_schedule_group.job_schedules.length }.by(1)
+        put :update, {:id => @job_schedule_group.to_param, :job_schedule_group => @updated_attributes}, valid_session
+        expect { @job_schedule_group.reload }.to change { @job_schedule_group.job_schedules.length }.by(1)
       end
 
       it "assigns the requested job_schedule_group as @job_schedule_group" do
-        put :update, {:id => job_schedule_group.to_param, :job_schedule_group => valid_attributes}, valid_session
-        expect(assigns(:job_schedule_group)).to eq(job_schedule_group)
+        put :update, {:id => @job_schedule_group.to_param, :job_schedule_group => @updated_attributes}, valid_session
+        expect(assigns(:job_schedule_group)).to eq(@job_schedule_group)
       end
 
       it "redirects to the job_schedule_group" do
-        put :update, {:id => job_schedule_group.to_param, :job_schedule_group => valid_attributes}, valid_session
-        expect(response).to redirect_to(job_schedule_group)
+        put :update, {:id => @job_schedule_group.to_param, :job_schedule_group => @updated_attributes}, valid_session
+        expect(response).to redirect_to(@job_schedule_group)
       end
     end
 
