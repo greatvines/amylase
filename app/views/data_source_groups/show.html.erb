@@ -5,5 +5,24 @@
   <%= @data_source_group.name %>
 </p>
 
+<p> <strong> Selected Data sources: </strong> </p>
+
+<div class="row">
+  <div class="col-md-6">
+
+    <ul class="list-group">
+      <% data_sources = @data_source_group.data_sources %>
+      <% DataSource.order(:name).each do |ds| %>
+        <% selected = data_sources.collect { |d| d.id }.include? ds.id %>
+        <li class="list-group-item <%= 'disabled' unless selected %>"> 
+          <span class="glyphicon <%= selected ? 'glyphicon-ok' : 'glyphicon-minus' %>"></span>
+          <%= conditional_emphasis(selected, tag_false: :small) { link_to ds.name, ds } %> 
+        </li>
+      <% end %>
+    </ul>
+
+  </div>
+</div>
+
 <%= link_to 'Edit', edit_data_source_group_path(@data_source_group) %> |
 <%= link_to 'Back', data_source_groups_path %>
