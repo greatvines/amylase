@@ -1,5 +1,7 @@
 Rails.application.routes.draw do
 
+  resources :data_source_groups
+
   root 'static_pages#home'
   match '/home', to: 'static_pages#home', via: 'get'
   match '/help', to: 'static_pages#help', via: 'get'
@@ -18,6 +20,7 @@ Rails.application.routes.draw do
 
   resources :clients
   resources :birst_spaces
+  resources :data_sources
 
 
   # The priority is based upon order of creation: first created -> highest priority.

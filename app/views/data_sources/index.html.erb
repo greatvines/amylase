@@ -1,0 +1,29 @@
+<h1>Listing data_sources</h1>
+
+<table id="datatable" class="table">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Birst filename</th>
+      <th>Data source type</th>
+      <th></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @data_sources.each do |data_source| %>
+      <tr>
+        <td><%= data_source.name %></td>
+        <td><%= data_source.birst_filename %></td>
+        <td><%= data_source.data_source_type %></td>
+        <td class="text-right"><%= link_to 'Show', data_source %> /
+        <%= link_to 'Edit', edit_data_source_path(data_source) %> /
+        <%= link_to 'Destroy', data_source, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Data source', new_data_source_path %>
