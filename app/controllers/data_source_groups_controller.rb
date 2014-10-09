@@ -37,9 +37,11 @@ class DataSourceGroupsController < ApplicationController
 
     respond_to do |format|
       if @data_source_group.save
-        format.html { redirect_to @data_source_group, notice: 'Data source group was successfully created.' }
+        flash[:success] = "Success! DataSourceGroup created."
+        format.html { redirect_to @data_source_group }
         format.json { render json: @data_source_group, status: :created }
       else
+        flash[:danger] = "Error! DataSourceGroup not created: #{@data_source_group.errors.full_messages}"
         format.html { render action: 'new' }
         format.json { render json: @data_source_group.errors, status: :unprocessable_entity }
       end
@@ -51,9 +53,11 @@ class DataSourceGroupsController < ApplicationController
   def update
     respond_to do |format|
       if @data_source_group.update(data_source_group_params)
-        format.html { redirect_to @data_source_group, notice: 'Data source group was successfully updated.' }
+        flash[:success] = "Success! DataSourceGroup updated."
+        format.html { redirect_to @data_source_group }
         format.json { head :no_content }
       else
+        flash[:danger] = "Error! DataSourceGroup not updated: #{@data_source_group.errors.full_messages}"
         format.html { render action: 'edit' }
         format.json { render json: @data_source_group.errors, status: :unprocessable_entity }
       end
@@ -65,6 +69,7 @@ class DataSourceGroupsController < ApplicationController
   def destroy
     @data_source_group.destroy
     respond_to do |format|
+      flash[:success] = 'Success! DataSourceGroup destroyed.'
       format.html { redirect_to data_source_groups_url }
       format.json { head :no_content }
     end
@@ -78,6 +83,6 @@ class DataSourceGroupsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def data_source_group_params
-      params.require(:data_source_group).permit(:name)
+      params.require(:data_source_group).permit(:name, data_source_ids: [])
     end
 end
