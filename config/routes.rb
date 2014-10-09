@@ -1,5 +1,7 @@
 Rails.application.routes.draw do
 
+  resources :birst_process_groups
+
   resources :data_source_groups
 
   root 'static_pages#home'
