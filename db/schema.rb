@@ -11,10 +11,19 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141008211710) do
+ActiveRecord::Schema.define(version: 20141009234451) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "birst_process_groups", force: true do |t|
+    t.text     "name",        null: false
+    t.text     "description"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "birst_process_groups", ["name"], name: "index_birst_process_groups_on_name", unique: true, using: :btree
 
   create_table "birst_spaces", force: true do |t|
     t.text     "name",                  null: false

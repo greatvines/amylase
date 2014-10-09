@@ -2,7 +2,7 @@
 
 FactoryGirl.define do
   factory :birst_process_group do
-    name "MyText"
-    description "MyText"
+    sequence(:name) { |n| "MyBirstProcessGroup-#{n}" }
+    description "MyDescription"
   end
 end
