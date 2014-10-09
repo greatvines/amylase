@@ -20,15 +20,23 @@ require 'rails_helper'
 
 RSpec.describe DataSourceGroupsController, :type => :controller do
 
+  def construct_associated_attributes(model, association_ids)
+    attributes = model.attributes.with_indifferent_access
+    attributes[association_ids] = model.send(association_ids)
+    attributes
+  end
+
   # This should return the minimal set of attributes required to create a valid
   # DataSourceGroup. As you add validations to DataSourceGroup, be sure to
   # adjust the attributes here as well.
   let(:valid_attributes) {
-    skip("Add a hash of attributes valid for your model")
+    valid_build = FactoryGirl.build(:data_source_group, :with_existing_sources)
+    construct_associated_attributes(valid_build, :data_source_ids)
   }
 
   let(:invalid_attributes) {
-    skip("Add a hash of attributes invalid for your model")
+    # An invalid record is one where the same name already exists
+    FactoryGirl.create(:data_source_group).attributes
   }
 
   # This should return the minimal set of values that should be in the session
@@ -85,6 +93,13 @@ RSpec.describe DataSourceGroupsController, :type => :controller do
         post :create, {:data_source_group => valid_attributes}, valid_session
         expect(response).to redirect_to(DataSourceGroup.last)
       end
+
+      it "creates the DataSourceGroupAssociation records" do
+        post :create, {:data_source_group => valid_attributes}, valid_session
+        data_source_group = assigns(:data_source_group).reload
+        expect(data_source_group.data_sources.count).to be > 0
+        expect(data_source_group.data_sources.count).to eq valid_attributes[:data_source_ids].count
+      end
     end
 
     describe "with invalid params" do
@@ -102,27 +117,28 @@ RSpec.describe DataSourceGroupsController, :type => :controller do
 
   describe "PUT update" do
     describe "with valid params" do
-      let(:new_attributes) {
-        skip("Add a hash of attributes valid for your model")
-      }
+      before do
+        @data_source_group = DataSourceGroup.create! valid_attributes
+
+        # Remove a data source from the group
+        @updated_attributes = construct_associated_attributes(@data_source_group, :data_source_ids)
+        @updated_attributes[:data_source_ids].pop
+      end
 
       it "updates the requested data_source_group" do
-        data_source_group = DataSourceGroup.create! valid_attributes
-        put :update, {:id => data_source_group.to_param, :data_source_group => new_attributes}, valid_session
-        data_source_group.reload
-        skip("Add assertions for updated state")
+        expect {
+          put :update, {:id => @data_source_group.to_param, :data_source_group => @updated_attributes}, valid_session
+        }.to change { @data_source_group.data_sources.count }.by(-1)
       end
 
       it "assigns the requested data_source_group as @data_source_group" do
-        data_source_group = DataSourceGroup.create! valid_attributes
-        put :update, {:id => data_source_group.to_param, :data_source_group => valid_attributes}, valid_session
-        expect(assigns(:data_source_group)).to eq(data_source_group)
+        put :update, {:id => @data_source_group.to_param, :data_source_group => @updated_attributes}, valid_session
+        expect(assigns(:data_source_group)).to eq(@data_source_group)
       end
 
       it "redirects to the data_source_group" do
-        data_source_group = DataSourceGroup.create! valid_attributes
-        put :update, {:id => data_source_group.to_param, :data_source_group => valid_attributes}, valid_session
-        expect(response).to redirect_to(data_source_group)
+        put :update, {:id => @data_source_group.to_param, :data_source_group => @updated_attributes}, valid_session
+        expect(response).to redirect_to(@data_source_group)
       end
     end
 
