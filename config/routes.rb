@@ -1,5 +1,7 @@
 Rails.application.routes.draw do
 
+  resources :tpl_birst_staged_refreshes
+
   resources :birst_process_group_collections
 
   root 'static_pages#home'
