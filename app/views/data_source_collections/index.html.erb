@@ -1,0 +1,33 @@
+<h1>Listing data_source_collections</h1>
+
+<table id="datatable" class="table">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Data sources</th>
+      <th></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @data_source_collections.each do |data_source_collection| %>
+      <tr>
+        <td><%= link_to data_source_collection.name, data_source_collection %></td>
+        <td>
+          <ul class="list-unstyled">
+            <% data_source_collection.data_sources.order(:name).each do |ds| %>
+              <li> <%= ds.name %> </li>
+            <% end %>
+          </ul>
+        </td>
+        <td class="text-right"><%= link_to 'Show', data_source_collection %> /
+        <%= link_to 'Edit', edit_data_source_collection_path(data_source_collection) %> /
+        <%= link_to 'Destroy', data_source_collection, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Data source collection', new_data_source_collection_path %>
