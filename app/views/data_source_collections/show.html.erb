@@ -2,7 +2,7 @@
 
 <p>
   <strong>Name:</strong>
-  <%= @data_source_group.name %>
+  <%= @data_source_collection.name %>
 </p>
 
 <p> <strong> Selected Data sources: </strong> </p>
@@ -11,7 +11,7 @@
   <div class="col-md-6">
 
     <ul class="list-group">
-      <% data_sources = @data_source_group.data_sources %>
+      <% data_sources = @data_source_collection.data_sources %>
       <% DataSource.order(:name).each do |ds| %>
         <% selected = data_sources.collect { |d| d.id }.include? ds.id %>
         <li class="list-group-item <%= selected ? 'list-group-item-success' : '' %>"> 
@@ -24,5 +24,5 @@
   </div>
 </div>
 
-<%= link_to 'Edit', edit_data_source_group_path(@data_source_group) %> |
-<%= link_to 'Back', data_source_groups_path %>
+<%= link_to 'Edit', edit_data_source_collection_path(@data_source_collection) %> |
+<%= link_to 'Back', data_source_collections_path %>
