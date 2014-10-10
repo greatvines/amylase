@@ -81,7 +81,7 @@ RSpec.describe DataSource, :type => :model do
 
       @redshift_s3_data_source.redshift_sql = modified_query
       @redshift_s3_data_source.save!
-      @redshift_s3_data_source.set_source_type_options(redshift_schema: Settings.test.redshift_schema)
+      @redshift_s3_data_source.initialize_data_source_type(redshift_schema: Settings.test.redshift_schema)
     end
 
     it 'returns as many rows as generated' do

@@ -32,5 +32,16 @@ FactoryGirl.define do
     trait :schedule_interval_1s do
       association :job_schedule_group, :interval_1s
     end
+
+    # Client associations
+    trait :with_client_spaces do
+      association :client
+      after(:build) do |job_spec, evaluator|
+        create :birst_space, space_type: 'production', client: job_spec.client
+        create :birst_space, space_type: 'staging', client: job_spec.client
+        create :birst_space, space_type: 'uat', client: job_spec.client
+      end
+    end
+
   end
 end

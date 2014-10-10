@@ -19,10 +19,11 @@ class DataSource < ActiveRecord::Base
   # Public: Gets the object for the data source type.
   attr_reader :source_type_obj
 
-  # Public: Used to set options for initializing the data source type.
-  def set_source_type_options(opts={})
-    @source_type_opts = opts
+  # Public: Used to initialize data sources that need to be passed options
+  def initialize_data_source_type(opts = {})
+    @source_type_obj = "#{self.data_source_type}".constantize.new(self, opts || {})
   end
+
 
   # Public: Generic method used to chunk data.  This method expects a
   # block.  It will first initialize the specific data source class
@@ -41,7 +42,7 @@ class DataSource < ActiveRecord::Base
   #
   # Yields an enumerator that can be used loop over chunks of data as a strings.
   def chunks(max_chunk_size: Settings.data_sources.max_chunk_size, &block)
-    @source_type_obj = "#{self.data_source_type}".constantize.new(self, @source_type_opts || {})
+    @source_type_obj || initialize_data_source_type
 
     Enumerator.new do |enum|
       chunk = ''

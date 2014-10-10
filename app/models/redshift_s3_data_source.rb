@@ -13,18 +13,14 @@ class RedshiftS3DataSource < DataSource
   # make these unique for each data source (see doc in each_chunk
   # method for examples).
   #
-  # bucket_name - Name of the S3 staging bucket used to UNLOAD query
-  #               results (default: Settings.aws.redshift.staging_bucket_name).
-  # s3_folder   - Name of the parent S3 folder to hold UNLOAD query results (default: "gvbirstwf").
-  # schema      - Name of the schema that the query uses (default: nil).
-  # table       - Name of the table that the query uses (default: nil).
-  # sql         - The SQL query string to be performed and unloaded
-  #               to S3. The query should be a simple single SQL
-  #               statement (no semicolons). Note that @schema and
-  #               @table will be replaced by the values of schema
-  #               and table.  This can be useful for defining
-  #               generic SQL queries (default: "select * from
-  #               @schema.@table").
+  # data_source     - The DataSource object that contains this RedshiftS3DataSource instance
+  # redshift_schema - The SQL query string to be performed and
+  #                   unloaded to S3. The query should be a simple
+  #                   single SQL statement (no semicolons). Note that
+  #                   @redshift_schema will be replaced by the values
+  #                   of @redshift_schema.  This can be useful for
+  #                   defining generic SQL queries (default: "select *
+  #                   from @redshift_schema.mytable").
   def initialize(data_source, redshift_schema: nil)
     @data_source = data_source
     @redshift_schema = redshift_schema
@@ -35,8 +31,6 @@ class RedshiftS3DataSource < DataSource
     @s3_table_folder = "#{Settings.data_sources.redshift_s3.s3_staging_path[/s3:\/\/[\w-]+\/(.*)/,1]}/#{@redshift_schema || "NOSCHEMA"}-#{@data_source.name}-#{Time.now.strftime('%Y%m%d-%H%M%S%z')}-#{SecureRandom.hex(2)}"
 
     @pg_conn = nil
-    initialize_connection
-    exec_query
   end
 
 
@@ -46,6 +40,8 @@ class RedshiftS3DataSource < DataSource
   #
   # Yields a chunk of data returned from Redshift via S3.
   def read(&block)
+    initialize_connection
+    exec_query
 
     yield header
 
