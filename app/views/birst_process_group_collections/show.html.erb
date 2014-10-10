@@ -10,5 +10,23 @@
   <%= @birst_process_group_collection.description %>
 </p>
 
+<div class="row">
+  <div class="col-md-6">
+
+    <ul class="list-group">
+      <% birst_process_groups = @birst_process_group_collection.birst_process_groups %>
+      <% BirstProcessGroup.order(:name).each do |pg| %>
+        <% selected = birst_process_groups.collect { |d| d.id }.include? pg.id %>
+        <li class="list-group-item <%= selected ? 'list-group-item-success' : '' %>"> 
+          <span class="glyphicon <%= selected ? 'glyphicon-ok' : 'glyphicon-minus' %>"></span>
+          <%= conditional_emphasis(selected, tag_false: :small) { link_to pg.name, pg } %> 
+        </li>
+      <% end %>
+    </ul>
+
+  </div>
+</div>
+
+
 <%= link_to 'Edit', edit_birst_process_group_collection_path(@birst_process_group_collection) %> |
 <%= link_to 'Back', birst_process_group_collections_path %>
