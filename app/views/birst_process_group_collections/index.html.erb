@@ -1,0 +1,35 @@
+<h1>Listing birst_process_group_collections</h1>
+
+<table id="datatable" class="table">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Description</th>
+      <th>Birst process groups</th>
+      <th></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @birst_process_group_collections.each do |birst_process_group_collection| %>
+      <tr>
+        <td><%= link_to birst_process_group_collection.name, birst_process_group_collection %></td>
+        <td><%= birst_process_group_collection.description %></td>
+        <td>
+          <ul class="list-unstyled">
+            <% birst_process_group_collection.birst_process_groups.order(:name).each do |pg| %>
+              <li> <%= pg.name %> </li>
+            <% end %>
+          </ul>
+        </td>
+        <td class="text-right"><%= link_to 'Show', birst_process_group_collection %> /
+        <%= link_to 'Edit', edit_birst_process_group_collection_path(birst_process_group_collection) %> /
+        <%= link_to 'Destroy', birst_process_group_collection, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Birst process group collection', new_birst_process_group_collection_path %>
