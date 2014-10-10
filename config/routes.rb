@@ -1,5 +1,7 @@
 Rails.application.routes.draw do
 
+  resources :birst_process_group_collections
+
   root 'static_pages#home'
   match '/home', to: 'static_pages#home', via: 'get'
   match '/help', to: 'static_pages#help', via: 'get'
