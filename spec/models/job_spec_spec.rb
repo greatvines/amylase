@@ -22,6 +22,7 @@ RSpec.describe JobSpec, :type => :model do
 
   it { should belong_to(:job_schedule_group) }
   it { should belong_to(:job_template) }
+  it { should belong_to(:client) }
   it { should accept_nested_attributes_for(:job_template) }
 
   it { should have_many(:launched_jobs) }
