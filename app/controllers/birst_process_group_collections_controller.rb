@@ -37,9 +37,11 @@ class BirstProcessGroupCollectionsController < ApplicationController
 
     respond_to do |format|
       if @birst_process_group_collection.save
-        format.html { redirect_to @birst_process_group_collection, notice: 'Birst process group collection was successfully created.' }
+        flash[:success] = "Success! BirstProcessGroupCollection created."
+        format.html { redirect_to @birst_process_group_collection }
         format.json { render json: @birst_process_group_collection, status: :created }
       else
+        flash[:danger] = "Error! BirstProcessGroupCollection not created: #{@birst_process_group_collection.errors.full_messages}"
         format.html { render action: 'new' }
         format.json { render json: @birst_process_group_collection.errors, status: :unprocessable_entity }
       end
@@ -51,9 +53,11 @@ class BirstProcessGroupCollectionsController < ApplicationController
   def update
     respond_to do |format|
       if @birst_process_group_collection.update(birst_process_group_collection_params)
-        format.html { redirect_to @birst_process_group_collection, notice: 'Birst process group collection was successfully updated.' }
+        flash[:success] = "Success! BirstProcessGroupCollection updated."
+        format.html { redirect_to @birst_process_group_collection }
         format.json { head :no_content }
       else
+        flash[:danger] = "Error! BirstProcessGroupCollection not updated: #{@birst_process_group_collection.errors.full_messages}"
         format.html { render action: 'edit' }
         format.json { render json: @birst_process_group_collection.errors, status: :unprocessable_entity }
       end
@@ -65,6 +69,7 @@ class BirstProcessGroupCollectionsController < ApplicationController
   def destroy
     @birst_process_group_collection.destroy
     respond_to do |format|
+      flash[:success] = 'Success! BirstProcessGroupCollection destroyed.'
       format.html { redirect_to birst_process_group_collections_url }
       format.json { head :no_content }
     end
@@ -78,6 +83,6 @@ class BirstProcessGroupCollectionsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def birst_process_group_collection_params
-      params.require(:birst_process_group_collection).permit(:name, :description)
+      params.require(:birst_process_group_collection).permit(:name, :description, birst_process_group_ids: [])
     end
 end

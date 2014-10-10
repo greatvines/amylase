@@ -7,7 +7,7 @@ FactoryGirl.define do
 
     trait :with_existing_groups do
       after(:build) do |birst_process_group_collection, evaluator|
-        birst_process_group_collection.birst_process_groups << create_list(:birst_process_gorup,3)
+        birst_process_group_collection.birst_process_groups << create_list(:birst_process_group,3)
       end
     end
   end
