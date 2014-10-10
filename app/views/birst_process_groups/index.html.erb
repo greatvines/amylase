@@ -1,0 +1,27 @@
+<h1>Listing birst_process_groups</h1>
+
+<table id="datatable" class="table">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Description</th>
+      <th></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @birst_process_groups.each do |birst_process_group| %>
+      <tr>
+        <td><%= birst_process_group.name %></td>
+        <td><%= birst_process_group.description %></td>
+        <td class="text-right"><%= link_to 'Show', birst_process_group %> /
+        <%= link_to 'Edit', edit_birst_process_group_path(birst_process_group) %> /
+        <%= link_to 'Destroy', birst_process_group, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Birst process group', new_birst_process_group_path %>

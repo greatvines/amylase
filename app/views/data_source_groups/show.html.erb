@@ -14,7 +14,7 @@
       <% data_sources = @data_source_group.data_sources %>
       <% DataSource.order(:name).each do |ds| %>
         <% selected = data_sources.collect { |d| d.id }.include? ds.id %>
-        <li class="list-group-item <%= 'disabled' unless selected %>"> 
+        <li class="list-group-item <%= selected ? 'list-group-item-success' : '' %>"> 
           <span class="glyphicon <%= selected ? 'glyphicon-ok' : 'glyphicon-minus' %>"></span>
           <%= conditional_emphasis(selected, tag_false: :small) { link_to ds.name, ds } %> 
         </li>
