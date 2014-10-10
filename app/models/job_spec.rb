@@ -15,6 +15,7 @@ class JobSpec < ActiveRecord::Base
   accepts_nested_attributes_for :job_template, reject_if: :all_blank
 
   belongs_to :job_schedule_group
+  belongs_to :client
 
   has_many :launched_jobs
 
