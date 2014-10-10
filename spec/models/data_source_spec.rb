@@ -23,8 +23,8 @@ RSpec.describe DataSource, :type => :model do
 
   it { should validate_inclusion_of(:data_source_type).in_array(DataSource::DATA_SOURCE_TYPES) }
 
-  it { should have_many(:data_source_group_associations).dependent(:destroy) }
-  it { should have_many(:data_sources).through(:data_source_group_associations) }
+  it { should have_many(:data_source_collection_associations).dependent(:destroy) }
+  it { should have_many(:data_sources).through(:data_source_collection_associations) }
 
 
   context 'if RedshiftS3DataSource' do

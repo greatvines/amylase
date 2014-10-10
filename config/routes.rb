@@ -21,7 +21,7 @@ Rails.application.routes.draw do
   resources :clients
   resources :birst_spaces
   resources :data_sources
-  resources :data_source_groups
+  resources :data_source_collections
   resources :birst_process_groups
 
 
