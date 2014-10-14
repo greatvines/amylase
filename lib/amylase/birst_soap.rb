@@ -44,6 +44,7 @@ module Amylase
     class BWSInvalidTokenError   < StandardError; end
     class BWSServerRequestError  < StandardError; end
     class BWSCopySpaceError      < StandardError; end
+    class BWSDeleteAllDataError  < StandardError; end
 
     # Public: Gets the authorization cookie
     attr_reader :auth_cookie
@@ -186,7 +187,7 @@ module Amylase
     #
     # space_id - id of the space to be deleted.
     #
-    # Returns nothing.
+    # Returns a BirstSoapResult.
     def delete_all_data(space_id = nil)
       result = {}
 
@@ -199,13 +200,10 @@ module Amylase
         status:       :get_job_status,
         token_name:   :jobToken,
         job_token:    result[:token],
-      ))
+      ).result_data)
 
-      @job_status.message = "#{result[:status_message][:status_code]}"
-      @job_status.data = JSON.parse(result.to_json)
-      raise BWSError::BWSDeleteAllDataError, @job_status.message if @job_status.message != "Complete"
-
-      nil
+      raise BWSDeleteAllDataError, result unless result[:final_status][:status_code] == 'Complete'
+      BirstSoapResult.new('delete_all_data complete', result)
     end
 
 
@@ -486,9 +484,7 @@ module Amylase
         wait_timeout: wait_timeout
       ).result_data)
 
-      final_status = result[:final_status][:status_code]
-      raise BWSCopySpaceError,  final_status if final_status != 'Complete'
-
+      raise BWSCopySpaceError, final_status unless result[:final_status][:status_code] == 'Complete'
       BirstSoapResult.new("copy complete", result)
     end
 
