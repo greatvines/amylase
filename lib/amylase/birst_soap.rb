@@ -374,7 +374,7 @@ module Amylase
     # max_upload_retry - The maximum number of times to retry uploading a chunk of data.
     #                    Wait between retries uses exponential backoff (default: 8).
     #
-    # Returns a result hash.
+    # Returns a BirstSoapResult.
     def upload_data_source(space_id = nil, data_source = nil, max_upload_retry: 8)
       result = {}
       birst_soap_session do |bc|        
@@ -441,32 +441,18 @@ module Amylase
 
     # Public: Uploads an array of data sources to a Birst space.
     #
-    # space_id - The space to upload the data.
-    # sources  - An array of hashes that contain descriptions of the data sources.
-    #            Required elements of the hash include:
-    #            name:    The Birst name of the target data source.
-    #            type:    The classname of the data source object (e.g., S3DataSource or RedshiftS3DataSource)
-    #            options: A hash of options passed to the initialize function of
-    #              the type of data source object.
+    # space_id      - The space to upload the data.
+    # data_sources  - An array of data_source objects to be uploaded.
     #
-    # Returns nothing.
-    def upload_data_sources(space_id = nil, sources = [])
+    # Returns a BirstSoapResult.
+    def upload_data_sources(space_id = nil, data_sources = [])
       result = {}
-      sources.each do |source_desc|
-        # Validate sources hash
-        raise "sources hash requires name, type, and options" unless ([:name, :type, :options].all? { |k| source_desc.key? k })
-
-        data_source = GVBirstWF.const_get(source_desc[:type]).new(source_desc[:options])
-        result[source_desc[:name]] = upload_data_source(space_id, source_desc[:name], data_source)
+      data_sources.each do |data_source|
+        result[data_source.name] = upload_data_source(space_id, data_source).result_data
       end
 
-
       # Since I don't know how to treat data upload errors, not much I can but assume success
-      @job_status.message = "Complete"
-      @job_status.data = result
-      raise BWSError::BWSUploadDataSourcesError, @job_status.message if @job_status.message != "Complete"
-
-      nil
+      BirstSoapResult.new("data uploads complete", result)
     end
 
     # Public: Copy space components from one space to another.
