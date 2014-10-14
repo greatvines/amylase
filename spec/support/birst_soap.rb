@@ -162,6 +162,7 @@ module BirstSoapSupport
     mock_job_status('Complete')
   end
 
+
   def mock_process_data(space_id = BirstSoapFixtures.space_id_1, timestamp: Time.now, process_groups: nil)
     mock_login_and_out do
       savon.expects(:publish_data)
@@ -172,4 +173,17 @@ module BirstSoapSupport
     mock_is_publish_complete(true)
     mock_publish_status('Complete')
   end
+
+
+  def mock_swap_spaces(space_id_1 = BirstSoapFixtures.space_id_1, space_id_2 = BirstSoapFixtures.space_id_2)
+    mock_login_and_out do
+      savon.expects(:swap_space_contents)
+        .with(message: @login_message.merge({ :sp1ID => space_id_1, :sp2ID => space_id_2 }))
+        .returns(BirstSoapFixtures.swap_spaces_response)
+    end
+
+    mock_is_job_complete(true)
+    mock_job_status('Complete')
+  end
+
 end
