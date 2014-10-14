@@ -46,6 +46,7 @@ module Amylase
     class BWSCopySpaceError      < StandardError; end
     class BWSDeleteAllDataError  < StandardError; end
     class BWSExtractSpaceError   < StandardError; end
+    class BWSProcessSpaceError   < StandardError; end
 
     # Public: Gets the authorization cookie
     attr_reader :auth_cookie
@@ -247,7 +248,7 @@ module Amylase
     # process_groups - An array of group names to process (Default: nil, which processes all).
     #
     # Returns nothing.
-    def process_space(space_id = nil, timestamp: Time.now(), process_groups: nil)
+    def process_space(space_id = nil, timestamp: Time.now, process_groups: nil)
       result = {}
 
       birst_soap_session do |bc|
@@ -263,13 +264,10 @@ module Amylase
         status:       :get_publishing_status,
         token_name:   :publishingToken,
         job_token:    result[:token],
-      ))
+      ).result_data)
 
-      @job_status.message = "#{result[:status_message][:string]}"
-      @job_status.data = JSON.parse(result.to_json)
-      raise BWSError::BWSProcessSpaceError, @job_status.message if @job_status.message != "Complete"
-
-      nil
+      raise BWSProcessSpaceError, result unless result[:final_status][:string] == 'Complete'
+      BirstSoapResult.new('process_space complete', result)
     end
 
 
