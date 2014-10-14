@@ -45,6 +45,7 @@ module Amylase
     class BWSServerRequestError  < StandardError; end
     class BWSCopySpaceError      < StandardError; end
     class BWSDeleteAllDataError  < StandardError; end
+    class BWSExtractSpaceError   < StandardError; end
 
     # Public: Gets the authorization cookie
     attr_reader :auth_cookie
@@ -214,32 +215,29 @@ module Amylase
     # extract_groups - An array of group names to extract (default: nil, which extracts all).
     #
     # Returns nothing.
-    def extract_space(space_id = nil, connector_name: "Salesforce", extract_groups: nil)
+    def extract_space(space_id = nil, connector_name: 'Salesforce', extract_groups: nil)
       result = {}
 
       birst_soap_session do |bc|
         result[:token] = bc.extract_connector_data(
           :spaceID       => space_id,
           :connectorName => connector_name,
-          :extractGroups => { "string" => extract_groups }
+          :extractGroups => { 'string' => extract_groups }
         )
       end
 
       # Returned job token must be valid
-      raise result[:token] unless result[:token] =~ /^[0-9a-f]{32}$/
+      raise BWSExtractSpaceError, result[:token] unless result[:token] =~ /^[0-9a-f]{32}$/
 
       result.merge!(wait_for_birst_job(
         complete:     :is_job_complete,
         status:       :get_job_status,
         token_name:   :jobToken,
         job_token:    result[:token],
-      ))
+      ).result_data)
 
-      @job_status.message = "#{result[:status_message][:status_code]}"
-      @job_status.data = JSON.parse(result.to_json)
-      raise BWSError::BWSExtractSpaceError, @job_status.message if @job_status.message != "Complete"
-
-      nil
+      raise BWSExtractSpaceError, result unless result[:final_status][:status_code] == 'Complete'
+      BirstSoapResult.new('extract_space complete', result)
     end
 
     # Public: Process data.
@@ -256,7 +254,7 @@ module Amylase
         result[:token] = bc.publish_data(
           :spaceID   => space_id,
           :date      => timestamp.strftime("%Y-%m-%dT%H:%M:%S%:z"),
-          :subgroups => { "string" => process_groups }
+          :subgroups => { 'string' => process_groups }
         )
       end
 
@@ -388,7 +386,7 @@ module Amylase
       birst_soap_session do |bc|
         bc.set_data_upload_options(
           :dataUploadToken => result[:upload_token],
-          :options         => { "string" => ["ConsolidateIdenticalStructures=false"] }
+          :options         => { 'string' => ['ConsolidateIdenticalStructures=false'] }
         )
       end
 

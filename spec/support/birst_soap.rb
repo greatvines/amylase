@@ -150,4 +150,16 @@ module BirstSoapSupport
     mock_job_status('Complete')
   end
 
+
+  def mock_extract_data(space_id = BirstSoapFixtures.space_id_1, extract_groups: nil)
+    mock_login_and_out do
+      savon.expects(:extract_connector_data)
+        .with(message: @login_message.merge({ :spaceID => space_id, :connectorName => 'Salesforce', :extractGroups => { 'string' => extract_groups } }))
+        .returns(BirstSoapFixtures.extract_connector_data_response)
+    end
+
+    mock_is_job_complete(true)
+    mock_job_status('Complete')
+  end
+
 end
