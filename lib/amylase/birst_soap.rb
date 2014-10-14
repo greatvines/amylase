@@ -47,6 +47,7 @@ module Amylase
     class BWSDeleteAllDataError  < StandardError; end
     class BWSExtractSpaceError   < StandardError; end
     class BWSProcessSpaceError   < StandardError; end
+    class BWSSwapSpacesError     < StandardError; end
 
     # Public: Gets the authorization cookie
     attr_reader :auth_cookie
@@ -290,13 +291,10 @@ module Amylase
         token_name:   :jobToken,
         job_token:    result[:token],
         wait_timeout: '5m'
-      ))
+      ).result_data)
 
-      @job_status.message = "#{result[:status_message][:status_code]}"
-      @job_status.data = JSON.parse(result.to_json)
-      raise BWSError::BWSSwapSpacesError, @job_status.message if @job_status.message != "Complete"
-
-      nil
+      raise BWSSwapSpacesError, result unless result[:final_status][:status_code] == 'Complete'
+      BirstSoapResult.new('swap_spaces complete', result)
     end
 
 
