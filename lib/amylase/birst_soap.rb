@@ -338,23 +338,49 @@ module Amylase
     end
 
 
+    # Public: Block retry with exponential backoff.
+    #
+    # max_retry     - The maximum number of times to retry a block before failing
+    #                 permanently (default: 8).
+    # base_time_sec - The base time (in seconds) between waiting after the first failure.
+    #                 All subsequent wait times are double the previous wait time.
+    #                 (default: 1)
+    # block         - A block to evaluate.
+    #
+    # Returns nothing.
+    def retry_exponential_backoff(max_retry: 8, base_time_sec: 1, &block)
+      tries = 0
+      begin
+        tries += 1
+        block.call
+
+      rescue => err
+        @job_log.warn "Error detected, possibly recoverable (try # #{tries}/#{max_retry}) - #{err.class.name} - #{err}"
+        @job_log.warn "#{$!}\n\t#{err.backtrace.join("\n\t")}"
+        if tries <= max_retry
+          sleep(base_time_sec * 0.5 * 2**tries)
+          retry
+        else
+          raise err
+        end
+      end
+    end
+
 
     # Public: Uploads a single data source to a space.
     #
     # space_id         - The space to upload the data.
-    # name             - The Birst name of the target data source.
-    # data_source      - A datasource object containing a description of the data
-    #                    (e.g., an S3DataSource or RedshiftS3DataSource instance).
+    # data_source      - A datasource object containing a description of the data.
     # max_upload_retry - The maximum number of times to retry uploading a chunk of data.
     #                    Wait between retries uses exponential backoff (default: 8).
     #
     # Returns a result hash.
-    def upload_data_source(space_id = nil, name = nil, data_source = nil, max_upload_retry: 8)
+    def upload_data_source(space_id = nil, data_source = nil, max_upload_retry: 8)
       result = {}
       birst_soap_session do |bc|        
         result[:upload_token] = bc.begin_data_upload(
           :spaceID    => space_id,
-          :sourceName => name
+          :sourceName => data_source.name
         )
       end
 
@@ -372,7 +398,7 @@ module Amylase
       job_log_data = @job_log.dup
 
       birst_soap_session :soap_logger => job_log_data, :soap_log_level => :error do |bc|
-        data_source.each_chunk do |chunk|
+        data_source.chunks.each do |chunk|
           @job_log.debug "Uploading chunk of size #{chunk.bytesize}"
 
           retry_exponential_backoff max_retry: max_upload_retry do
@@ -395,7 +421,7 @@ module Amylase
         status:       :get_data_upload_status,
         token_name:   :dataUploadToken,
         job_token:    result[:upload_token],
-      ))
+      ).result_data)
 
       # I don't really know how to treat data upload errors.
       # get_data_upload_status is blank when nothing is wrong,
@@ -408,9 +434,9 @@ module Amylase
         check_command: :get_job_status,
         token_name:    :jobToken,
         token:         result[:upload_token]
-      ))
+      ).result_data)
 
-      JSON.parse(result.to_json)
+      BirstSoapResult.new("data upload complete", result)
     end
 
     # Public: Uploads an array of data sources to a Birst space.
