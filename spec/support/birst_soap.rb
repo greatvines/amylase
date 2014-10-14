@@ -162,4 +162,14 @@ module BirstSoapSupport
     mock_job_status('Complete')
   end
 
+  def mock_process_data(space_id = BirstSoapFixtures.space_id_1, timestamp: Time.now, process_groups: nil)
+    mock_login_and_out do
+      savon.expects(:publish_data)
+        .with(message: @login_message.merge({ :spaceID => space_id, :date => timestamp.strftime("%Y-%m-%dT%H:%M:%S%:z"), :subgroups => { 'string' => process_groups } }))
+        .returns(BirstSoapFixtures.publish_data_response)
+    end
+
+    mock_is_publish_complete(true)
+    mock_publish_status('Complete')
+  end
 end
