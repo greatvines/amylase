@@ -32,7 +32,17 @@ describe 'Uploading data sources' do
 
       upload_data_source(@space_id, data_source)
     end
+  end
 
+  context 'uploading a collection of data sources' do
+    before do 
+      @data_source_collection = FactoryGirl.build(:data_source_collection, :with_existing_sources)
+      allow(self).to receive(:upload_data_source) { |space_id, data_source| Amylase::BirstSoap::BirstSoapResult.new("complete", data_source.name) }
+    end
+
+    it 'collects results from each data upload' do
+      expect(upload_data_sources(BirstSoapFixtures.space_id_1, @data_source_collection.data_sources.to_a).result_data.count).to eq @data_source_collection.data_sources.size
+    end
   end
 end
 
