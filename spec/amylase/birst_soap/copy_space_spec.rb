@@ -11,6 +11,8 @@ describe "Copying a space", :birst_soap_mock => true do
     Settings.birst_soap.rufus_freq = '0.1s'
   end
 
+  after { Settings.reload! }
+
   context "successful copy, wait, complete cycle" do
     before do
       mock_login_and_out do 
@@ -83,7 +85,5 @@ describe "Copying a space", :birst_soap_mock => true do
     end
 
   end
-
-
 end
 
