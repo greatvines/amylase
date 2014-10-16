@@ -23,6 +23,8 @@ module BirstSoapSupport
     @job_log = Logging.logger['JobLog']
     @job_log.level = :debug
     @job_log.add_appenders(Logging.appenders.stdout)
+
+    @login_message = { :token => BirstSoapFixtures.login_token }
   end
 
   def mock_login(&block)
@@ -35,12 +37,12 @@ module BirstSoapSupport
 
   def mock_login_and_out(&block)
     mock_login(&block)
-    savon.expects(:logout).with(message: { :token => BirstSoapFixtures.login_token }).returns(BirstSoapFixtures.logout)
+    savon.expects(:logout).with(message: @login_message).returns(BirstSoapFixtures.logout)
   end
 
 
   def mock_is_complete(status, ntimes = 1, type = :job)
-    message = { :token => BirstSoapFixtures.login_token }
+    message = @login_message.dup
 
     case type
     when :job
@@ -80,7 +82,7 @@ module BirstSoapSupport
 
 
   def mock_status(status, type = :job)
-    message = { :token => BirstSoapFixtures.login_token }
+    message = @login_message.dup
 
     case type
     when :job
@@ -135,4 +137,53 @@ module BirstSoapSupport
     mock_is_job_complete(true)
     mock_job_status("Complete")
   end
+
+
+  def mock_delete_all_data(space_id = BirstSoapFixtures.space_id_1)
+    mock_login_and_out do
+      savon.expects(:delete_all_data_from_space)
+        .with(message: @login_message.merge({ :spaceID => space_id }))
+        .returns(BirstSoapFixtures.delete_all_data_response)
+    end
+
+    mock_is_job_complete(true)
+    mock_job_status('Complete')
+  end
+
+
+  def mock_extract_data(space_id = BirstSoapFixtures.space_id_1, extract_groups: nil)
+    mock_login_and_out do
+      savon.expects(:extract_connector_data)
+        .with(message: @login_message.merge({ :spaceID => space_id, :connectorName => 'Salesforce', :extractGroups => { 'string' => extract_groups } }))
+        .returns(BirstSoapFixtures.extract_connector_data_response)
+    end
+
+    mock_is_job_complete(true)
+    mock_job_status('Complete')
+  end
+
+
+  def mock_process_data(space_id = BirstSoapFixtures.space_id_1, timestamp: Time.now, process_groups: nil)
+    mock_login_and_out do
+      savon.expects(:publish_data)
+        .with(message: @login_message.merge({ :spaceID => space_id, :date => timestamp.strftime("%Y-%m-%dT%H:%M:%S%:z"), :subgroups => { 'string' => process_groups } }))
+        .returns(BirstSoapFixtures.publish_data_response)
+    end
+
+    mock_is_publish_complete(true)
+    mock_publish_status('Complete')
+  end
+
+
+  def mock_swap_spaces(space_id_1 = BirstSoapFixtures.space_id_1, space_id_2 = BirstSoapFixtures.space_id_2)
+    mock_login_and_out do
+      savon.expects(:swap_space_contents)
+        .with(message: @login_message.merge({ :sp1ID => space_id_1, :sp2ID => space_id_2 }))
+        .returns(BirstSoapFixtures.swap_spaces_response)
+    end
+
+    mock_is_job_complete(true)
+    mock_job_status('Complete')
+  end
+
 end

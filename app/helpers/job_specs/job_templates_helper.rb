@@ -1,2 +1,0 @@
-module JobSpecs::JobTemplatesHelper
-end

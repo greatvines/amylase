@@ -2,9 +2,10 @@
 
 require 'rails_helper'
 
-feature "User creates a JobSpec" do
+feature "User creates a JobSpec", :js => true do
 
   before do
+    Capybara.current_driver = :webkit
     visit new_job_spec_path
     fill_in 'Name', with: 'the_george_job'
     check 'Enabled'
@@ -13,6 +14,8 @@ feature "User creates a JobSpec" do
     fill_in 'To space name', with: 'george_II'
     check 'With data'
   end
+
+  after { Capybara.use_default_driver }
 
   context "with valid data" do
     scenario "the creation was successful" do
@@ -31,6 +34,20 @@ feature "User creates a JobSpec" do
 
       expect(page).to have_content 'Error! JobSpec not created'
       expect(page).to have_content 'space id must be a UUID'
+    end
+  end
+
+  context 'filling out a different template' do
+    scenario 'selecting a new template' do
+      select 'TplBirstSoapGenericCommand', from: 'Job template type'
+      fill_in 'Command', with: 'list_spaces'
+      click_button 'Create Job spec'
+    
+      expect(page).to have_content 'Success! JobSpec created.'
+    end
+
+    scenario 'without selecting a new template' do
+      expect { fill_in 'Command', with: 'list_spaces' }.to raise_error Capybara::ElementNotFound
     end
   end
 end

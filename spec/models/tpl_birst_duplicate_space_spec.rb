@@ -45,6 +45,8 @@ RSpec.describe TplBirstDuplicateSpace, :type => :model do
       Settings.birst_soap.rufus_freq = '0.1s'
     end
 
+    after { Settings.reload! }
+
     let(:run_template) { @job_template.run_template }
 
     context "with default options" do

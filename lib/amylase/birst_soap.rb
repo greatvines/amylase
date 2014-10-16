@@ -44,6 +44,10 @@ module Amylase
     class BWSInvalidTokenError   < StandardError; end
     class BWSServerRequestError  < StandardError; end
     class BWSCopySpaceError      < StandardError; end
+    class BWSDeleteAllDataError  < StandardError; end
+    class BWSExtractSpaceError   < StandardError; end
+    class BWSProcessSpaceError   < StandardError; end
+    class BWSSwapSpacesError     < StandardError; end
 
     # Public: Gets the authorization cookie
     attr_reader :auth_cookie
@@ -186,7 +190,7 @@ module Amylase
     #
     # space_id - id of the space to be deleted.
     #
-    # Returns nothing.
+    # Returns a BirstSoapResult.
     def delete_all_data(space_id = nil)
       result = {}
 
@@ -199,13 +203,10 @@ module Amylase
         status:       :get_job_status,
         token_name:   :jobToken,
         job_token:    result[:token],
-      ))
+      ).result_data)
 
-      @job_status.message = "#{result[:status_message][:status_code]}"
-      @job_status.data = JSON.parse(result.to_json)
-      raise BWSError::BWSDeleteAllDataError, @job_status.message if @job_status.message != "Complete"
-
-      nil
+      raise BWSDeleteAllDataError, result unless result[:final_status][:status_code] == 'Complete'
+      BirstSoapResult.new('delete_all_data complete', result)
     end
 
 
@@ -216,32 +217,29 @@ module Amylase
     # extract_groups - An array of group names to extract (default: nil, which extracts all).
     #
     # Returns nothing.
-    def extract_space(space_id = nil, connector_name: "Salesforce", extract_groups: nil)
+    def extract_space(space_id = nil, connector_name: 'Salesforce', extract_groups: nil)
       result = {}
 
       birst_soap_session do |bc|
         result[:token] = bc.extract_connector_data(
           :spaceID       => space_id,
           :connectorName => connector_name,
-          :extractGroups => { "string" => extract_groups }
+          :extractGroups => { 'string' => extract_groups }
         )
       end
 
       # Returned job token must be valid
-      raise result[:token] unless result[:token] =~ /^[0-9a-f]{32}$/
+      raise BWSExtractSpaceError, result[:token] unless result[:token] =~ /^[0-9a-f]{32}$/
 
       result.merge!(wait_for_birst_job(
         complete:     :is_job_complete,
         status:       :get_job_status,
         token_name:   :jobToken,
         job_token:    result[:token],
-      ))
+      ).result_data)
 
-      @job_status.message = "#{result[:status_message][:status_code]}"
-      @job_status.data = JSON.parse(result.to_json)
-      raise BWSError::BWSExtractSpaceError, @job_status.message if @job_status.message != "Complete"
-
-      nil
+      raise BWSExtractSpaceError, result unless result[:final_status][:status_code] == 'Complete'
+      BirstSoapResult.new('extract_space complete', result)
     end
 
     # Public: Process data.
@@ -251,14 +249,14 @@ module Amylase
     # process_groups - An array of group names to process (Default: nil, which processes all).
     #
     # Returns nothing.
-    def process_space(space_id = nil, timestamp: Time.now(), process_groups: nil)
+    def process_space(space_id = nil, timestamp: Time.now, process_groups: nil)
       result = {}
 
       birst_soap_session do |bc|
         result[:token] = bc.publish_data(
           :spaceID   => space_id,
           :date      => timestamp.strftime("%Y-%m-%dT%H:%M:%S%:z"),
-          :subgroups => { "string" => process_groups }
+          :subgroups => { 'string' => process_groups }
         )
       end
 
@@ -267,13 +265,10 @@ module Amylase
         status:       :get_publishing_status,
         token_name:   :publishingToken,
         job_token:    result[:token],
-      ))
+      ).result_data)
 
-      @job_status.message = "#{result[:status_message][:string]}"
-      @job_status.data = JSON.parse(result.to_json)
-      raise BWSError::BWSProcessSpaceError, @job_status.message if @job_status.message != "Complete"
-
-      nil
+      raise BWSProcessSpaceError, result unless result[:final_status][:string] == 'Complete'
+      BirstSoapResult.new('process_space complete', result)
     end
 
 
@@ -296,13 +291,10 @@ module Amylase
         token_name:   :jobToken,
         job_token:    result[:token],
         wait_timeout: '5m'
-      ))
+      ).result_data)
 
-      @job_status.message = "#{result[:status_message][:status_code]}"
-      @job_status.data = JSON.parse(result.to_json)
-      raise BWSError::BWSSwapSpacesError, @job_status.message if @job_status.message != "Complete"
-
-      nil
+      raise BWSSwapSpacesError, result unless result[:final_status][:status_code] == 'Complete'
+      BirstSoapResult.new('swap_spaces complete', result)
     end
 
 
@@ -340,23 +332,49 @@ module Amylase
     end
 
 
+    # Public: Block retry with exponential backoff.
+    #
+    # max_retry     - The maximum number of times to retry a block before failing
+    #                 permanently (default: 8).
+    # base_time_sec - The base time (in seconds) between waiting after the first failure.
+    #                 All subsequent wait times are double the previous wait time.
+    #                 (default: 1)
+    # block         - A block to evaluate.
+    #
+    # Returns nothing.
+    def retry_exponential_backoff(max_retry: 8, base_time_sec: 1, &block)
+      tries = 0
+      begin
+        tries += 1
+        block.call
+
+      rescue => err
+        @job_log.warn "Error detected, possibly recoverable (try # #{tries}/#{max_retry}) - #{err.class.name} - #{err}"
+        @job_log.warn "#{$!}\n\t#{err.backtrace.join("\n\t")}"
+        if tries <= max_retry
+          sleep(base_time_sec * 0.5 * 2**tries)
+          retry
+        else
+          raise err
+        end
+      end
+    end
+
 
     # Public: Uploads a single data source to a space.
     #
     # space_id         - The space to upload the data.
-    # name             - The Birst name of the target data source.
-    # data_source      - A datasource object containing a description of the data
-    #                    (e.g., an S3DataSource or RedshiftS3DataSource instance).
+    # data_source      - A datasource object containing a description of the data.
     # max_upload_retry - The maximum number of times to retry uploading a chunk of data.
     #                    Wait between retries uses exponential backoff (default: 8).
     #
-    # Returns a result hash.
-    def upload_data_source(space_id = nil, name = nil, data_source = nil, max_upload_retry: 8)
+    # Returns a BirstSoapResult.
+    def upload_data_source(space_id = nil, data_source = nil, max_upload_retry: 8)
       result = {}
       birst_soap_session do |bc|        
         result[:upload_token] = bc.begin_data_upload(
           :spaceID    => space_id,
-          :sourceName => name
+          :sourceName => data_source.name
         )
       end
 
@@ -364,7 +382,7 @@ module Amylase
       birst_soap_session do |bc|
         bc.set_data_upload_options(
           :dataUploadToken => result[:upload_token],
-          :options         => { "string" => ["ConsolidateIdenticalStructures=false"] }
+          :options         => { 'string' => ['ConsolidateIdenticalStructures=false'] }
         )
       end
 
@@ -374,7 +392,7 @@ module Amylase
       job_log_data = @job_log.dup
 
       birst_soap_session :soap_logger => job_log_data, :soap_log_level => :error do |bc|
-        data_source.each_chunk do |chunk|
+        data_source.chunks.each do |chunk|
           @job_log.debug "Uploading chunk of size #{chunk.bytesize}"
 
           retry_exponential_backoff max_retry: max_upload_retry do
@@ -397,7 +415,7 @@ module Amylase
         status:       :get_data_upload_status,
         token_name:   :dataUploadToken,
         job_token:    result[:upload_token],
-      ))
+      ).result_data)
 
       # I don't really know how to treat data upload errors.
       # get_data_upload_status is blank when nothing is wrong,
@@ -410,39 +428,25 @@ module Amylase
         check_command: :get_job_status,
         token_name:    :jobToken,
         token:         result[:upload_token]
-      ))
+      ).result_data)
 
-      JSON.parse(result.to_json)
+      BirstSoapResult.new("data upload complete", result)
     end
 
     # Public: Uploads an array of data sources to a Birst space.
     #
-    # space_id - The space to upload the data.
-    # sources  - An array of hashes that contain descriptions of the data sources.
-    #            Required elements of the hash include:
-    #            name:    The Birst name of the target data source.
-    #            type:    The classname of the data source object (e.g., S3DataSource or RedshiftS3DataSource)
-    #            options: A hash of options passed to the initialize function of
-    #              the type of data source object.
+    # space_id      - The space to upload the data.
+    # data_sources  - An array of data_source objects to be uploaded.
     #
-    # Returns nothing.
-    def upload_data_sources(space_id = nil, sources = [])
+    # Returns a BirstSoapResult.
+    def upload_data_sources(space_id = nil, data_sources = [])
       result = {}
-      sources.each do |source_desc|
-        # Validate sources hash
-        raise "sources hash requires name, type, and options" unless ([:name, :type, :options].all? { |k| source_desc.key? k })
-
-        data_source = GVBirstWF.const_get(source_desc[:type]).new(source_desc[:options])
-        result[source_desc[:name]] = upload_data_source(space_id, source_desc[:name], data_source)
+      data_sources.each do |data_source|
+        result[data_source.name] = upload_data_source(space_id, data_source).result_data
       end
 
-
       # Since I don't know how to treat data upload errors, not much I can but assume success
-      @job_status.message = "Complete"
-      @job_status.data = result
-      raise BWSError::BWSUploadDataSourcesError, @job_status.message if @job_status.message != "Complete"
-
-      nil
+      BirstSoapResult.new("data uploads complete", result)
     end
 
     # Public: Copy space components from one space to another.
@@ -486,9 +490,7 @@ module Amylase
         wait_timeout: wait_timeout
       ).result_data)
 
-      final_status = result[:final_status][:status_code]
-      raise BWSCopySpaceError,  final_status if final_status != 'Complete'
-
+      raise BWSCopySpaceError, final_status unless result[:final_status][:status_code] == 'Complete'
       BirstSoapResult.new("copy complete", result)
     end
 

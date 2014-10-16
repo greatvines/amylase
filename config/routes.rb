@@ -1,7 +1,5 @@
 Rails.application.routes.draw do
 
-  resources :birst_process_group_collections
-
   root 'static_pages#home'
   match '/home', to: 'static_pages#home', via: 'get'
   match '/help', to: 'static_pages#help', via: 'get'
@@ -23,8 +21,9 @@ Rails.application.routes.draw do
   resources :data_sources
   resources :data_source_collections
   resources :birst_process_groups
+  resources :birst_process_group_collections
 
-
+  get '/job_spec/show_job_template_form' => 'job_specs#show_job_template_form', as: 'show_job_template_form'
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

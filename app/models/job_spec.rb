@@ -1,7 +1,7 @@
 class JobSpec < ActiveRecord::Base
   after_initialize :defaults, unless: :persisted?
 
-  job_template_types_prod = %w(TplBirstSoapGenericCommand TplBirstDuplicateSpace)
+  job_template_types_prod = %w(TplBirstSoapGenericCommand TplBirstDuplicateSpace TplBirstStagedRefresh)
   job_template_types_test = %w(TplDevTest)
   JOB_TEMPLATE_TYPES = job_template_types_prod if Rails.env.production?
   JOB_TEMPLATE_TYPES = (job_template_types_prod + job_template_types_test).uniq if !Rails.env.production?
@@ -15,6 +15,7 @@ class JobSpec < ActiveRecord::Base
   accepts_nested_attributes_for :job_template, reject_if: :all_blank
 
   belongs_to :job_schedule_group
+  belongs_to :client
 
   has_many :launched_jobs
 
