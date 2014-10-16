@@ -19,6 +19,13 @@ class JobSpecsController < ApplicationController
   def edit
   end
 
+  # GET /job_specs/show_job_template_form
+  def show_job_template_form
+    respond_to do |format|
+      format.js
+    end
+  end
+
   #  POST /job_specs
   def create
     @job_spec = JobSpec.new(job_spec_params)
@@ -72,10 +79,11 @@ class JobSpecsController < ApplicationController
     def job_spec_params
       tpl_attributes = (
         TplBirstSoapGenericCommand::JOB_SPEC_PERMITTED_ATTRIBUTES +
-        TplBirstDuplicateSpace::JOB_SPEC_PERMITTED_ATTRIBUTES
+        TplBirstDuplicateSpace::JOB_SPEC_PERMITTED_ATTRIBUTES +
+        TplBirstStagedRefresh::JOB_SPEC_PERMITTED_ATTRIBUTES
       )
 
-      params.require(:job_spec).permit(:name, :enabled, :job_template_type, :job_template_id, :job_schedule_group_id, job_template_attributes: tpl_attributes.uniq)
+      params.require(:job_spec).permit(:name, :enabled, :job_template_type, :job_template_id, :job_schedule_group_id, :client_id, job_template_attributes: tpl_attributes.uniq)
     end
 
 end
