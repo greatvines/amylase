@@ -1,4 +1,12 @@
 class TplBirstStagedRefresh < ActiveRecord::Base
+  JOB_SPEC_PERMITTED_ATTRIBUTES =
+    [
+      :data_source_collection_id,
+      :birst_process_group_collection_id,
+      :production_space_id,
+      :staging_space_id
+    ]
+
   belongs_to :data_source_collection
   belongs_to :birst_process_group_collection
   belongs_to :production_space, class_name: 'BirstSpace'
