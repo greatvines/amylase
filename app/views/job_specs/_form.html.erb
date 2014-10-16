@@ -13,38 +13,16 @@
 
           <%= f.input :name %>
           <%= f.input :enabled %>
-          <%= f.input :job_template_type, collection: ['TplBirstSoapGenericCommand','TplBirstDuplicateSpace'], :include_blank => false %>
+          <%= f.association :client, collection: Client.order(:name), include_blank: 'None' %>
+          <%= f.input :job_template_type, collection: JobSpec::JOB_TEMPLATE_TYPES, :include_blank => false, :input_html => { :id => 'job_template_type_selector' } %>
           <%= f.association :job_schedule_group %>
 
-          <h4> Now fill out parameters for the selected job template type</h4>
-
-          <div class="panel panel-primary">
-            <div class="panel-heading">TplBirstSoapGenericCommand</div>
-            <div class="panel-body">
-
-              <%= f.simple_fields_for :job_template_attributes, form_job_template_object(@job_spec, 'TplBirstSoapGenericCommand') do |tpl| %>
-                <%= tpl.input :command %>
-                <%= tpl.input :argument_json %>
-              <% end %>
-
-            </div>
+          <div id="show_job_template_form" style="display: none">
+            <%= link_to "get job template form", show_job_template_form_path, :remote => true %>
           </div>
 
-          <div class="panel panel-primary">
-            <div class="panel-heading">TplBirstDuplicateSpace</div>
-            <div class="panel-body">
-
-              <%= f.simple_fields_for :job_template_attributes, form_job_template_object(@job_spec, 'TplBirstDuplicateSpace') do |tpl| %>
-                <%= tpl.input :from_space_id_str %>
-                <%= tpl.input :to_space_name %>
-
-
-                <%= tpl.input :with_membership, as: :boolean, wrapper: :horizontal_boolean %>
-                <%= tpl.input :with_data, as: :boolean, wrapper: :horizontal_boolean %>
-                <%= tpl.input :with_datastore, as: :boolean, wrapper: :horizontal_boolean %>
-              <% end %>
-
-            </div>
+          <div id="job_template_form">
+            <%= render partial: 'job_template', locals: { f: f } %>
           </div>
 
           <%= f.button :submit %>

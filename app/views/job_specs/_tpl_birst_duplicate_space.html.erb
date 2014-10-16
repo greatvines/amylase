@@ -1,0 +1,10 @@
+<%= f.simple_fields_for :job_template_attributes, form_job_template_object(@job_spec, 'TplBirstDuplicateSpace') do |tpl| %>
+  <%= tpl.input :from_space_id_str %>
+  <%= tpl.input :to_space_name %>
+
+
+  <%= tpl.input :with_membership, as: :boolean, wrapper: :horizontal_boolean %>
+  <%= tpl.input :with_data, as: :boolean, wrapper: :horizontal_boolean %>
+  <%= tpl.input :with_datastore, as: :boolean, wrapper: :horizontal_boolean %>
+<% end %>
+

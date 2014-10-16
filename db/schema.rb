@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141010204247) do
+ActiveRecord::Schema.define(version: 20141010224146) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -125,8 +125,10 @@ ActiveRecord::Schema.define(version: 20141010204247) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "job_schedule_group_id"
+    t.integer  "client_id"
   end
 
+  add_index "job_specs", ["client_id"], name: "index_job_specs_on_client_id", using: :btree
   add_index "job_specs", ["job_schedule_group_id"], name: "index_job_specs_on_job_schedule_group_id", using: :btree
   add_index "job_specs", ["job_template_id"], name: "index_job_specs_on_job_template_id", using: :btree
   add_index "job_specs", ["name"], name: "index_job_specs_on_name", unique: true, using: :btree
@@ -161,6 +163,20 @@ ActiveRecord::Schema.define(version: 20141010204247) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  create_table "tpl_birst_staged_refreshes", force: true do |t|
+    t.integer  "data_source_collection_id"
+    t.integer  "birst_process_group_collection_id"
+    t.integer  "production_space_id"
+    t.integer  "staging_space_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "tpl_birst_staged_refreshes", ["birst_process_group_collection_id"], name: "idx_tpl_staged_refresh_process_group_collection", using: :btree
+  add_index "tpl_birst_staged_refreshes", ["data_source_collection_id"], name: "index_tpl_birst_staged_refreshes_on_data_source_collection_id", using: :btree
+  add_index "tpl_birst_staged_refreshes", ["production_space_id"], name: "index_tpl_birst_staged_refreshes_on_production_space_id", using: :btree
+  add_index "tpl_birst_staged_refreshes", ["staging_space_id"], name: "index_tpl_birst_staged_refreshes_on_staging_space_id", using: :btree
 
   create_table "tpl_dev_tests", force: true do |t|
     t.string   "argument",   null: false
