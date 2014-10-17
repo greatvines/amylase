@@ -46,6 +46,11 @@ class JobSpecsController < ApplicationController
   def update
     respond_to do |format|
       if @job_spec.update(job_spec_params)
+        if JobScheduler.find
+          JobScheduler.find.unschedule_job_spec(@job_spec)
+          JobScheduler.find.schedule_job_spec(@job_spec) if @job_spec.enabled
+        end
+
         flash[:success] = "Success! JobSpec updated."
         format.html { redirect_to @job_spec }
         format.json { render :show, status: :ok, location: @job_spec }
@@ -61,6 +66,8 @@ class JobSpecsController < ApplicationController
   # DELETE /job_schedule_groups/1.json
   def destroy
     @job_spec.destroy
+    JobScheduler.find.unschedule_job_spec(@job_spec) if JobScheduler.find
+
     respond_to do |format|
       flash[:success] = 'Success! JobSpec destroyed.'
       format.html { redirect_to job_specs_url }
