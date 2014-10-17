@@ -86,26 +86,52 @@ class JobScheduler
   def start_scheduler
     @rufus = Rufus::Scheduler.new
     schedule_shutdown_job if !self.timeout.blank?
-    schedule_job_specs
+    schedule_job_specs(JobSpec.where(enabled: true))
   end
 
 
-  # Public: Reads through all of the schedules of the enabled JobSpecs and 
-  # adds them to the Rufus scheduler queue.
+  # Public: Reads through all of the given job specs and passes them
+  # off to be scheduled via JobScheduler#schedule_job_spec.
+  #
+  # jobs_specs - A collection of JobSpec instances to be scheduled.
   #
   # Returns nothing.
-  def schedule_job_specs
-    JobSpec.where(enabled: true).each do |job_spec|
-      job_schedule_group = job_spec.job_schedule_group
-      next unless job_schedule_group
+  def schedule_job_specs(job_specs)
+    job_specs.each { |job_spec| schedule_job_spec(job_spec) }
+  end
 
-      job_schedule_group.job_schedules.each do |job_schedule|
-        job_spec.job_template
-        opts = job_schedule.rufus_options
-        @rufus.send(job_schedule.schedule_method, job_schedule.schedule_time, LaunchedJob.new(job_spec: job_spec), opts)
-      end
+  # Public: Adds the specified JobSpec instance to the scheduler.
+  #
+  # job_spec - A JobSpec instance.
+  #
+  # Returns nothing.
+  def schedule_job_spec(job_spec)
+    job_schedule_group = job_spec.job_schedule_group
+    return unless job_schedule_group
+
+    job_schedule_group.job_schedules.each do |job_schedule|
+      job_spec.job_template
+      opts = job_schedule.rufus_options
+
+      opts.delete(:first_at) if opts[:first_at] ? opts[:first_at] < Time.now : false
+      return if opts[:last_at] ? opts[:last_at] < Time.now : false
+
+      @rufus.send(job_schedule.schedule_method, job_schedule.schedule_time, LaunchedJob.new(job_spec: job_spec), opts)
     end
   end
+
+  # Public: Unschedules a collection of JobSpecs.  Can also be used to uschedule
+  # a single JobSpec instance.  unschedule_job_spec is an alias for this method.
+  #
+  # job_specs - A collection of or a single instance of a JobSpec(s)
+  #
+  # Returns nothing.
+  def unschedule_job_specs(job_specs)
+    job_spec_ids = Array(job_specs).collect { |j| j.id }
+    @rufus.jobs.select { |job| Array(job_spec_ids).include? job.handler.job_spec_id }.each(&:unschedule)
+  end
+  alias_method :unschedule_job_spec, :unschedule_job_specs
+
 
   # Public: Execution of the Ruby script will wait until the Rufus job scheduler
   # is shut down.  This is mostly useful for testing.
@@ -144,33 +170,32 @@ class JobScheduler
     @rufus ? @rufus.threads : nil
   end
 
-  # Public: Returns a list of the jobs that are scheduled to run with
-  # the Rufus scheduler.  This should mostly be used for debugging and early
-  # development.
+  # Public: Translates the list of Rufus jobs that are scheduled into a hash
+  # of job attributes.
   #
-  # Returns an array of job hashes.
-  def job_list
+  # Returns an array of hashes.
+  def jobs
     return nil unless @rufus
     return @saved_job_list if !running
 
-    jobs = []
-    @rufus.jobs.each do |job|
-      jobs << {
-                :name => (job.tags.include? 'SchedulerTimeout') ? 'SchedulerTimeout' : job.handler.job_spec.name,
-                :running => job.running?,
-                :last_time => job.last_time,
-                :next_time => job.next_time,
-                :opts => job.opts,
-                :scheduled_at => job.scheduled_at,
-                :unscheduled_at => job.unscheduled_at,
-                :id => job.id,
-                :tags => job.tags,
-                :last_work_time => job.last_work_time,
-                :mean_work_time => job.mean_work_time
-              }
+    @rufus.jobs.collect do |job|
+      {
+        :job_spec_id => job.handler.job_spec_id,
+        :job_spec_name => job.handler.job_spec_name,
+        :running => job.running?,
+        :last_time => job.last_time,
+        :next_time => job.next_time,
+        :opts => job.opts,
+        :scheduled_at => job.scheduled_at,
+        :unscheduled_at => job.unscheduled_at,
+        :id => job.id,
+        :tags => job.tags,
+        :last_work_time => job.last_work_time,
+        :mean_work_time => job.mean_work_time
+      }
     end
-    jobs
   end
+
 
   # Public: This is called just prior to shutdown so that the job list
   # can be evaluated after Rufus shuts down (otherwise jobs go away
@@ -178,7 +203,7 @@ class JobScheduler
   #
   # Returns the job_list.
   def save_job_list
-    @saved_job_list = job_list
+    @saved_job_list = jobs
   end
 
 
@@ -209,6 +234,23 @@ class JobScheduler
 
   private
 
+    # Private: This is a special instance of the LaunchedJob class that is used
+    # for the Rufus job handler for the timeout job.
+    class SchedulerTimeoutHandler < LaunchedJob
+      def run_job
+        JobScheduler.find.save_job_list
+        JobScheduler.find.shutdown(:kill)
+      end
+
+      def job_spec_name
+        'SchedulerTimeout'
+      end
+
+      def job_spec_id
+        -1
+      end
+    end
+
     # Private: Shuts down the Rufus scheduler after a given amount of time
     # has elapsed.  Note that this will not destroy the JobScheduler instance.
     #
@@ -218,10 +260,7 @@ class JobScheduler
     # Returns nothing.
     def schedule_shutdown_job(timeout_interval = self.timeout)
       puts "Scheduling the shutdown job"
-      @rufus.in timeout_interval, :blocking => true, :overlap => false, :tag => 'SchedulerTimeout' do
-        self.save_job_list
-        self.shutdown(:kill)
-      end      
+      @rufus.in timeout_interval, SchedulerTimeoutHandler.new, :blocking => true, :overlap => false
     end
 end
 

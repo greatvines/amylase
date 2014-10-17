@@ -45,6 +45,14 @@ class LaunchedJob < ActiveRecord::Base
     end
   end
 
+  def job_spec_id
+    self.job_spec.id
+  end
+
+  def job_spec_name
+    self.job_spec.name
+  end
+
   # Public: This is the method that is called when the job is to be
   # executed.  It wraps the run_template job that is defined in and
   # specific to individual job template models.
