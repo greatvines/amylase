@@ -10,7 +10,7 @@ RSpec.describe JobScheduler, :type => :model do
   it { should respond_to(:started_at) }
   it { should respond_to(:uptime) }
   it { should respond_to(:threads) }
-  it { should respond_to(:job_list) }
+  it { should respond_to(:jobs) }
   it { should be_valid }
 
   it "only allows one instance at a time" do
@@ -27,7 +27,7 @@ RSpec.describe JobScheduler, :type => :model do
     expect(@job_scheduler.started_at).not_to be nil
     expect(@job_scheduler.uptime).not_to be nil
     expect(@job_scheduler.threads).not_to be nil
-    expect(@job_scheduler.job_list).not_to be_empty
+    expect(@job_scheduler.jobs).not_to be_empty
 
     @job_scheduler.wait_for_shutdown
 
@@ -37,7 +37,7 @@ RSpec.describe JobScheduler, :type => :model do
 
   context "with a job to schedule", :rufus_job => true do
     before do 
-      FactoryGirl.create(:job_spec, :schedule_interval_1s, name: "MyTestSpec", enabled: true)
+      @job_spec = FactoryGirl.create(:job_spec, :schedule_interval_1s, name: "MyTestSpec", enabled: true)
       FactoryGirl.create_list(:job_spec, 2, :schedule_in_1s, enabled: true)
       FactoryGirl.create_list(:job_spec, 3, :schedule_in_1s, enabled: false)
 
@@ -49,8 +49,8 @@ RSpec.describe JobScheduler, :type => :model do
     it "schedules JobSpecs that are enabled" do
       enabled = JobSpec.where(enabled: true).collect { |j| j.name }
 
-      scheduled = @job_scheduler.job_list.collect do |j|
-        j[:name] if j[:name] != "SchedulerTimeout"
+      scheduled = @job_scheduler.jobs.collect do |j|
+        j[:job_spec_name] if j[:job_spec_name] != "SchedulerTimeout"
       end.compact
 
       expect(scheduled).to match_array enabled
@@ -58,11 +58,17 @@ RSpec.describe JobScheduler, :type => :model do
 
 
     it "runs a JobSpec that is enabled" do
-      last_time = lambda { @job_scheduler.job_list.select { |j| j[:name] == "MyTestSpec" }.pop[:last_time] }
+      last_time = lambda { @job_scheduler.jobs.select { |j| j[:job_spec_name] == "MyTestSpec" }.pop[:last_time] }
 
       expect(last_time.call).to be_nil
       @job_scheduler.wait_for_shutdown
       expect(last_time.call).to be_a(Time)
     end
+
+    it 'can unschedule a job_spec' do
+      @job_scheduler.unschedule_job_spec(@job_spec)
+      expect(@job_scheduler.jobs.collect { |j| j[:job_spec_name] }).not_to include 'MyTestSpec'
+    end
+
   end
 end
