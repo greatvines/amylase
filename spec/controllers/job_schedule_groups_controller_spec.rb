@@ -151,6 +151,21 @@ RSpec.describe JobScheduleGroupsController, :type => :controller do
         put :update, {:id => @job_schedule_group.to_param, :job_schedule_group => @updated_attributes}, valid_session
         expect(response).to redirect_to(@job_schedule_group)
       end
+
+      context 'when the job scheduler is running' do
+        before do
+          @job_spec = FactoryGirl.create(:job_spec, job_schedule_group: @job_schedule_group, enabled: true)
+          JobScheduler.new.start_scheduler
+        end
+
+        it 'updates associated job_specs' do
+          expect {
+            put :update, {:id => @job_schedule_group.to_param, :job_schedule_group => @updated_attributes}, valid_session
+          }.to change {
+            JobScheduler.find.jobs.select { |j| j[:job_spec_name] == @job_spec.name }.size
+          }.from(2).to(3)
+        end
+      end
     end
 
     describe "with invalid params" do
@@ -169,18 +184,35 @@ RSpec.describe JobScheduleGroupsController, :type => :controller do
   end
 
   describe "DELETE destroy" do
+    before { @job_schedule_group = JobScheduleGroup.create! valid_attributes }
+
     it "destroys the requested job_schedule_group" do
-      job_schedule_group = JobScheduleGroup.create! valid_attributes
       expect {
-        delete :destroy, {:id => job_schedule_group.to_param}, valid_session
+        delete :destroy, {:id => @job_schedule_group.to_param}, valid_session
       }.to change(JobScheduleGroup, :count).by(-1)
     end
 
     it "redirects to the job_schedule_groups list" do
-      job_schedule_group = JobScheduleGroup.create! valid_attributes
-      delete :destroy, {:id => job_schedule_group.to_param}, valid_session
+      delete :destroy, {:id => @job_schedule_group.to_param}, valid_session
       expect(response).to redirect_to(job_schedule_groups_url)
     end
+
+    context 'when the job scheduler is running' do
+      before do
+        @job_spec = FactoryGirl.create(:job_spec, job_schedule_group: @job_schedule_group, enabled: true)
+        JobScheduler.new.start_scheduler
+      end
+
+      it 'unschedules the job_specs associated with the destroyed job_schedule_group' do
+        expect {
+          delete :destroy, {:id => @job_schedule_group.to_param}, valid_session
+        }.to change {
+          JobScheduler.find.jobs.select { |j| j[:job_spec_name] == @job_spec.name }.size
+        }.from(2).to(0)
+      end
+
+    end
+
   end
 
 end

@@ -128,6 +128,35 @@ RSpec.describe JobSpecsController, :type => :controller do
       end
     end
 
+    context 'when the job scheduler is running' do
+      before do
+        @job_spec = FactoryGirl.create(:job_spec, :schedule_in_1s, enabled: true)
+        @new_job_schedule = FactoryGirl.create(:job_schedule_group, :schedule_maintenance)
+        JobScheduler.new.start_scheduler
+      end
+
+      it 'updates the scheduler' do
+        new_attributes = @job_spec.attributes.merge(:job_schedule_group_id => @new_job_schedule.id)
+
+        expect {
+          put :update, {:id => @job_spec.to_param, :job_spec => new_attributes}, valid_session
+          @job_spec.reload
+        }.to change {
+          JobScheduler.find.jobs.select { |j| j[:job_spec_name] == @job_spec.name }.size
+        }.from(1).to(2)
+      end
+
+      it 'deletes the job from the scheduler when it is disabled' do
+        new_attributes = @job_spec.attributes.merge(enabled: false)
+        expect {
+          put :update, {:id => @job_spec.to_param, :job_spec => new_attributes}, valid_session
+          @job_spec.reload
+        }.to change {
+          JobScheduler.find.jobs.select { |j| j[:job_spec_name] == @job_spec.name }.size
+        }.from(1).to(0)
+      end
+    end
+
     describe "with invalid params" do
       # The only invalid attribute at this point is a duplicate JobSpec
       before { JobSpec.create! valid_attributes.merge('name' => 'existing_job_spec') }
@@ -159,6 +188,21 @@ RSpec.describe JobSpecsController, :type => :controller do
       job_spec = JobSpec.create! valid_attributes
       delete :destroy, {:id => job_spec.to_param}, valid_session
       expect(response).to redirect_to(job_specs_url)
+    end
+
+    context 'when the job scheduler is running' do
+      before do
+        @job_spec = FactoryGirl.create(:job_spec, :schedule_in_1s, enabled: true)
+        JobScheduler.new.start_scheduler
+      end
+
+      it 'unschedules the destroyed job spec' do
+        expect {
+          delete :destroy, {:id => @job_spec.to_param}, valid_session
+        }.to change {
+          JobScheduler.find.jobs.select { |j| j[:job_spec_name] == @job_spec.name }.size
+        }.from(1).to(0)
+      end
     end
   end
 end
