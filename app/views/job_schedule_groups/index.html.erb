@@ -4,6 +4,7 @@
   <thead>
     <tr>
       <th>Name</th>
+      <th>Schedule Time</th>
       <th></th>
     </tr>
   </thead>
@@ -12,6 +13,23 @@
     <% @job_schedule_groups.each do |job_schedule_group| %>
       <tr>
         <td><%= job_schedule_group.name %></td>
+        <td>
+          <ul class="list-unstyled">
+            <% job_schedule_group.job_schedules.each do |job_schedule| %>
+              <li> 
+                <%= job_schedule.schedule_method %> - 
+                <%= job_schedule.schedule_time %>
+                <% if !job_schedule.first_at.blank? || !job_schedule.last_at.blank? %>
+                  (
+                    <%= "first: #{job_schedule.first_at}" unless job_schedule.first_at.blank? %>
+                    <%= "last: #{job_schedule.last_at}" unless job_schedule.last_at.blank? %>
+                  )
+                <% end %>
+                <%= "X #{job_schedule.number_of_times}" if job_schedule.number_of_times %> 
+              </li>
+            <% end %>
+          </ul>
+        </td>
         <td class="text-right"><%= link_to 'Show', job_schedule_group %> /
         <%= link_to 'Edit', edit_job_schedule_group_path(job_schedule_group) %> /
         <%= link_to 'Destroy', job_schedule_group, method: :delete, data: { confirm: 'Are you sure?' } %></td>
