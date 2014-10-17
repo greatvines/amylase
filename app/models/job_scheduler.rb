@@ -112,6 +112,10 @@ class JobScheduler
     job_schedule_group.job_schedules.each do |job_schedule|
       job_spec.job_template
       opts = job_schedule.rufus_options
+
+      opts.delete(:first_at) if opts[:first_at] ? opts[:first_at] < Time.now : false
+      return if opts[:last_at] ? opts[:last_at] < Time.now : false
+
       @rufus.send(job_schedule.schedule_method, job_schedule.schedule_time, LaunchedJob.new(job_spec: job_spec), opts)
     end
   end
@@ -123,8 +127,8 @@ class JobScheduler
   #
   # Returns nothing.
   def unschedule_job_specs(job_specs)
-    job_spec_names = Array(job_specs).collect { |j| j.name }
-    @rufus.jobs.select { |job| Array(job_spec_names).include? job.handler.job_spec_name }.each(&:unschedule)
+    job_spec_ids = Array(job_specs).collect { |j| j.id }
+    @rufus.jobs.select { |job| Array(job_spec_ids).include? job.handler.job_spec_id }.each(&:unschedule)
   end
   alias_method :unschedule_job_spec, :unschedule_job_specs
 
@@ -176,6 +180,7 @@ class JobScheduler
 
     @rufus.jobs.collect do |job|
       {
+        :job_spec_id => job.handler.job_spec_id,
         :job_spec_name => job.handler.job_spec_name,
         :running => job.running?,
         :last_time => job.last_time,
@@ -239,6 +244,10 @@ class JobScheduler
 
       def job_spec_name
         'SchedulerTimeout'
+      end
+
+      def job_spec_id
+        -1
       end
     end
 

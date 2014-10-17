@@ -45,6 +45,10 @@ class LaunchedJob < ActiveRecord::Base
     end
   end
 
+  def job_spec_id
+    self.job_spec.id
+  end
+
   def job_spec_name
     self.job_spec.name
   end
