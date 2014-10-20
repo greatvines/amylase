@@ -1,6 +1,6 @@
 # -*- mode: ruby -*-
 source 'https://rubygems.org'
-ruby '2.0.0'
+ruby '2.1.3'
 
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
@@ -63,7 +63,7 @@ gem 'httpclient', '~> 2.3'
 gem 'logging', '~> 1.8'
 
 # AWS Utilities
-gem 'aws-sdk', '~> 1'
+gem 'aws-sdk-v1', '~> 1'
 
 group :development, :test do
   gem 'rspec-rails', '~> 3.0'
