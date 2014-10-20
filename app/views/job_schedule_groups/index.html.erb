@@ -1,6 +1,6 @@
 <h1>JobScheduleGroups#index</h1>
 
-<table id="datatable" class="table">
+<table class="table datatable">
   <thead>
     <tr>
       <th>Name</th>
@@ -36,6 +36,14 @@
       </tr>
     <% end %>
   </tbody>
+
+  <tfoot>
+    <tr>
+      <th>Name</th>
+      <th>Schedule Time</th>
+      <th></th>
+    </tr>
+  </tfoot>
 </table>
 
 <%= link_to 'New Job schedule group', new_job_schedule_group_path, { class: "btn btn-default" } %>

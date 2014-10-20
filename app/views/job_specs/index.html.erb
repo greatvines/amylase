@@ -1,6 +1,6 @@
 <h1>JobSpecs#index</h1>
 
-<table id="datatable" class="table">
+<table class="table datatable">
   <thead>
     <tr>
       <th>id</th>
@@ -26,6 +26,17 @@
       </tr>
     <% end %>
   </tbody>
+
+  <tfoot>
+    <tr>
+      <th>id</th>
+      <th>Name</th>
+      <th>Enabled</th>
+      <th>Job Template Type</th>
+      <th>Job Schedule Group</th>
+      <th></th>
+    </tr>
+  </tfoot>
 </table>
 
 <%= link_to 'New Job Spec', new_job_spec_path, { class: "btn btn-default" } %>
