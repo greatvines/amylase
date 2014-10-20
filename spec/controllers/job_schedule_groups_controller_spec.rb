@@ -158,6 +158,8 @@ RSpec.describe JobScheduleGroupsController, :type => :controller do
           JobScheduler.new.start_scheduler
         end
 
+        after { JobScheduler.find.destroy }
+
         it 'updates associated job_specs' do
           expect {
             put :update, {:id => @job_schedule_group.to_param, :job_schedule_group => @updated_attributes}, valid_session
@@ -202,6 +204,8 @@ RSpec.describe JobScheduleGroupsController, :type => :controller do
         @job_spec = FactoryGirl.create(:job_spec, job_schedule_group: @job_schedule_group, enabled: true)
         JobScheduler.new.start_scheduler
       end
+
+      after { JobScheduler.find.destroy }
 
       it 'unschedules the job_specs associated with the destroyed job_schedule_group' do
         expect {

@@ -135,6 +135,8 @@ RSpec.describe JobSpecsController, :type => :controller do
         JobScheduler.new.start_scheduler
       end
 
+      after { JobScheduler.find.destroy }
+
       it 'updates the scheduler' do
         new_attributes = @job_spec.attributes.merge(:job_schedule_group_id => @new_job_schedule.id)
 
@@ -195,6 +197,8 @@ RSpec.describe JobSpecsController, :type => :controller do
         @job_spec = FactoryGirl.create(:job_spec, :schedule_in_1s, enabled: true)
         JobScheduler.new.start_scheduler
       end
+
+      after { JobScheduler.find.destroy }
 
       it 'unschedules the destroyed job spec' do
         expect {
