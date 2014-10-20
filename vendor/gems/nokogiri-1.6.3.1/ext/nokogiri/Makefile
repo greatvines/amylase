@@ -11,12 +11,12 @@ ECHO = $(ECHO1:0=@echo)
 #### Start of system configuration section. ####
 
 srcdir = .
-topdir = /usr/local/var/rbenv/versions/2.0.0-p353/include/ruby-2.0.0
+topdir = /usr/local/var/rbenv/versions/2.1.3/include/ruby-2.1.0
 hdrdir = $(topdir)
-arch_hdrdir = /usr/local/var/rbenv/versions/2.0.0-p353/include/ruby-2.0.0/x86_64-darwin13.2.0
+arch_hdrdir = /usr/local/var/rbenv/versions/2.1.3/include/ruby-2.1.0/x86_64-darwin13.0
 PATH_SEPARATOR = :
 VPATH = $(srcdir):$(arch_hdrdir)/ruby:$(hdrdir)/ruby
-prefix = /usr/local/var/rbenv/versions/2.0.0-p353
+prefix = $(DESTDIR)/usr/local/var/rbenv/versions/2.1.3
 rubysitearchprefix = $(rubylibprefix)/$(sitearch)
 rubyarchprefix = $(rubylibprefix)/$(arch)
 rubylibprefix = $(libdir)/$(RUBY_BASE_NAME)
@@ -30,8 +30,8 @@ rubyhdrdir = $(includedir)/$(RUBY_VERSION_NAME)
 vendorarchdir = $(vendorlibdir)/$(sitearch)
 vendorlibdir = $(vendordir)/$(ruby_version)
 vendordir = $(rubylibprefix)/vendor_ruby
-sitearchdir = ./.gem.20140815-87419-1ptbkhf
-sitelibdir = ./.gem.20140815-87419-1ptbkhf
+sitearchdir = $(DESTDIR)./.gem.20141020-73396-1e72erh
+sitelibdir = $(DESTDIR)./.gem.20141020-73396-1e72erh
 sitedir = $(rubylibprefix)/site_ruby
 rubyarchdir = $(rubylibdir)/$(arch)
 rubylibdir = $(rubylibprefix)/$(ruby_version)
@@ -49,7 +49,7 @@ dvidir = $(docdir)
 htmldir = $(docdir)
 infodir = $(datarootdir)/info
 docdir = $(datarootdir)/doc/$(PACKAGE)
-oldincludedir = /usr/include
+oldincludedir = $(DESTDIR)/usr/include
 includedir = $(prefix)/include
 localstatedir = $(prefix)/var
 sharedstatedir = $(prefix)/com
@@ -67,7 +67,7 @@ CXX = g++
 LIBRUBY = $(LIBRUBY_A)
 LIBRUBY_A = lib$(RUBY_SO_NAME)-static.a
 LIBRUBYARG_SHARED = 
-LIBRUBYARG_STATIC = -l$(RUBY_SO_NAME)-static
+LIBRUBYARG_STATIC = -l$(RUBY_SO_NAME)-static -framework CoreFoundation
 empty =
 OUTFLAG = -o $(empty)
 COUTFLAG = -o $(empty)
@@ -76,14 +76,14 @@ RUBY_EXTCONF_H =
 cflags   =  $(optflags) $(debugflags) $(warnflags)
 optflags = -O3 -fno-fast-math
 debugflags = -ggdb3
-warnflags = -Wall -Wextra -Wno-unused-parameter -Wno-parentheses -Wno-long-long -Wno-missing-field-initializers -Wunused-variable -Wpointer-arith -Wwrite-strings -Wdeclaration-after-statement -Wshorten-64-to-32 -Wimplicit-function-declaration
+warnflags = -Wall -Wextra -Wno-unused-parameter -Wno-parentheses -Wno-long-long -Wno-missing-field-initializers -Wunused-variable -Wpointer-arith -Wwrite-strings -Wdeclaration-after-statement -Wshorten-64-to-32 -Wimplicit-function-declaration -Wdivision-by-zero -Wextra-tokens
 CCDLFLAGS = -fno-common
 CFLAGS   = $(CCDLFLAGS)  -O3 -Wno-error=shorten-64-to-32  -pipe  -Wno-error=unused-command-line-argument-hard-error-in-future -DNOKOGIRI_USE_PACKAGED_LIBRARIES $(ARCH_FLAG)
 INCFLAGS = -I. -I$(arch_hdrdir) -I$(hdrdir)/ruby/backward -I$(hdrdir) -I$(srcdir)
 DEFS     = 
-CPPFLAGS = -DHAVE_ICONV_H -DHAVE_XMLPARSEDOC -DHAVE_XSLTPARSESTYLESHEETDOC -DHAVE_EXSLTFUNCREGISTER -DHAVE_XMLHASFEATURE -DHAVE_XMLFIRSTELEMENTCHILD -DHAVE_XMLRELAXNGSETPARSERSTRUCTUREDERRORS -DHAVE_XMLRELAXNGSETPARSERSTRUCTUREDERRORS -DHAVE_XMLRELAXNGSETVALIDSTRUCTUREDERRORS -DHAVE_XMLSCHEMASETVALIDSTRUCTUREDERRORS -DHAVE_XMLSCHEMASETPARSERSTRUCTUREDERRORS -I/Users/gnilrets/git/amylase/vendor/gems/nokogiri-1.6.3.1/ports/x86_64-apple-darwin13.2.0/libxslt/1.1.28/include -I/Users/gnilrets/git/amylase/vendor/gems/nokogiri-1.6.3.1/ports/x86_64-apple-darwin13.2.0/libxml2/2.8.0/include/libxml2 -I/usr/include -I/Users/gnilrets/git/amylase/vendor/gems/nokogiri-1.6.3.1/ports/x86_64-apple-darwin13.2.0/libxml2/2.8.0/include/libxml2 -I/usr/include -I/usr/local/var/rbenv/versions/2.0.0-p353/include  -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE -D_DARWIN_UNLIMITED_SELECT -D_REENTRANT $(DEFS) $(cppflags) -DNOKOGIRI_LIBXML2_PATH\=\"/Users/gnilrets/git/amylase/vendor/gems/nokogiri-1.6.3.1/ports/x86_64-apple-darwin13.2.0/libxml2/2.8.0\" -DNOKOGIRI_LIBXSLT_PATH\=\"/Users/gnilrets/git/amylase/vendor/gems/nokogiri-1.6.3.1/ports/x86_64-apple-darwin13.2.0/libxslt/1.1.28\"
+CPPFLAGS = -DHAVE_ICONV_H -DHAVE_XMLPARSEDOC -DHAVE_XSLTPARSESTYLESHEETDOC -DHAVE_EXSLTFUNCREGISTER -DHAVE_XMLHASFEATURE -DHAVE_XMLFIRSTELEMENTCHILD -DHAVE_XMLRELAXNGSETPARSERSTRUCTUREDERRORS -DHAVE_XMLRELAXNGSETPARSERSTRUCTUREDERRORS -DHAVE_XMLRELAXNGSETVALIDSTRUCTUREDERRORS -DHAVE_XMLSCHEMASETVALIDSTRUCTUREDERRORS -DHAVE_XMLSCHEMASETPARSERSTRUCTUREDERRORS -I/Users/gnilrets/git/amylase/vendor/gems/nokogiri-1.6.3.1/ports/x86_64-apple-darwin13.4.0/libxslt/1.1.28/include -I/Users/gnilrets/git/amylase/vendor/gems/nokogiri-1.6.3.1/ports/x86_64-apple-darwin13.4.0/libxml2/2.8.0/include/libxml2 -I/usr/include -I/Users/gnilrets/git/amylase/vendor/gems/nokogiri-1.6.3.1/ports/x86_64-apple-darwin13.4.0/libxml2/2.8.0/include/libxml2 -I/usr/include -I/usr/local/var/rbenv/versions/2.1.3/include  -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE -D_DARWIN_UNLIMITED_SELECT -D_REENTRANT $(DEFS) $(cppflags) -DNOKOGIRI_LIBXML2_PATH\=\"/Users/gnilrets/git/amylase/vendor/gems/nokogiri-1.6.3.1/ports/x86_64-apple-darwin13.4.0/libxml2/2.8.0\" -DNOKOGIRI_LIBXSLT_PATH\=\"/Users/gnilrets/git/amylase/vendor/gems/nokogiri-1.6.3.1/ports/x86_64-apple-darwin13.4.0/libxslt/1.1.28\"
 CXXFLAGS = $(CCDLFLAGS) $(cxxflags) $(ARCH_FLAG)
-ldflags  = -L. -L/usr/local/var/rbenv/versions/2.0.0-p353/lib 
+ldflags  = -L. -L/usr/local/var/rbenv/versions/2.1.3/lib  -fstack-protector
 dldflags = -Wl,-undefined,dynamic_lookup -Wl,-multiply_defined,suppress 
 ARCH_FLAG = 
 DLDFLAGS = $(ldflags) $(dldflags) $(ARCH_FLAG)
@@ -99,12 +99,12 @@ RUBY_VERSION_NAME = $(RUBY_BASE_NAME)-$(ruby_version)
 RUBYW_BASE_NAME = rubyw
 RUBY_BASE_NAME = ruby
 
-arch = x86_64-darwin13.2.0
+arch = x86_64-darwin13.0
 sitearch = $(arch)
-ruby_version = 2.0.0
+ruby_version = 2.1.0
 ruby = $(bindir)/ruby
 RUBY = $(ruby)
-ruby_headers = $(hdrdir)/ruby.h $(hdrdir)/ruby/defines.h $(arch_hdrdir)/ruby/config.h
+ruby_headers = $(hdrdir)/ruby.h $(hdrdir)/ruby/ruby.h $(hdrdir)/ruby/defines.h $(hdrdir)/ruby/missing.h $(hdrdir)/ruby/intern.h $(hdrdir)/ruby/st.h $(hdrdir)/ruby/subst.h $(arch_hdrdir)/ruby/config.h
 
 RM = rm -f
 RM_RF = $(RUBY) -run -e rm -- -rf
@@ -120,8 +120,8 @@ TOUCH = exit >
 
 preload = 
 
-libpath = . $(libdir) /Users/gnilrets/git/amylase/vendor/gems/nokogiri-1.6.3.1/ports/x86_64-apple-darwin13.2.0/libxml2/2.8.0/lib /Users/gnilrets/git/amylase/vendor/gems/nokogiri-1.6.3.1/ports/x86_64-apple-darwin13.2.0/libxslt/1.1.28/lib /usr/lib
-LIBPATH =  -L. -L$(libdir) -L/Users/gnilrets/git/amylase/vendor/gems/nokogiri-1.6.3.1/ports/x86_64-apple-darwin13.2.0/libxml2/2.8.0/lib -L/Users/gnilrets/git/amylase/vendor/gems/nokogiri-1.6.3.1/ports/x86_64-apple-darwin13.2.0/libxslt/1.1.28/lib -L/usr/lib
+libpath = . $(libdir) /Users/gnilrets/git/amylase/vendor/gems/nokogiri-1.6.3.1/ports/x86_64-apple-darwin13.4.0/libxml2/2.8.0/lib /Users/gnilrets/git/amylase/vendor/gems/nokogiri-1.6.3.1/ports/x86_64-apple-darwin13.4.0/libxslt/1.1.28/lib /usr/lib
+LIBPATH =  -L. -L$(libdir) -L/Users/gnilrets/git/amylase/vendor/gems/nokogiri-1.6.3.1/ports/x86_64-apple-darwin13.4.0/libxml2/2.8.0/lib -L/Users/gnilrets/git/amylase/vendor/gems/nokogiri-1.6.3.1/ports/x86_64-apple-darwin13.4.0/libxslt/1.1.28/lib -L/usr/lib
 DEFFILE = 
 
 CLEANFILES = mkmf.log
@@ -132,7 +132,7 @@ extout =
 extout_prefix = 
 target_prefix = /nokogiri
 LOCAL_LIBS = 
-LIBS =  /Users/gnilrets/git/amylase/vendor/gems/nokogiri-1.6.3.1/ports/x86_64-apple-darwin13.2.0/libxslt/1.1.28/lib/libexslt.a -lm -liconv -lpthread -lz /Users/gnilrets/git/amylase/vendor/gems/nokogiri-1.6.3.1/ports/x86_64-apple-darwin13.2.0/libxml2/2.8.0/lib/libxml2.a /Users/gnilrets/git/amylase/vendor/gems/nokogiri-1.6.3.1/ports/x86_64-apple-darwin13.2.0/libxslt/1.1.28/lib/libxslt.a -lm -liconv -lpthread -lz /Users/gnilrets/git/amylase/vendor/gems/nokogiri-1.6.3.1/ports/x86_64-apple-darwin13.2.0/libxml2/2.8.0/lib/libxml2.a -llzma -lpthread -ldl -lobjc  
+LIBS =  /Users/gnilrets/git/amylase/vendor/gems/nokogiri-1.6.3.1/ports/x86_64-apple-darwin13.4.0/libxslt/1.1.28/lib/libexslt.a -lm -liconv -lpthread -lz /Users/gnilrets/git/amylase/vendor/gems/nokogiri-1.6.3.1/ports/x86_64-apple-darwin13.4.0/libxml2/2.8.0/lib/libxml2.a /Users/gnilrets/git/amylase/vendor/gems/nokogiri-1.6.3.1/ports/x86_64-apple-darwin13.4.0/libxslt/1.1.28/lib/libxslt.a -lm -liconv -lpthread -lz /Users/gnilrets/git/amylase/vendor/gems/nokogiri-1.6.3.1/ports/x86_64-apple-darwin13.4.0/libxml2/2.8.0/lib/libxml2.a -llzma -lpthread -ldl -lobjc  
 ORIG_SRCS = html_document.c html_element_description.c html_entity_lookup.c html_sax_parser_context.c html_sax_push_parser.c nokogiri.c xml_attr.c xml_attribute_decl.c xml_cdata.c xml_comment.c xml_document.c xml_document_fragment.c xml_dtd.c xml_element_content.c xml_element_decl.c xml_encoding_handler.c xml_entity_decl.c xml_entity_reference.c xml_io.c xml_libxml2_hacks.c xml_namespace.c xml_node.c xml_node_set.c xml_processing_instruction.c xml_reader.c xml_relax_ng.c xml_sax_parser.c xml_sax_parser_context.c xml_sax_push_parser.c xml_schema.c xml_syntax_error.c xml_text.c xml_xpath_context.c xslt_stylesheet.c
 SRCS = $(ORIG_SRCS) 
 OBJS = html_document.o html_element_description.o html_entity_lookup.o html_sax_parser_context.o html_sax_push_parser.o nokogiri.o xml_attr.o xml_attribute_decl.o xml_cdata.o xml_comment.o xml_document.o xml_document_fragment.o xml_dtd.o xml_element_content.o xml_element_decl.o xml_encoding_handler.o xml_entity_decl.o xml_entity_reference.o xml_io.o xml_libxml2_hacks.o xml_namespace.o xml_node.o xml_node_set.o xml_processing_instruction.o xml_reader.o xml_relax_ng.o xml_sax_parser.o xml_sax_parser_context.o xml_sax_push_parser.o xml_schema.o xml_syntax_error.o xml_text.o xml_xpath_context.o xslt_stylesheet.o
@@ -144,12 +144,13 @@ DLLIB = $(TARGET).bundle
 EXTSTATIC = 
 STATIC_LIB = 
 
-BINDIR        = $(DESTDIR)$(bindir)
-RUBYCOMMONDIR = $(DESTDIR)$(sitedir)$(target_prefix)
-RUBYLIBDIR    = $(DESTDIR)$(sitelibdir)$(target_prefix)
-RUBYARCHDIR   = $(DESTDIR)$(sitearchdir)$(target_prefix)
-HDRDIR        = $(DESTDIR)$(rubyhdrdir)/ruby$(target_prefix)
-ARCHHDRDIR    = $(DESTDIR)$(rubyhdrdir)/$(arch)/ruby$(target_prefix)
+TIMESTAMP_DIR = .
+BINDIR        = $(bindir)
+RUBYCOMMONDIR = $(sitedir)$(target_prefix)
+RUBYLIBDIR    = $(sitelibdir)$(target_prefix)
+RUBYARCHDIR   = $(sitearchdir)$(target_prefix)
+HDRDIR        = $(rubyhdrdir)/ruby$(target_prefix)
+ARCHHDRDIR    = $(rubyhdrdir)/$(arch)/ruby$(target_prefix)
 
 TARGET_SO     = $(DLLIB)
 CLEANLIBS     = $(TARGET).bundle 
@@ -179,7 +180,7 @@ distclean: clean distclean-so distclean-static distclean-rb-default distclean-rb
 realclean: distclean
 install: install-so install-rb
 
-install-so: $(DLLIB) ./.RUBYARCHDIR.time
+install-so: $(DLLIB) $(TIMESTAMP_DIR)/.RUBYARCHDIR.-.nokogiri.time
 	$(INSTALL_PROG) $(DLLIB) $(RUBYARCHDIR)
 clean-static::
 	-$(Q)$(RM) $(STATIC_LIB)
@@ -189,8 +190,8 @@ pre-install-rb: Makefile
 pre-install-rb-default: Makefile
 pre-install-rb-default:
 	$(ECHO) installing default nokogiri libraries
-./.RUBYARCHDIR.time:
-	$(Q) $(MAKEDIRS) $(RUBYARCHDIR)
+$(TIMESTAMP_DIR)/.RUBYARCHDIR.-.nokogiri.time:
+	$(Q) $(MAKEDIRS) $(@D) $(RUBYARCHDIR)
 	$(Q) $(TOUCH) $@
 
 site-install: site-install-so site-install-rb
@@ -231,7 +232,7 @@ $(DLLIB): $(OBJS) Makefile
 	$(ECHO) linking shared-object nokogiri/$(DLLIB)
 	-$(Q)$(RM) $(@)
 	$(Q) $(LDSHARED) -o $@ $(OBJS) $(LIBPATH) $(DLDFLAGS) $(LOCAL_LIBS) $(LIBS)
-	$(Q) test -z '$(RUBY_CODESIGN)' || codesign -s '$(RUBY_CODESIGN)' -f $@
+	$(Q) $(POSTLINK)
 
 
 

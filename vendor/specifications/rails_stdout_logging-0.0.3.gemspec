@@ -12,8 +12,8 @@ Gem::Specification.new do |s|
   s.description = "Sets Rails to log to stdout"
   s.email = ["david@heroku.com", "jd@heroku.com", "richard@heroku.com"]
   s.homepage = "https://github.com/heroku/rails_stdout_logging"
-  s.rubygems_version = "2.3.0"
+  s.rubygems_version = "2.2.2"
   s.summary = "Overrides Rails' built in logger to send all logs to stdout"
 
-  s.installed_by_version = "2.3.0" if s.respond_to? :installed_by_version
+  s.installed_by_version = "2.2.2" if s.respond_to? :installed_by_version
 end

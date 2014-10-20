@@ -16,10 +16,10 @@ Gem::Specification.new do |s|
   s.files = ["MIT-LICENSE", "README.rdoc", "bin/uuid"]
   s.homepage = "http://github.com/assaf/uuid"
   s.rdoc_options = ["--main", "README.rdoc", "--title", "UUID generator", "--line-numbers"]
-  s.rubygems_version = "2.3.0"
+  s.rubygems_version = "2.2.2"
   s.summary = "UUID generator"
 
-  s.installed_by_version = "2.3.0" if s.respond_to? :installed_by_version
+  s.installed_by_version = "2.2.2" if s.respond_to? :installed_by_version
 
   if s.respond_to? :specification_version then
     s.specification_version = 3

@@ -18,10 +18,10 @@ Gem::Specification.new do |s|
   s.homepage = "https://github.com/codahale/bcrypt-ruby"
   s.licenses = ["MIT"]
   s.rdoc_options = ["--title", "bcrypt-ruby", "--line-numbers", "--inline-source", "--main", "README.md"]
-  s.rubygems_version = "2.3.0"
+  s.rubygems_version = "2.2.2"
   s.summary = "OpenBSD's bcrypt() password hashing algorithm."
 
-  s.installed_by_version = "2.3.0" if s.respond_to? :installed_by_version
+  s.installed_by_version = "2.2.2" if s.respond_to? :installed_by_version
 
   if s.respond_to? :specification_version then
     s.specification_version = 4
