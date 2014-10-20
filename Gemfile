@@ -42,7 +42,9 @@ gem 'rufus-scheduler', '~> 3.0'
 
 # Dynamic table displays
 gem 'jquery-datatables-rails', '~> 2.2'
-
+#gem 'ajax-datatables-rails', '~> 0.2'
+gem 'ajax-datatables-rails', git: 'git://github.com/antillas21/ajax-datatables-rails.git', branch: 'master'
+gem 'kaminari', '~> 0.16.1'
 # Dynamic nested forms
 gem 'cocoon', '~> 1.2'
 

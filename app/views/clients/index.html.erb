@@ -1,6 +1,6 @@
 <h1>Listing clients</h1>
 
-<table id="datatable" class="table">
+<table class="table datatable">
   <thead>
     <tr>
       <th>id</th>
@@ -24,6 +24,16 @@
       </tr>
     <% end %>
   </tbody>
+
+  <tfoot>
+    <tr>
+      <th>id</th>
+      <th>Name</th>
+      <th>Salesforce username</th>
+      <th>Redshift schema</th>
+      <th></th>
+    </tr>
+  </tfoot>
 </table>
 
 <br>

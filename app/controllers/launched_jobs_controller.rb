@@ -4,13 +4,12 @@ class LaunchedJobsController < ApplicationController
   # GET /launched_jobs
   # GET /launched_jobs.json
   def index
-    @launched_jobs = LaunchedJob.all
-
     respond_to do |format|
       format.html # index.html.erb
-      format.json { render json: @launched_jobs }
+      format.json { render json: LaunchedJobDatatable.new(view_context) }
     end
   end
+
 
   # GET /launched_jobs/1
   # GET /launched_jobs/1.json
@@ -26,7 +25,8 @@ class LaunchedJobsController < ApplicationController
     s3_path = @launched_job.log_file
 
     if s3_path.blank?
-      render @launched_job
+      flash[:danger] = "Error! Job log not found."
+      redirect_to @launched_job
     else
       bucket_name = s3_path[/s3:\/\/([\w-]+)\//,1]
       object_name = s3_path[/s3:\/\/[\w-]+\/(.*)/,1]
