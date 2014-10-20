@@ -13,8 +13,8 @@ Gem::Specification.new do |s|
   s.homepage = "http://github.com/rubyzip/rubyzip"
   s.licenses = ["BSD 2-Clause"]
   s.required_ruby_version = Gem::Requirement.new(">= 1.9.2")
-  s.rubygems_version = "2.3.0"
+  s.rubygems_version = "2.2.2"
   s.summary = "rubyzip is a ruby module for reading and writing zip files"
 
-  s.installed_by_version = "2.3.0" if s.respond_to? :installed_by_version
+  s.installed_by_version = "2.2.2" if s.respond_to? :installed_by_version
 end

@@ -14,8 +14,8 @@ Gem::Specification.new do |s|
   s.homepage = "https://github.com/ahoward/systemu"
   s.licenses = ["same as ruby's"]
   s.rubyforge_project = "codeforpeople"
-  s.rubygems_version = "2.3.0"
+  s.rubygems_version = "2.2.2"
   s.summary = "systemu"
 
-  s.installed_by_version = "2.3.0" if s.respond_to? :installed_by_version
+  s.installed_by_version = "2.2.2" if s.respond_to? :installed_by_version
 end

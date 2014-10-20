@@ -17,8 +17,8 @@ Gem::Specification.new do |s|
   s.licenses = ["MIT"]
   s.required_ruby_version = Gem::Requirement.new("~> 2")
   s.rubyforge_project = "envcrypt"
-  s.rubygems_version = "2.3.0"
+  s.rubygems_version = "2.2.2"
   s.summary = "Simple secure encryption/decryption of secret data"
 
-  s.installed_by_version = "2.3.0" if s.respond_to? :installed_by_version
+  s.installed_by_version = "2.2.2" if s.respond_to? :installed_by_version
 end

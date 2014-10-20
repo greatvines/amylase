@@ -13,8 +13,8 @@ Gem::Specification.new do |s|
   s.email = ["pedro@heroku.com", "jd@heroku.com"]
   s.homepage = "https://github.com/heroku/rails_serve_static_assets"
   s.licenses = ["LICENSE"]
-  s.rubygems_version = "2.3.0"
+  s.rubygems_version = "2.2.2"
   s.summary = "Sets serve_static_assets to true so Rails will sere your static assets"
 
-  s.installed_by_version = "2.3.0" if s.respond_to? :installed_by_version
+  s.installed_by_version = "2.2.2" if s.respond_to? :installed_by_version
 end
