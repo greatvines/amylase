@@ -58,7 +58,7 @@ class LaunchedJobDatatable < AjaxDatatablesRails::Base
     # insert query here
     LaunchedJob.includes({ job_spec: :client })
       .references(:job_spec)
-      .order(status: :asc, start_time: :desc)
+      .order(status_priority: :desc, start_time: :desc)
 
   end
 

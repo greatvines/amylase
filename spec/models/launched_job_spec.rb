@@ -9,6 +9,7 @@ RSpec.describe LaunchedJob, :type => :model do
   it { should respond_to(:end_time) }
   it { should respond_to(:status) }
   it { should respond_to(:status_message) }
+  it { should respond_to(:status_priority) }
   it { should respond_to(:result_data) }
   it { should respond_to(:log_file) }
   it { should be_valid }
@@ -21,6 +22,11 @@ RSpec.describe LaunchedJob, :type => :model do
     specify "status has the correct default" do
       expect(@launched_job.status).to eq LaunchedJob::UNKNOWN
     end
+
+    specify "status has the correct priority" do
+      expect(@launched_job.status_priority).to eq LaunchedJob::STATUS_PRIORITY_MAP[@launched_job.status]
+    end
+
   end
 
 

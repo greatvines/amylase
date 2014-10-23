@@ -1,5 +1,6 @@
 class LaunchedJob < ActiveRecord::Base
   after_initialize :defaults, unless: :persisted?
+  before_save :set_status_priority
 
   belongs_to :job_spec
 
@@ -13,8 +14,21 @@ class LaunchedJob < ActiveRecord::Base
 
   STATUS_VALUES = [SUCCESS, ERROR, RUNNING, UNKNOWN]
 
+  STATUS_PRIORITY_MAP = {
+    SUCCESS => 1,
+    ERROR   => 9,
+    RUNNING => 5,
+    UNKNOWN => 10
+  }
+
   validates_inclusion_of :status, in: STATUS_VALUES, allow_nil: false
 
+
+  # Public: The status priority is a simple map between the status and an
+  # integer used to sort launched jobs by priority.
+  def set_status_priority
+    self.status_priority = STATUS_PRIORITY_MAP[self.status]
+  end
 
   # Public: Used to get the total run time of the launched job.  If the job is
   # currently running, it will return the difference between the start time and the
