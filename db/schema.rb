@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141010224146) do
+ActiveRecord::Schema.define(version: 20141023184309) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -143,6 +143,7 @@ ActiveRecord::Schema.define(version: 20141010224146) do
     t.text     "log_file"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "status_priority"
   end
 
   add_index "launched_jobs", ["job_spec_id"], name: "index_launched_jobs_on_job_spec_id", using: :btree
