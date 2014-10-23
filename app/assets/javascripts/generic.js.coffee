@@ -1,2 +1,3 @@
 jQuery ->
   $('.hint a').tooltip()
+

@@ -1,5 +1,14 @@
 jQuery ->
   if $('.datatable-job-summary').length
+    $('#min-start-date').datetimepicker()
+    $('#min-start-date').data("DateTimePicker").setDate(moment().subtract(1,'day'))
+
+    ajax_url = () -> '/launched_jobs.json/?min_start_date='+$('#min-start-date').data("DateTimePicker").getDate().format("YYYY-MM-DD HH:mm:00")
+
+    col_status = 5 # Not a fan of hard-coding the column, but I'm out of good ideas and for now this is only used on one page anyway
+    col_last_search = 5
+
+
     table = $(".datatable-job-summary").DataTable
       pagingType: "full_numbers"
       lengthMenu: [[50, 100, 500], [50, 100, 500]]
@@ -7,9 +16,9 @@ jQuery ->
 
       processing: true
       serverSide: true
-      ajax: $('.datatable-job-summary').data('source')
+      ajax: ajax_url()
       createdRow: (row, data, index) ->
-        switch data[5] # Not a fan of hard-coding the column, but I'm out of ideas
+        switch data[col_status]
           when '<%= LaunchedJob::ERROR %>'
             $('td', row).addClass('danger')
           when '<%= LaunchedJob::UNKNOWN %>'
@@ -26,10 +35,10 @@ jQuery ->
         { width: "6em" },
         null
       ]
-          
 
+    # Put search boxes on each column              
     $('.datatable-job-summary tfoot th').each -> 
-      if $(this).index() < 6
+      if $(this).index() <= col_last_search
         title = $('.datatable-job-summary tfoot th').eq( $(this).index() ).text()
         $(this).html( '<input type="text" placeholder="Search '+title+'" />' )
       else
@@ -51,3 +60,5 @@ jQuery ->
       element = $('input', table.column(colIdx).footer() )
       element.on( 'keyup change', -> delay(250, => table.column(colIdx).search(this.value).draw()))
 
+    $('#min-start-date').on 'focusout change', -> 
+      delay(1000, -> table.ajax.url(ajax_url()).load())

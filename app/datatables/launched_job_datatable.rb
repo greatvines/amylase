@@ -54,9 +54,14 @@ class LaunchedJobDatatable < AjaxDatatablesRails::Base
     end
   end
 
+  def min_start_date
+    @min_start_date ||= options[:min_start_date] || '1900-01-01'
+  end
+
   def get_raw_records
     # insert query here
-    LaunchedJob.includes({ job_spec: :client })
+    LaunchedJob.where('start_time >= ?', min_start_date)
+      .includes({ job_spec: :client })
       .references(:job_spec)
       .order(status_priority: :desc, start_time: :desc)
 
