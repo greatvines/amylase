@@ -45,6 +45,11 @@ gem 'jquery-datatables-rails', '~> 2.2'
 #gem 'ajax-datatables-rails', '~> 0.2'
 gem 'ajax-datatables-rails', git: 'git://github.com/antillas21/ajax-datatables-rails.git', branch: 'master'
 gem 'kaminari', '~> 0.16.1'
+
+# Date-time picker
+gem 'momentjs-rails', '>= 2.8.1'
+gem 'bootstrap3-datetimepicker-rails', '~> 3.1'
+
 # Dynamic nested forms
 gem 'cocoon', '~> 1.2'
 

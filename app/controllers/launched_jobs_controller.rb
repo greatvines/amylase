@@ -6,7 +6,7 @@ class LaunchedJobsController < ApplicationController
   def index
     respond_to do |format|
       format.html # index.html.erb
-      format.json { render json: LaunchedJobDatatable.new(view_context) }
+      format.json { render json: LaunchedJobDatatable.new(view_context, min_start_date: params[:min_start_date]) }
     end
   end
 

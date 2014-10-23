@@ -1,6 +1,23 @@
 <h1>Job Summary</h1>
 
-<table class="table table-hover table-condensed datatable-job-summary", data-source="<%= launched_jobs_path(format: :json) %>">
+<div class="container">
+  <div class="row">
+    <div class="col-md-2">
+      Show jobs started since:
+    </div>
+    <div class="col-md-4">
+      <div class="form-group">
+        <div class="input-group date" id="min-start-date">
+          <input type="text" data-date-format="YYYY-MM-DD HH:MM:00 UTC" class="form-control" />
+          <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<table class="table table-hover table-condensed datatable-job-summary">
   <thead>
     <tr>
       <th>Client</th>
