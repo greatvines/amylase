@@ -18,9 +18,7 @@
         <td><%= client.name %></td>
         <td><%= client.salesforce_username %></td>
         <td><%= client.redshift_schema %></td>
-        <td class="text-right"><%= link_to 'Show', client %> /
-        <%= link_to 'Edit', edit_client_path(client) %> /
-        <%= link_to 'Destroy', client, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        <td class="text-right"> <%= render partial: "shared/row_functions", locals: { obj: client } %></td>
       </tr>
     <% end %>
   </tbody>
@@ -38,4 +36,4 @@
 
 <br>
 
-<%= link_to 'New Client', new_client_path %>
+<%= link_to 'New Client', new_client_path, { class: "btn btn-default" }  %>

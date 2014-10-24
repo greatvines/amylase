@@ -18,9 +18,7 @@
         <td><%= link_to_if(birst_space.client, birst_space.client.try(:name), birst_space.client) %></td>
         <td><%= birst_space.space_type %></td>
         <td><%= birst_space.space_uuid %></td>
-        <td class="text-right"><%= link_to 'Show', birst_space %> /
-        <%= link_to 'Edit', edit_birst_space_path(birst_space) %> /
-        <%= link_to 'Destroy', birst_space, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        <td class="text-right"> <%= render partial: "shared/row_functions", locals: { obj: birst_space } %></td>
       </tr>
     <% end %>
   </tbody>
@@ -38,4 +36,4 @@
 
 <br>
 
-<%= link_to 'New Birst space', new_birst_space_path %>
+<%= link_to 'New Birst space', new_birst_space_path, { class: "btn btn-default" }  %>

@@ -16,9 +16,7 @@
         <td><%= data_source.name %></td>
         <td><%= data_source.birst_filename %></td>
         <td><%= data_source.data_source_type %></td>
-        <td class="text-right"><%= link_to 'Show', data_source %> /
-        <%= link_to 'Edit', edit_data_source_path(data_source) %> /
-        <%= link_to 'Destroy', data_source, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        <td class="text-right"> <%= render partial: "shared/row_functions", locals: { obj: data_source } %></td>
       </tr>
     <% end %>
   </tbody>
@@ -36,4 +34,4 @@
 
 <br>
 
-<%= link_to 'New Data source', new_data_source_path %>
+<%= link_to 'New Data source', new_data_source_path, { class: "btn btn-default" } %>
