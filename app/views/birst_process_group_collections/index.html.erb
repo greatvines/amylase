@@ -22,9 +22,7 @@
             <% end %>
           </ul>
         </td>
-        <td class="text-right"><%= link_to 'Show', birst_process_group_collection %> /
-        <%= link_to 'Edit', edit_birst_process_group_collection_path(birst_process_group_collection) %> /
-        <%= link_to 'Destroy', birst_process_group_collection, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        <td class="text-right"> <%= render partial: "shared/row_functions", locals: { obj: birst_process_group_collection } %></td>
       </tr>
     <% end %>
   </tbody>
@@ -41,4 +39,4 @@
 
 <br>
 
-<%= link_to 'New Birst process group collection', new_birst_process_group_collection_path %>
+<%= link_to 'New Birst process group collection', new_birst_process_group_collection_path, { class: "btn btn-default" } %>

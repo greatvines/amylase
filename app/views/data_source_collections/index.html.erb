@@ -20,9 +20,7 @@
             <% end %>
           </ul>
         </td>
-        <td class="text-right"><%= link_to 'Show', data_source_collection %> /
-        <%= link_to 'Edit', edit_data_source_collection_path(data_source_collection) %> /
-        <%= link_to 'Destroy', data_source_collection, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        <td class="text-right"> <%= render partial: "shared/row_functions", locals: { obj: data_source_collection } %></td>
       </tr>
     <% end %>
   </tbody>
@@ -38,4 +36,4 @@
 
 <br>
 
-<%= link_to 'New Data source collection', new_data_source_collection_path %>
+<%= link_to 'New Data source collection', new_data_source_collection_path, { class: "btn btn-default" } %>

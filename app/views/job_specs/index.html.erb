@@ -3,7 +3,7 @@
 <table class="table datatable">
   <thead>
     <tr>
-      <th>id</th>
+      <th>Client</th>
       <th>Name</th>
       <th>Enabled</th>
       <th>Job Template Type</th>
@@ -15,21 +15,19 @@
   <tbody>
     <% @job_specs.each do |job_spec| %>
       <tr>
-        <td><%= job_spec.id %></td>
+        <td><%= job_spec.client.name %></td>
         <td><%= job_spec.name %></td>
         <td><%= job_spec.enabled %></td>
         <td><%= job_spec.job_template_type %></td>
         <td><%= link_to_if(job_spec.job_schedule_group, job_spec.job_schedule_group.try(:name), job_spec.job_schedule_group) %></td>
-        <td class="text-right"><%= link_to 'Show', job_spec %> /
-        <%= link_to 'Edit', edit_job_spec_path(job_spec) %> /
-        <%= link_to 'Destroy', job_spec, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        <td class="text-right"> <%= render partial: "shared/row_functions", locals: { obj: job_spec } %></td>
       </tr>
     <% end %>
   </tbody>
 
   <tfoot>
     <tr>
-      <th>id</th>
+      <th>Client</th>
       <th>Name</th>
       <th>Enabled</th>
       <th>Job Template Type</th>
@@ -40,8 +38,3 @@
 </table>
 
 <%= link_to 'New Job Spec', new_job_spec_path, { class: "btn btn-default" } %>
-
-<pre>
-  <%= "#{@job_specs.as_json({ include: :job_template }).to_yaml}" %>
-</pre>
-

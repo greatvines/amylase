@@ -16,6 +16,11 @@ module LaunchedJobsHelper
         raw '<span class="glyphicon glyphicon-download"></span>'
       end
     }
+    #{
+      link_to launched_job_path(launched_job_id), :title => 'Show Job', :data => { :toggle => 'tooltip' } do
+        raw '<span class="glyphicon glyphicon-eye-open"></span>'
+      end
+    }
     </div>
     EOF
   end
