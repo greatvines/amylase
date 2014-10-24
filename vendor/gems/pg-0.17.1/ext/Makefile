@@ -13,7 +13,7 @@ ECHO = $(ECHO1:0=@echo)
 srcdir = .
 topdir = /usr/local/var/rbenv/versions/2.1.3/include/ruby-2.1.0
 hdrdir = $(topdir)
-arch_hdrdir = /usr/local/var/rbenv/versions/2.1.3/include/ruby-2.1.0/x86_64-darwin13.0
+arch_hdrdir = /usr/local/var/rbenv/versions/2.1.3/include/ruby-2.1.0/x86_64-darwin14.0
 PATH_SEPARATOR = :
 VPATH = $(srcdir):$(arch_hdrdir)/ruby:$(hdrdir)/ruby
 prefix = $(DESTDIR)/usr/local/var/rbenv/versions/2.1.3
@@ -30,8 +30,8 @@ rubyhdrdir = $(includedir)/$(RUBY_VERSION_NAME)
 vendorarchdir = $(vendorlibdir)/$(sitearch)
 vendorlibdir = $(vendordir)/$(ruby_version)
 vendordir = $(rubylibprefix)/vendor_ruby
-sitearchdir = $(DESTDIR)./.gem.20141020-73396-1k9jqn0
-sitelibdir = $(DESTDIR)./.gem.20141020-73396-1k9jqn0
+sitearchdir = $(DESTDIR)./.gem.20141024-4166-hpkor0
+sitelibdir = $(DESTDIR)./.gem.20141024-4166-hpkor0
 sitedir = $(rubylibprefix)/site_ruby
 rubyarchdir = $(rubylibdir)/$(arch)
 rubylibdir = $(rubylibprefix)/$(ruby_version)
@@ -81,9 +81,9 @@ CCDLFLAGS = -fno-common
 CFLAGS   = $(CCDLFLAGS)  -O3 -Wno-error=shorten-64-to-32  -pipe $(ARCH_FLAG)
 INCFLAGS = -I. -I$(arch_hdrdir) -I$(hdrdir)/ruby/backward -I$(hdrdir) -I$(srcdir)
 DEFS     = 
-CPPFLAGS = -DRUBY_EXTCONF_H=\"$(RUBY_EXTCONF_H)\" -I/usr/local/Cellar/postgresql/9.3.5/include -I/usr/local/var/rbenv/versions/2.1.3/include  -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE -D_DARWIN_UNLIMITED_SELECT -D_REENTRANT $(DEFS) $(cppflags)
+CPPFLAGS = -DRUBY_EXTCONF_H=\"$(RUBY_EXTCONF_H)\" -I/usr/local/Cellar/postgresql/9.3.5_1/include -I/usr/local/var/rbenv/versions/2.1.3/include  -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE -D_DARWIN_UNLIMITED_SELECT -D_REENTRANT $(DEFS) $(cppflags)
 CXXFLAGS = $(CCDLFLAGS) $(cxxflags) $(ARCH_FLAG)
-ldflags  = -L. -L/usr/local/var/rbenv/versions/2.1.3/lib  -fstack-protector -Wl,-rpath,/usr/local/Cellar/postgresql/9.3.5/lib
+ldflags  = -L. -L/usr/local/var/rbenv/versions/2.1.3/lib  -fstack-protector -Wl,-rpath,/usr/local/Cellar/postgresql/9.3.5_1/lib
 dldflags = -Wl,-undefined,dynamic_lookup -Wl,-multiply_defined,suppress 
 ARCH_FLAG = 
 DLDFLAGS = $(ldflags) $(dldflags) $(ARCH_FLAG)
@@ -99,7 +99,7 @@ RUBY_VERSION_NAME = $(RUBY_BASE_NAME)-$(ruby_version)
 RUBYW_BASE_NAME = rubyw
 RUBY_BASE_NAME = ruby
 
-arch = x86_64-darwin13.0
+arch = x86_64-darwin14.0
 sitearch = $(arch)
 ruby_version = 2.1.0
 ruby = $(bindir)/ruby
@@ -120,8 +120,8 @@ TOUCH = exit >
 
 preload = 
 
-libpath = . $(libdir) /usr/local/Cellar/postgresql/9.3.5/lib
-LIBPATH =  -L. -L$(libdir) -L/usr/local/Cellar/postgresql/9.3.5/lib
+libpath = . $(libdir) /usr/local/Cellar/postgresql/9.3.5_1/lib
+LIBPATH =  -L. -L$(libdir) -L/usr/local/Cellar/postgresql/9.3.5_1/lib
 DEFFILE = 
 
 CLEANFILES = mkmf.log
@@ -132,7 +132,7 @@ extout =
 extout_prefix = 
 target_prefix = 
 LOCAL_LIBS = 
-LIBS =  -lpq  -lpthread -ldl -lobjc 
+LIBS =  -lpq  -lpthread -lgmp -ldl -lobjc 
 ORIG_SRCS = gvl_wrappers.c pg.c pg_connection.c pg_errors.c pg_result.c
 SRCS = $(ORIG_SRCS) 
 OBJS = gvl_wrappers.o pg.o pg_connection.o pg_errors.o pg_result.o

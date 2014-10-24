@@ -1,0 +1,20 @@
+jQuery ->
+  if $('.datatable').length
+    table = $(".datatable").DataTable
+      pagingType: "full_numbers"
+      lengthMenu: [[20, 100, -1], [20, 100, 'All']]
+      dom: 'lrtip'
+      order: []
+
+    $('.datatable tfoot th').each -> 
+      title = $('.datatable tfoot th').eq( $(this).index() ).text()
+      $(this).html( '<input type="text" placeholder="Search '+title+'" />' )
+
+
+    table.columns().eq(0).each (colIdx) ->
+      $('input', table.column(colIdx).footer() ).on( 'keyup change', -> table.column(colIdx).search(this.value).draw())
+
+    r = $('.datatable tfoot tr')
+    r.find('th').each -> $(this).css('padding', 8)
+    $('.datatable thead').prepend(r)
+    $('#search_0').css('text-align', 'center')

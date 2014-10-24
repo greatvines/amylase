@@ -1,39 +1,49 @@
-<h1>Listing launched_jobs</h1>
+<h1>Job Summary</h1>
 
-<table id="datatable" class="table">
+<div class="container">
+  <div class="row">
+    <div class="col-md-2">
+      Show jobs started since:
+    </div>
+    <div class="col-md-4">
+      <div class="form-group">
+        <div class="input-group date" id="min-start-date">
+          <input type="text" id="input_min_start_date" data-date-format="YYYY-MM-DD HH:MM:00 UTC" class="form-control" />
+          <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<table class="table table-hover table-condensed datatable-job-summary">
   <thead>
     <tr>
-      <th>Job id</th>
+      <th>Client</th>
       <th>Job Spec</th>
       <th>Job Template Type</th>
       <th>Start time</th>
-      <th>End time</th>
       <th>Run time</th>
       <th>Status</th>
       <th>log</th>
-      <th></th>
     </tr>
   </thead>
 
   <tbody>
-    <% @launched_jobs.each do |launched_job| %>
-      <tr>
-        <td><%= launched_job.id %></td>
-        <td><%= link_to launched_job.job_spec.name, launched_job.job_spec %></td>
-        <td><%= launched_job.job_spec.job_template_type %></td>
-        <td><%= launched_job.start_time %></td>
-        <td><%= launched_job.end_time %></td>
-        <td><%= pretty_print_duration(launched_job.run_time) %></td>
-        <td><%= launched_job.status %></td>
-        <td class="text-center">
-          <%= link_to job_log_path(launched_job.id), :target => '_blank' do %>
-            <span class="glyphicon glyphicon-download"></span>
-          <% end %>
-        </td>
-        <td><%= link_to 'Show', launched_job %></td>
-      </tr>
-    <% end %>
   </tbody>
+
+  <tfoot>
+    <tr>
+      <th>Client</th>
+      <th>Job Spec</th>
+      <th>Job Template Type</th>
+      <th>Start time</th>
+      <th>Run time</th>
+      <th>Status</th>
+      <th>log</th>
+    </tr>
+  </tfoot>
+
 </table>
 
-<br>

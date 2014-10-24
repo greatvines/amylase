@@ -1,0 +1,64 @@
+jQuery ->
+  if $('.datatable-job-summary').length
+    $('#min-start-date').datetimepicker()
+    $('#min-start-date').data("DateTimePicker").setDate(moment().subtract(1,'day'))
+
+    ajax_url = () -> '/launched_jobs.json/?min_start_date='+$('#min-start-date').data("DateTimePicker").getDate().format("YYYY-MM-DD HH:mm:00")
+
+    col_status = 5 # Not a fan of hard-coding the column, but I'm out of good ideas and for now this is only used on one page anyway
+    col_last_search = 5
+
+
+    table = $(".datatable-job-summary").DataTable
+      pagingType: "full_numbers"
+      lengthMenu: [[50, 100, 500], [50, 100, 500]]
+      dom: 'lrtip'
+
+      processing: true
+      serverSide: true
+      ajax: ajax_url()
+      createdRow: (row, data, index) ->
+        switch data[col_status]
+          when '<%= LaunchedJob::ERROR %>'
+            $('td', row).addClass('danger')
+          when '<%= LaunchedJob::UNKNOWN %>'
+            $('td', row).addClass('danger')
+          when '<%= LaunchedJob::RUNNING %>'
+            $('td', row).addClass('info')
+        $('.hint a', row).tooltip()
+      columns: [
+        null,
+        null,
+        null,
+        { width: "13em" },
+        { width: "6em" },
+        { width: "6em" },
+        null
+      ]
+
+    # Put search boxes on each column              
+    $('.datatable-job-summary tfoot th').each -> 
+      if $(this).index() <= col_last_search
+        title = $('.datatable-job-summary tfoot th').eq( $(this).index() ).text()
+        $(this).html( '<input id="input_search_'+$(this).index()+'" type="text" placeholder="Search '+title+'" />' )
+      else
+        $(this).html('')
+
+    # Move column search to the top
+    r = $('.datatable-job-summary tfoot tr')
+    r.find('th').each -> $(this).css('padding', 8)
+    $('.datatable-job-summary thead').prepend(r)
+    $('#search_0').css('text-align', 'center')
+
+    # Redo server-side search when text is entered
+    timer = null
+    delay = (ms, func) -> 
+      clearTimeout(timer)
+      timer = setTimeout(func, ms)
+
+    table.columns().eq(0).each (colIdx) ->
+      element = $('input', table.column(colIdx).footer() )
+      element.on( 'keyup change', -> delay(250, => table.column(colIdx).search(this.value).draw()))
+
+    $('#min-start-date').on 'focusout change', -> 
+      delay(1000, -> table.ajax.url(ajax_url()).load())
