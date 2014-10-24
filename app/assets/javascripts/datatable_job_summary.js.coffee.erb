@@ -40,7 +40,7 @@ jQuery ->
     $('.datatable-job-summary tfoot th').each -> 
       if $(this).index() <= col_last_search
         title = $('.datatable-job-summary tfoot th').eq( $(this).index() ).text()
-        $(this).html( '<input type="text" placeholder="Search '+title+'" />' )
+        $(this).html( '<input id="input_search_'+$(this).index()+'" type="text" placeholder="Search '+title+'" />' )
       else
         $(this).html('')
 
