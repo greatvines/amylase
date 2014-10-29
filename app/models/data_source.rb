@@ -1,4 +1,6 @@
 class DataSource < ActiveRecord::Base
+  nilify_blanks
+
   S3_PATH_REGEX = /\As3:\/\/[\w-]+\/.*/
   DATA_SOURCE_TYPES = %w(RedshiftS3DataSource S3DataSource)
   

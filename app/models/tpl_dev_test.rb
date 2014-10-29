@@ -1,4 +1,6 @@
 class TplDevTest < ActiveRecord::Base
+  nilify_blanks
+
   JOB_SPEC_PERMITTED_ATTRIBUTES = [ :argument ]
   
   validates_presence_of :argument

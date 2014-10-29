@@ -32,6 +32,8 @@ class JobSchedulersController < ApplicationController
         format.html { redirect_to job_scheduler_url(@job_scheduler) }
         format.json { render :show, status: :created, location: job_scheduler_url(@job_scheduler) }
       else
+        flash[:danger] = "Error! There was a problem creating the Scheduler."
+        @job_scheduler.destroy
         format.html { render :new }
         format.json { render json: @job_scheduler.errors, status: :unprocessable_entity }
       end

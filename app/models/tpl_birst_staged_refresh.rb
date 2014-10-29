@@ -1,4 +1,6 @@
 class TplBirstStagedRefresh < ActiveRecord::Base
+  nilify_blanks
+
   JOB_SPEC_PERMITTED_ATTRIBUTES =
     [
       :data_source_collection_id,

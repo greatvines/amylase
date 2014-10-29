@@ -72,6 +72,9 @@ gem 'logging', '~> 1.8'
 # AWS Utilities
 gem 'aws-sdk-v1', '~> 1'
 
+# Save blanks as nil
+gem 'nilify_blanks', '~> 1.1'
+
 group :development, :test do
   gem 'rspec-rails', '~> 3.0'
   gem 'factory_girl_rails', '~> 4.4'
