@@ -150,7 +150,12 @@ class LaunchedJob < ActiveRecord::Base
   #
   # Returns the launched_job instance.
   def set_initial_status
-    self.update(status: RUNNING, start_time: Time.now)
+    if LaunchedJob.where(job_spec: self.job_spec, status: LaunchedJob::RUNNING).size > 0
+      self.update(status: ERROR, start_time: Time.now)
+      raise "JobSpec already running" 
+    else
+      self.update(status: RUNNING, start_time: Time.now)
+    end
   end
 
   # Private: Runs the job specified in the job template.

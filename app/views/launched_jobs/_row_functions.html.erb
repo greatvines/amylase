@@ -1,0 +1,14 @@
+<span class="hint">
+  <%= link_to job_log_path(launched_job_id), :id => 'log', :target => '_blank', :title => 'Download Log', :data => { :toggle => 'tooltip' } do %>
+    <span class="glyphicon glyphicon-download"></span>
+  <% end %>
+  <%= link_to launched_job_path(launched_job_id), :id => 'show', :title => 'Show', :data => { :toggle => 'tooltip' } do %>
+    <span class="glyphicon glyphicon-eye-open"></span>
+  <% end %>
+  <%= link_to launched_job_rerun_path(launched_job_id), :id => 'run_now', :title => 'Rerun Job Now', :data => { :toggle => 'tooltip' } do %>
+    <span class="glyphicon glyphicon-repeat"></span>
+  <% end %>
+  <%#= link_to launched_job_rerun_path(launched_job_id), :id => 'stop_job', :title => 'Stop Job', :data => { :toggle => 'tooltip' } do %>
+    <span class="glyphicon glyphicon-ban-circle"></span>
+  <%# end %>
+</span>

@@ -3,9 +3,7 @@
 require 'rails_helper'
 
 feature "User interacts with the launched job summary page", :js => true do
-
   before do
-
     @clients = []
 
     FactoryGirl.create_list(:client, 2).each do |client|
@@ -32,7 +30,6 @@ feature "User interacts with the launched job summary page", :js => true do
       )
     end
     
-
     Capybara.current_driver = :webkit
     visit launched_jobs_path
   end
@@ -46,34 +43,59 @@ feature "User interacts with the launched job summary page", :js => true do
     expect(page).to have_content 'running'
     expect(page).to have_content 'success'
 
-    # Yes, the columns are hard-coded.  Will need to revisit this whole mess
-    fill_in 'input_search_0', with: @clients[1].name
-    sleep 0.5 # give the page a moment to refresh
+    # Yes, the columns are hard-coded.  Would like to revisit this whole mess
+    fill_in 'input_search_1', with: @clients[1].name
     expect(page).to_not have_content @clients[0].name
 
-    fill_in 'input_search_0', with: ''
-    sleep 0.5 # give the page a moment to refresh
+    fill_in 'input_search_1', with: ''
     expect(page).to have_content @clients[0].name
 
-    fill_in 'input_search_5', with: 'ror'
-    sleep 0.5 # give the page a moment to refresh
+    fill_in 'input_search_6', with: 'ror'
     expect(page).to_not have_content 'success'
 
-    fill_in 'input_search_5', with: ''
-    sleep 0.5 # give the page a moment to refresh
+    fill_in 'input_search_6', with: ''
     expect(page).to have_content 'success'
 
     fill_in 'input_min_start_date', with: (Time.now + 1.day).strftime("%Y-%m-%d")
     page.execute_script("$('#input_min_start_date').blur()")
-    sleep 1
     expect(page).to_not have_content @clients[0].name
     expect(page).to_not have_content @clients[1].name
 
     fill_in 'input_min_start_date', with: (Time.now - 1.day).strftime("%Y-%m-%d")
     page.execute_script("$('#input_min_start_date').blur()")
-    sleep 1
     expect(page).to have_content @clients[0].name
     expect(page).to have_content @clients[1].name
+  end
 
+  context 'Rerunning a job' do
+    before do
+      @launched_job = FactoryGirl.create(:launched_job, :with_tpl_dev_test_job_spec,
+        status: LaunchedJob::ERROR, 
+        start_time: Time.now - 1.minute,
+        end_time: Time.now - 30.seconds
+      )
+    end
+    
+    context 'without the JobScheduler' do
+      scenario 'clicks the Rerun job link' do
+        visit launched_jobs_path
+        within( find('tr', text: @launched_job.job_spec.name) ) { click_link 'run_now' }
+        expect(page).to have_content 'Error! JobScheduler not running'
+      end
+    end
+
+    context 'with the JobScheduler' do
+      before { JobScheduler.new.start_scheduler }
+      after { JobScheduler.find.destroy }
+
+      scenario 'clicks the Rerun job link' do
+        visit launched_jobs_path
+        within( find('tr', text: @launched_job.job_spec.name) ) { click_link 'run_now' }
+        page.document.synchronize do
+          visit current_path
+          expect(find("tr#id#{LaunchedJob.last.id}")).to have_content(/(running|success)/)
+        end
+      end
+    end
   end
 end

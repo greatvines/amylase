@@ -209,4 +209,47 @@ RSpec.describe JobSpecsController, :type => :controller do
       end
     end
   end
+
+  describe 'GET run_now' do
+    before do
+      @job_spec = JobSpec.create! valid_attributes
+      @request.env['HTTP_REFERER'] = "/job_specs/#{@job_spec.id}"
+    end
+
+    context 'scheduler is not running' do
+      it 'redirects back to the show template' do
+        get :run_now, { id: @job_spec.id }, valid_session
+        expect(response).to redirect_to @job_spec
+      end
+    end
+
+    context 'scheduler is running' do
+      before do
+        @job_scheduler = JobScheduler.new
+        @job_scheduler.start_scheduler
+      end
+      after { @job_scheduler.destroy }
+
+      it 'redirects to the launched_jobs index' do
+        get :run_now, { id: @job_spec.id }, valid_session
+        expect(response).to redirect_to launched_jobs_path
+      end
+
+      it 'launches the job now' do
+        expect {
+          get :run_now, { id: @job_spec.id }, valid_session
+        }.to change {
+          @job_scheduler.jobs.size
+        }.by(1)
+      end
+
+      context 'JobSpec already running' do
+        it 'redirects back to the show template' do
+          FactoryGirl.create(:launched_job, job_spec: @job_spec, status: LaunchedJob::RUNNING)
+          get :run_now, { id: @job_spec.id }, valid_session
+          expect(response).to redirect_to @job_spec
+        end
+      end
+    end
+  end
 end

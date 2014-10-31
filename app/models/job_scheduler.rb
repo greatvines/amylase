@@ -120,6 +120,18 @@ class JobScheduler
     end
   end
 
+  # Public: Schedules a specified JobSpec to run immediately.  Will raise
+  # an error if the JobSpec is already running.
+  #
+  # job_spec - A JobSpec instance.
+  #
+  # Returns nothing.
+  def schedule_job_spec_now(job_spec)
+    raise "JobSpec already running" if LaunchedJob.where(job_spec: job_spec, status: LaunchedJob::RUNNING).size > 0
+    @rufus.send('in', '0s', LaunchedJob.new(job_spec: job_spec))
+  end
+
+
   # Public: Unschedules a collection of JobSpecs.  Can also be used to uschedule
   # a single JobSpec instance.  unschedule_job_spec is an alias for this method.
   #

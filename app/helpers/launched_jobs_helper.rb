@@ -8,21 +8,7 @@ module LaunchedJobsHelper
     time.strftime "%Y-%m-%d %H:%M:%S %Z"
   end
 
-  def link_to_log(launched_job_id)
-    <<-EOF.unindent
-    <div class="hint">
-    #{
-      link_to job_log_path(launched_job_id), :target => '_blank', :title => 'Download Log', :data => { :toggle => 'tooltip' } do
-        raw '<span class="glyphicon glyphicon-download"></span>'
-      end
-    }
-    #{
-      link_to launched_job_path(launched_job_id), :title => 'Show Job', :data => { :toggle => 'tooltip' } do
-        raw '<span class="glyphicon glyphicon-eye-open"></span>'
-      end
-    }
-    </div>
-    EOF
+  def row_functions(launched_job_id)
+    render partial: "row_functions", locals: { launched_job_id: launched_job_id }, formats: [:html]
   end
-
 end

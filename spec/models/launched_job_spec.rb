@@ -57,6 +57,12 @@ RSpec.describe LaunchedJob, :type => :model do
       it "sets the start time to now (within 1 sec)" do
         expect { set_initial_status }.to change { @launched_job.start_time }.from(nil).to(be_within(1.0).of(Time.now))
       end
+
+      it 'raises an error if the JobSpec is already running' do
+        FactoryGirl.create(:launched_job, job_spec: @launched_job.job_spec, status: LaunchedJob::RUNNING)
+        expect { set_initial_status }.to raise_error "JobSpec already running"
+      end
+
     end
 
     context "running the job template" do

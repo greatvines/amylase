@@ -5,16 +5,17 @@ Rails.application.routes.draw do
   match '/help', to: 'static_pages#help', via: 'get'
 
   resources :job_specs
+  get 'job_specs/:id/run_now', to: 'job_specs#run_now', as: :job_specs_run_now
+
   resources :tpl_dev_tests, only: [:index, :show, :edit, :update]
 
-  resources :job_schedule_groups do
-#    resources :job_schedules
-  end
+  resources :job_schedule_groups
 
   resource :job_scheduler, only: [:show, :new, :create, :destroy]
 
   resources :launched_jobs, only: [:index, :show]
   get 'launched_jobs/:id/job_log', to: 'launched_jobs#show_job_log', as: :job_log
+  get 'launched_jobs/:id/rerun', to: 'launched_jobs#rerun', as: :launched_job_rerun
 
   resources :clients
   resources :birst_spaces

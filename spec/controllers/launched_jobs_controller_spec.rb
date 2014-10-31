@@ -157,4 +157,10 @@ RSpec.describe LaunchedJobsController, :type => :controller do
     end
   end
 
+  describe 'GET rerun' do
+    it 'redirects to the job_specs/:id/run_now path' do
+      launched_job = FactoryGirl.create(:launched_job, :with_tpl_dev_test_job_spec)
+      get :rerun, { id: launched_job.id }, valid_session
+    end
+  end
 end

@@ -1,6 +1,6 @@
 class LaunchedJobDatatable < AjaxDatatablesRails::Base
 
-  def_delegators :@view, :link_to, :pretty_print_duration, :link_to_log, :format_datetime
+  def_delegators :@view, :link_to, :pretty_print_duration, :row_functions, :format_datetime
 
   # uncomment the appropriate paginator module,
   # depending on gems available in your project.
@@ -12,6 +12,7 @@ class LaunchedJobDatatable < AjaxDatatablesRails::Base
     # list columns inside the Array in string dot notation.
     # Example: 'users.email'
     @sortable_columns ||= [
+      'launched_jobs.id',
       'clients.name',
       'job_specs.name',
       'job_specs.job_template_type',
@@ -26,6 +27,7 @@ class LaunchedJobDatatable < AjaxDatatablesRails::Base
     # list columns inside the Array in string dot notation.
     # Example: 'users.email'
     @searchable_columns ||= [
+      'launched_jobs.id',
       'client.name',
       'job_spec.name',
       'job_spec.job_template_type',
@@ -43,13 +45,14 @@ class LaunchedJobDatatable < AjaxDatatablesRails::Base
       [
         # comma separated list of the values for each cell of a table row
         # example: record.attribute,
-        record.job_spec.client.name,
+        record.id,
+        record.job_spec.client.try(:name),
         record.job_spec.name,
         record.job_spec.job_template_type,
         format_datetime(record.start_time),
         pretty_print_duration(record.run_time),
         record.status,
-        link_to_log(record.id)
+        row_functions(record.id)
       ]
     end
   end

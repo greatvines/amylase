@@ -1,5 +1,5 @@
 class LaunchedJobsController < ApplicationController
-  before_action :set_launched_job, only: [:show, :edit, :update, :destroy, :show_job_log]
+  before_action :set_launched_job, only: [:show, :edit, :update, :destroy, :show_job_log, :rerun]
 
   # GET /launched_jobs
   # GET /launched_jobs.json
@@ -84,6 +84,11 @@ class LaunchedJobsController < ApplicationController
       format.html { redirect_to launched_jobs_url }
       format.json { head :no_content }
     end
+  end
+
+  # GET /launched_jobs/1/rerun
+  def rerun
+    redirect_to job_specs_run_now_path(@launched_job.job_spec.id)
   end
 
   private

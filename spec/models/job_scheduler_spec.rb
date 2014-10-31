@@ -70,5 +70,33 @@ RSpec.describe JobScheduler, :type => :model do
       expect(@job_scheduler.jobs.collect { |j| j[:job_spec_name] }).not_to include 'MyTestSpec'
     end
 
+    it 'can run a JobSpec now (even without a schedule)' do
+      ad_hoc_job_spec = FactoryGirl.create(:job_spec, enabled: false, name: 'ad_hoc')
+      expect {
+        @job_scheduler.schedule_job_spec_now(ad_hoc_job_spec)
+      }.to change {
+        @job_scheduler.jobs.size
+      }.by(1)
+    end
+
+    context 'attempting to run a JobSpec now when one is already running' do
+      before { FactoryGirl.create(:launched_job, job_spec: @job_spec, status: LaunchedJob::RUNNING) }
+
+      it 'fails to run' do
+        expect {
+          @job_scheduler.schedule_job_spec_now(@job_spec) rescue nil
+        }.not_to change {
+          @job_scheduler.jobs.size
+        }
+      end
+
+      it 'raises an error' do
+        expect {
+          @job_scheduler.schedule_job_spec_now(@job_spec)
+        }.to raise_error 'JobSpec already running'
+      end
+
+    end
+
   end
 end
