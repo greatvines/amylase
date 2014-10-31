@@ -21,6 +21,9 @@ class LaunchedJob < ActiveRecord::Base
     UNKNOWN => 10
   }
 
+  class UnableToKillJobNotRunningError < StandardError; end
+  class KilledJobError < StandardError; end
+  
   validates_inclusion_of :status, in: STATUS_VALUES, allow_nil: false
 
 
@@ -84,6 +87,24 @@ class LaunchedJob < ActiveRecord::Base
     end
   end
 
+
+  # Public: This method is used to kill a job.  It first stops the thread
+  # from executing in the JobScheduler and then it closes out the launched
+  # job as it would if it exited normally.
+  #
+  # Returns nothing.
+  def kill_job
+    raise UnableToKillJobNotRunningError unless self.status == RUNNING
+    begin
+      JobScheduler.find.try(:kill_job, self)
+      raise KilledJobError.new 'Job Killed'
+    rescue => err
+      job_error_handler(err)
+    ensure
+      close_job               
+    end
+  end
+  
 
   private
 
@@ -170,8 +191,8 @@ class LaunchedJob < ActiveRecord::Base
   #
   # Returns nothing.
   def job_error_handler(err)
-    @job_log.error error_message(err)
     self.update(status: ERROR, status_message: error_message(err))
+    @job_log.error error_message(err)
     raise err
   end
 

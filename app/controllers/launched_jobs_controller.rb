@@ -1,5 +1,5 @@
 class LaunchedJobsController < ApplicationController
-  before_action :set_launched_job, only: [:show, :edit, :update, :destroy, :show_job_log, :rerun]
+  before_action :set_launched_job, only: [:show, :edit, :update, :destroy, :show_job_log, :rerun, :kill_job]
 
   # GET /launched_jobs
   # GET /launched_jobs.json
@@ -89,6 +89,17 @@ class LaunchedJobsController < ApplicationController
   # GET /launched_jobs/1/rerun
   def rerun
     redirect_to job_specs_run_now_path(@launched_job.job_spec.id)
+  end
+
+  # GET /launched_jobs/1/kill_job
+  def kill_job
+    begin
+      @launched_job.kill_job
+      redirect_to :back
+    rescue => err
+      flash[:danger] = "Error! Unable to kill job: #{err.class.name}: #{err.message}"
+      redirect_to :back
+    end
   end
 
   private

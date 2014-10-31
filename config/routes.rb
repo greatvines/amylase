@@ -16,6 +16,7 @@ Rails.application.routes.draw do
   resources :launched_jobs, only: [:index, :show]
   get 'launched_jobs/:id/job_log', to: 'launched_jobs#show_job_log', as: :job_log
   get 'launched_jobs/:id/rerun', to: 'launched_jobs#rerun', as: :launched_job_rerun
+  get 'launched_jobs/:id/kill_job', to: 'launched_jobs#kill_job', as: :launched_job_kill_job
 
   resources :clients
   resources :birst_spaces

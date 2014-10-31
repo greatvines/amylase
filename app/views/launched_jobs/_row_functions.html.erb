@@ -8,7 +8,10 @@
   <%= link_to launched_job_rerun_path(launched_job_id), :id => 'run_now', :title => 'Rerun Job Now', :data => { :toggle => 'tooltip' } do %>
     <span class="glyphicon glyphicon-repeat"></span>
   <% end %>
-  <%#= link_to launched_job_rerun_path(launched_job_id), :id => 'stop_job', :title => 'Stop Job', :data => { :toggle => 'tooltip' } do %>
-    <span class="glyphicon glyphicon-ban-circle"></span>
-  <%# end %>
+
+  <% if LaunchedJob.find(launched_job_id).try(:status) == LaunchedJob::RUNNING %>
+    <%= link_to launched_job_kill_job_path(launched_job_id), :id => 'kill_job', :title => 'Kill Job', :data => { :toggle => 'tooltip' } do %>
+      <span class="glyphicon glyphicon-ban-circle"></span>
+    <% end %>
+  <% end %>
 </span>

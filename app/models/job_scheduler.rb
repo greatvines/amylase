@@ -192,8 +192,10 @@ class JobScheduler
 
     @rufus.jobs.collect do |job|
       {
+        :job => job,
         :job_spec_id => job.handler.job_spec_id,
         :job_spec_name => job.handler.job_spec_name,
+        :launched_job => job.handler,
         :running => job.running?,
         :last_time => job.last_time,
         :next_time => job.next_time,
@@ -208,6 +210,10 @@ class JobScheduler
     end
   end
 
+
+  def kill_job(launched_job)
+    self.jobs.select { |job| job[:launched_job].id == launched_job.id }.first[:job].kill
+  end
 
   # Public: This is called just prior to shutdown so that the job list
   # can be evaluated after Rufus shuts down (otherwise jobs go away

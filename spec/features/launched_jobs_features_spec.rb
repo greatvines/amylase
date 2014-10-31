@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-feature "User interacts with the launched job summary page", :js => true do
+feature 'User interacts with the launched job summary page', :js => true do
   before do
     @clients = []
 
@@ -36,7 +36,7 @@ feature "User interacts with the launched job summary page", :js => true do
 
   after { Capybara.use_default_driver }
 
-  scenario "searching through the launched jobs" do
+  scenario 'searching through the launched jobs' do
     expect(page).to have_content @clients[0].name
     expect(page).to have_content @clients[1].name
     expect(page).to have_content 'error'
@@ -56,18 +56,18 @@ feature "User interacts with the launched job summary page", :js => true do
     fill_in 'input_search_6', with: ''
     expect(page).to have_content 'success'
 
-    fill_in 'input_min_start_date', with: (Time.now + 1.day).strftime("%Y-%m-%d")
+    fill_in 'input_min_start_date', with: (Time.now + 1.day).strftime('%Y-%m-%d')
     page.execute_script("$('#input_min_start_date').blur()")
     expect(page).to_not have_content @clients[0].name
     expect(page).to_not have_content @clients[1].name
 
-    fill_in 'input_min_start_date', with: (Time.now - 1.day).strftime("%Y-%m-%d")
+    fill_in 'input_min_start_date', with: (Time.now - 1.day).strftime('%Y-%m-%d')
     page.execute_script("$('#input_min_start_date').blur()")
     expect(page).to have_content @clients[0].name
     expect(page).to have_content @clients[1].name
   end
 
-  context 'Rerunning a job' do
+  feature 'rerunning a job' do
     before do
       @launched_job = FactoryGirl.create(:launched_job, :with_tpl_dev_test_job_spec,
         status: LaunchedJob::ERROR, 
@@ -95,6 +95,27 @@ feature "User interacts with the launched job summary page", :js => true do
           visit current_path
           expect(find("tr#id#{LaunchedJob.last.id}")).to have_content(/(running|success)/)
         end
+      end
+    end
+  end
+
+
+  feature 'killing a job' do
+    before do
+      @launched_job = FactoryGirl.create(:launched_job, :with_tpl_dev_test_job_spec,
+        status: LaunchedJob::RUNNING, 
+        start_time: Time.now - 1.minute
+      )
+    end
+
+    scenario 'user clicks the kill job link' do
+      visit launched_jobs_path
+      expect(find("tr#id#{@launched_job.id}")).to have_content(/running/)
+      
+      within( find("tr#id#{@launched_job.id}") ) { click_link 'kill_job' }
+      page.document.synchronize do
+        visit current_path
+        expect(find("tr#id#{@launched_job.id}")).to have_content(/error/)
       end
     end
   end

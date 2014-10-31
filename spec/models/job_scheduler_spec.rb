@@ -13,12 +13,12 @@ RSpec.describe JobScheduler, :type => :model do
   it { should respond_to(:jobs) }
   it { should be_valid }
 
-  it "only allows one instance at a time" do
+  it 'only allows one instance at a time' do
     another_scheduler = JobScheduler.new
     expect(another_scheduler).to eq @job_scheduler
   end
 
-  it "starts up and shuts down" do
+  it 'starts up and shuts down' do
     expect(@job_scheduler.running).to be false
 
     @job_scheduler.start_scheduler
@@ -35,9 +35,9 @@ RSpec.describe JobScheduler, :type => :model do
   end
 
 
-  context "with a job to schedule", :rufus_job => true do
+  context 'with a job to schedule', :rufus_job => true do
     before do 
-      @job_spec = FactoryGirl.create(:job_spec, :schedule_interval_1s, name: "MyTestSpec", enabled: true)
+      @job_spec = FactoryGirl.create(:job_spec, :schedule_interval_1s, name: 'MyTestSpec', enabled: true)
       FactoryGirl.create_list(:job_spec, 2, :schedule_in_1s, enabled: true)
       FactoryGirl.create_list(:job_spec, 3, :schedule_in_1s, enabled: false)
 
@@ -46,19 +46,19 @@ RSpec.describe JobScheduler, :type => :model do
     after { @job_scheduler.destroy }
 
 
-    it "schedules JobSpecs that are enabled" do
+    it 'schedules JobSpecs that are enabled' do
       enabled = JobSpec.where(enabled: true).collect { |j| j.name }
 
       scheduled = @job_scheduler.jobs.collect do |j|
-        j[:job_spec_name] if j[:job_spec_name] != "SchedulerTimeout"
+        j[:job_spec_name] if j[:job_spec_name] != 'SchedulerTimeout'
       end.compact
 
       expect(scheduled).to match_array enabled
     end
 
 
-    it "runs a JobSpec that is enabled" do
-      last_time = lambda { @job_scheduler.jobs.select { |j| j[:job_spec_name] == "MyTestSpec" }.pop[:last_time] }
+    it 'runs a JobSpec that is enabled' do
+      last_time = lambda { @job_scheduler.jobs.select { |j| j[:job_spec_name] == 'MyTestSpec' }.pop[:last_time] }
 
       expect(last_time.call).to be_nil
       @job_scheduler.wait_for_shutdown
@@ -95,8 +95,37 @@ RSpec.describe JobScheduler, :type => :model do
           @job_scheduler.schedule_job_spec_now(@job_spec)
         }.to raise_error 'JobSpec already running'
       end
-
     end
 
+    context 'with a job to be killed' do
+      before do
+        @to_kill_job_spec = FactoryGirl.create(:job_spec, name: 'ToKill')
+      
+        TplDevTest.sleep_seconds = 10
+        @job_scheduler.schedule_job_spec_now(@to_kill_job_spec)
+
+        def to_kill_job
+          @job_scheduler.jobs.select { |job| job[:job_spec_id] == @to_kill_job_spec.id }.first || {}
+        end
+
+        def wait_for(msg, interval = 0.3, max_iter = 10, &condition)
+          iter = 0
+          until condition.call || iter >= max_iter
+            sleep interval
+            iter += 1
+          end
+          raise "#{msg} wait timed out" if iter >= max_iter
+        end
+      end
+
+      after { TplDevTest.sleep_seconds = 0 }
+    
+      it 'can kill the job' do
+        wait_for('job to run') { to_kill_job[:running] }
+
+        @job_scheduler.kill_job(to_kill_job[:launched_job])
+        wait_for('job to be killed') { to_kill_job.size == 0 }
+      end
+    end
   end
 end
