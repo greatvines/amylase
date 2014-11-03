@@ -32,7 +32,7 @@ RSpec.describe JobSpec, :type => :model do
 
   describe "default values" do
     specify "enabled has correct default" do
-      expect(@job_spec.enabled).to eq false
+      expect(@job_spec.enabled).to eq true
     end
   end
 
