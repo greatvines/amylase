@@ -21,7 +21,7 @@ class JobSpec < ActiveRecord::Base
 
 
   def defaults
-    self.enabled = false if self.enabled.nil?
+    self.enabled = true if self.enabled.blank?
   end
 
   def build_job_template(params)
