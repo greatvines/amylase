@@ -1,5 +1,5 @@
 class JobSpecsController < ApplicationController
-  before_action :set_job_spec, only: [:show, :edit, :update, :destroy]
+  before_action :set_job_spec, only: [:show, :edit, :update, :destroy, :run_now]
 
   # GET /job_specs
   def index
@@ -75,6 +75,23 @@ class JobSpecsController < ApplicationController
     end
   end
 
+  # GET /job_specs/1/run_now
+  def run_now
+    job_scheduler = JobScheduler.find
+
+    unless job_scheduler
+      flash[:danger] = "Error! JobScheduler not running."
+      return redirect_to :back
+    end
+
+    begin
+      job_scheduler.schedule_job_spec_now(@job_spec)
+      redirect_to launched_jobs_path
+    rescue => err
+      flash[:danger] = "Error! Job not launched. #{err.class.name}: #{err.message}"
+      redirect_to :back
+    end
+  end
 
   private
     # Use callbacks to share common setup or constraints between actions.

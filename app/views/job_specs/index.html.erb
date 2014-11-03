@@ -15,12 +15,18 @@
   <tbody>
     <% @job_specs.each do |job_spec| %>
       <tr>
-        <td><%= job_spec.client.name %></td>
+        <td><%= job_spec.client.try(:name) %></td>
         <td><%= job_spec.name %></td>
         <td><%= job_spec.enabled %></td>
         <td><%= job_spec.job_template_type %></td>
         <td><%= link_to_if(job_spec.job_schedule_group, job_spec.job_schedule_group.try(:name), job_spec.job_schedule_group) %></td>
-        <td class="text-right"> <%= render partial: "shared/row_functions", locals: { obj: job_spec } %></td>
+        <td class="text-right"> <%= render partial: "shared/row_functions", locals: { obj: job_spec } %>
+          <span class="hint">
+            <%= link_to job_specs_run_now_path(job_spec.id), :id => 'run_now', :title => 'Run Now', :data => { :toggle => 'tooltip' } do %>
+            <span class="glyphicon glyphicon-play"></span>
+            <% end %>
+          </span>
+        </td>
       </tr>
     <% end %>
   </tbody>

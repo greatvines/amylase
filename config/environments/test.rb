@@ -36,4 +36,7 @@ Rails.application.configure do
 
   # Raises error for missing translations
   # config.action_view.raise_on_missing_translations = true
+
+  # Recommendation to fix Capybara tests with AJAX https://github.com/rails/rails/issues/15089
+  config.allow_concurrency = false
 end

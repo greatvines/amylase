@@ -157,4 +157,46 @@ RSpec.describe LaunchedJobsController, :type => :controller do
     end
   end
 
+  describe 'GET rerun' do
+    it 'redirects to the job_specs/:id/run_now path' do
+      launched_job = FactoryGirl.create(:launched_job, :with_tpl_dev_test_job_spec)
+      get :rerun, { id: launched_job.id }, valid_session
+      expect(response).to redirect_to job_specs_run_now_path(launched_job.job_spec.id)
+    end
+  end
+
+  describe 'GET kill_job' do
+    before { @request.env['HTTP_REFERER'] = "/launched_jobs" }
+
+    context 'when the job is running' do
+      before { @launched_job = FactoryGirl.create(:launched_job, :with_tpl_dev_test_job_spec, status: LaunchedJob::RUNNING) }
+      
+      it 'redirects to the launched jobs path' do
+        get :kill_job, { id: @launched_job.id }, valid_session
+        expect(response).to redirect_to launched_jobs_path
+      end
+      it 'kills the job' do
+        get :kill_job, { id: @launched_job.id }, valid_session
+        expect(@launched_job.reload.status).to eq LaunchedJob::ERROR
+        expect(@launched_job.reload.status_message).to match /Job Killed/
+      end
+    end
+
+    context 'when the job is not running' do
+      before { @launched_job = FactoryGirl.create(:launched_job, :with_tpl_dev_test_job_spec, status: LaunchedJob::SUCCESS) }
+
+      it 'redirects to the launched jobs path' do
+        get :kill_job, { id: @launched_job.id }, valid_session
+        expect(response).to redirect_to launched_jobs_path
+      end
+      
+      it 'does not change the status' do
+        expect {
+          get :kill_job, { id: @launched_job.id }, valid_session
+        }.not_to change {
+          @launched_job.reload.status
+        }
+      end
+    end
+  end
 end

@@ -1,14 +1,14 @@
 <% model_type = obj.class.name.underscore %>
-<div class="hint">
-  <%= link_to obj, :title => 'Show', :data => { :toggle => 'tooltip' } do %>
+<span class="hint">
+  <%= link_to obj, :id => 'show', :title => 'Show', :data => { :toggle => 'tooltip' } do %>
     <span class="glyphicon glyphicon-eye-open"></span>
   <% end %>
 
-  <%= link_to send("edit_#{model_type}_path", obj), :title => 'Edit', :data => { :toggle => 'tooltip' } do %>
+  <%= link_to send("edit_#{model_type}_path", obj), :id => 'edit', :title => 'Edit', :data => { :toggle => 'tooltip' } do %>
     <span class="glyphicon glyphicon-pencil"></span>
   <% end %>
 
-  <%= link_to obj, method: :delete, title: 'Destroy', data: { toggle: 'tooltip', confirm: 'Are you want destroy this record?' } do %>
+  <%= link_to obj, :method => :delete, :id => 'destroy', title: 'Destroy', data: { toggle: 'tooltip', confirm: 'Are you want destroy this record?' } do %>
     <span class="glyphicon glyphicon-remove"></span>
   <% end %>
-</div>
+</span>

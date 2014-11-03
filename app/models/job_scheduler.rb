@@ -120,6 +120,18 @@ class JobScheduler
     end
   end
 
+  # Public: Schedules a specified JobSpec to run immediately.  Will raise
+  # an error if the JobSpec is already running.
+  #
+  # job_spec - A JobSpec instance.
+  #
+  # Returns nothing.
+  def schedule_job_spec_now(job_spec)
+    raise "JobSpec already running" if LaunchedJob.where(job_spec: job_spec, status: LaunchedJob::RUNNING).size > 0
+    @rufus.send('in', '0s', LaunchedJob.new(job_spec: job_spec))
+  end
+
+
   # Public: Unschedules a collection of JobSpecs.  Can also be used to uschedule
   # a single JobSpec instance.  unschedule_job_spec is an alias for this method.
   #
@@ -180,8 +192,10 @@ class JobScheduler
 
     @rufus.jobs.collect do |job|
       {
+        :job => job,
         :job_spec_id => job.handler.job_spec_id,
         :job_spec_name => job.handler.job_spec_name,
+        :launched_job => job.handler,
         :running => job.running?,
         :last_time => job.last_time,
         :next_time => job.next_time,
@@ -196,6 +210,10 @@ class JobScheduler
     end
   end
 
+
+  def kill_job(launched_job)
+    self.jobs.select { |job| job[:launched_job].id == launched_job.id }.first[:job].kill
+  end
 
   # Public: This is called just prior to shutdown so that the job list
   # can be evaluated after Rufus shuts down (otherwise jobs go away
