@@ -17,7 +17,14 @@ RSpec.describe TplBirstStagedRefresh, :type => :model do
   it { should have_one(:client).through(:job_spec) }
 
   context 'with a full job_spec' do
-    before { @tpl = FactoryGirl.create(:tpl_birst_staged_refresh, :with_job_spec) }
+    before do
+      created_template = FactoryGirl.create(:tpl_birst_staged_refresh, :with_job_spec)
+      @launched_job = FactoryGirl.build(:launched_job, job_spec: created_template.job_spec)
+      @launched_job.send(:initialize_job)
+
+      # Need to reference the template instance via the launched job so it has the ability to update status
+      @tpl = @launched_job.job_spec.job_template
+    end
 
     context 'with default staging and production spaces (inherited from client)' do
       it 'returns the client production space' do
@@ -65,6 +72,17 @@ RSpec.describe TplBirstStagedRefresh, :type => :model do
           expect(@tpl).to receive(:process_space)
           expect(@tpl).to receive(:copy_space)
           expect(@tpl).to receive(:swap_spaces)
+
+          run_template
+        end
+
+        it 'updates the status along the way' do
+          expect(@launched_job).to receive(:update).with(status_message: 'deleting all staging data')
+          expect(@launched_job).to receive(:update).with(status_message: 'uploading external data')
+          expect(@launched_job).to receive(:update).with(status_message: 'extracting salesforce')
+          expect(@launched_job).to receive(:update).with(status_message: 'processing space')
+          expect(@launched_job).to receive(:update).with(status_message: 'copying catalog to production')
+          expect(@launched_job).to receive(:update).with(status_message: 'swapping staging/production')
 
           run_template
         end
