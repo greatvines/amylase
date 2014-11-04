@@ -50,11 +50,19 @@ class TplBirstStagedRefresh < ActiveRecord::Base
       ds.initialize_data_source_type(opts)
     end
 
+    launched_job.update(status_message: 'deleting all staging data')
     delete_all_data(staging_space_uuid)
+
+    launched_job.update(status_message: 'uploading external data')
     upload_data_sources(staging_space_uuid, data_source_list)
+
+    launched_job.update(status_message: 'extracting salesforce')
     extract_space(staging_space_uuid)
+
+    launched_job.update(status_message: 'processing space')
     process_space(staging_space_uuid, process_groups: self.birst_process_groups.collect { |g| g.name })
 
+    launched_job.update(status_message: 'copying catalog to production')
     copy_space(
       from_id:         production_space_uuid,
       to_id:           staging_space_uuid, 
@@ -69,6 +77,7 @@ class TplBirstStagedRefresh < ActiveRecord::Base
       wait_timeout:    "10m"
     )    
 
+    launched_job.update(status_message: 'swapping staging/production')
     swap_spaces(production_space_uuid, staging_space_uuid)
   end
 end
