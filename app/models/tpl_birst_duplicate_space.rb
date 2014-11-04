@@ -1,4 +1,6 @@
 class TplBirstDuplicateSpace < ActiveRecord::Base
+  nilify_blanks
+
   JOB_SPEC_PERMITTED_ATTRIBUTES = 
     [
       :from_space_id_str, 

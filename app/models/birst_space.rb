@@ -1,4 +1,6 @@
 class BirstSpace < ActiveRecord::Base
+  nilify_blanks
+
   after_initialize :defaults, unless: :persisted?
   SPACE_TYPES = %w(production staging uat development master other)
   SPACE_UUID_REGEX = /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/

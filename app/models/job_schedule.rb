@@ -1,4 +1,6 @@
 class JobSchedule < ActiveRecord::Base
+  nilify_blanks
+
   SCHEDULE_METHODS = %w(cron at interval in)
 
   belongs_to :job_schedule_group
@@ -28,8 +30,17 @@ class JobSchedule < ActiveRecord::Base
   def rufus_options
     opts = {}
     [:first_at, :last_at, :number_of_times].each do |opt|
-      opts[opt] = self.send(opt) if self.send(opt)
+      opts[opt] = self.send(opt) if self.send(opt).present?
     end
+
+    # rufus gives an error if first_at is in the past, so drop it
+    opts.delete(:first_at) if opts[:first_at].present? ? Rufus::Scheduler.parse(opts[:first_at]) < Time.now : false    
+
+    # set a skip flag if last_at is in the past
+    if opts[:last_at].present?
+      opts[:_skip] = true if Rufus::Scheduler.parse(opts[:last_at]) < Time.now
+    end
+
     opts
   end
 

@@ -40,4 +40,55 @@ RSpec.describe JobSchedule, :type => :model do
 
   it { should be_valid }
 
+  describe 'rufus options' do
+    shared_examples 'rufus non-blank options' do
+      it 'only returns non-blank options' do
+        subject.rufus_options.each do |k,v|
+          expect(v).to_not be_blank
+        end
+      end
+    end
+
+    shared_examples 'a non-skipped schedule' do
+      it 'does not include the skip option' do
+        expect(subject.rufus_options.keys).not_to include :_skip
+      end
+    end
+
+    context 'base model' do
+      it_behaves_like 'rufus non-blank options'
+      it_behaves_like 'a non-skipped schedule'
+    end
+
+    context 'with first_at populated in the future' do
+      before { @job_schedule.first_at = (Time.now + 1.hour).strftime('%Y-%m-%d %H:%M:%S') }
+      it_behaves_like 'rufus non-blank options'
+      it_behaves_like 'a non-skipped schedule'
+    end
+
+    context 'with last_at populated in the future' do
+      before { @job_schedule.last_at = (Time.now + 1.hour).strftime('%Y-%m-%d %H:%M:%S') }
+      it_behaves_like 'rufus non-blank options'
+      it_behaves_like 'a non-skipped schedule'
+    end
+
+    context 'with first_at populated in the past' do
+      before { @job_schedule.first_at = (Time.now - 1.hour).strftime('%Y-%m-%d %H:%M:%S') }
+      it_behaves_like 'a non-skipped schedule'
+
+      it 'should not return the first_at option' do
+        expect(@job_schedule.rufus_options.keys).not_to include :first_at
+      end
+    end
+
+    context 'with last_at populated in the past' do
+      before { @job_schedule.last_at = (Time.now - 1.hour).strftime('%Y-%m-%d %H:%M:%S') }
+      it_behaves_like 'rufus non-blank options'
+
+      it 'includes the skip option' do
+        expect(@job_schedule.rufus_options.keys).to include :_skip
+      end
+    end
+  end
+
 end

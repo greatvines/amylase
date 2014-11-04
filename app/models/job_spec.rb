@@ -1,4 +1,6 @@
 class JobSpec < ActiveRecord::Base
+  nilify_blanks
+
   after_initialize :defaults, unless: :persisted?
 
   job_template_types_prod = %w(TplBirstSoapGenericCommand TplBirstDuplicateSpace TplBirstStagedRefresh)

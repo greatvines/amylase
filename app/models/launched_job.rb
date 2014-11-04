@@ -1,4 +1,6 @@
 class LaunchedJob < ActiveRecord::Base
+  nilify_blanks
+
   after_initialize :defaults, unless: :persisted?
   before_save :set_status_priority
 

@@ -113,8 +113,7 @@ class JobScheduler
       job_spec.job_template
       opts = job_schedule.rufus_options
 
-      opts.delete(:first_at) if opts[:first_at] ? opts[:first_at] < Time.now : false
-      return if opts[:last_at] ? opts[:last_at] < Time.now : false
+      return if opts[:_skip]
 
       @rufus.send(job_schedule.schedule_method, job_schedule.schedule_time, LaunchedJob.new(job_spec: job_spec), opts)
     end
