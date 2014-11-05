@@ -1,6 +1,6 @@
 class LaunchedJobDatatable < AjaxDatatablesRails::Base
 
-  def_delegators :@view, :link_to, :pretty_print_duration, :row_functions, :format_datetime, :truncate
+  def_delegators :@view, :link_to, :link_to_if, :pretty_print_duration, :row_functions, :format_datetime, :truncate
 
   # uncomment the appropriate paginator module,
   # depending on gems available in your project.
@@ -46,8 +46,8 @@ class LaunchedJobDatatable < AjaxDatatablesRails::Base
         # comma separated list of the values for each cell of a table row
         # example: record.attribute,
         record.id,
-        record.job_spec.client.try(:name),
-        record.job_spec.name,
+        link_to_if(record.job_spec.client, record.job_spec.client.try(:name),  record.job_spec.client),
+        link_to(record.job_spec.name, record.job_spec),
         format_datetime(record.start_time),
         pretty_print_duration(record.run_time),
         truncate(record.status_message, length: 30),
