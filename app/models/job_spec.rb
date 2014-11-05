@@ -1,6 +1,4 @@
 class JobSpec < ActiveRecord::Base
-
-  after_initialize :defaults, unless: :persisted?
   nilify_blanks
 
   job_template_types_prod = %w(TplBirstSoapGenericCommand TplBirstDuplicateSpace TplBirstStagedRefresh)
@@ -21,10 +19,6 @@ class JobSpec < ActiveRecord::Base
 
   has_many :launched_jobs
 
-
-  def defaults
-    self.enabled = true if self.enabled.nil?
-  end
 
   def build_job_template(params)
     raise "Unknown job_template_type: #{job_template_type}" unless JOB_TEMPLATE_TYPES.include?(job_template_type)
