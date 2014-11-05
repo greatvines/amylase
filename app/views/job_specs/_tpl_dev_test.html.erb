@@ -1,1 +1,5 @@
-Testing
+<%= f.simple_fields_for :job_template_attributes, form_job_template_object(@job_spec, 'TplDevTest') do |tpl| %>
+  <%= tpl.input :id, as: :hidden, input_html: { name: 'job_spec[tpl_dev_test][id]' } %>
+  <%= tpl.input :sleep_seconds %>
+  <%= tpl.input :argument %>
+<% end %>
