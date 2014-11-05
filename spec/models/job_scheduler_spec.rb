@@ -100,8 +100,8 @@ RSpec.describe JobScheduler, :type => :model do
     context 'with a job to be killed' do
       before do
         @to_kill_job_spec = FactoryGirl.create(:job_spec, name: 'ToKill')
-      
-        TplDevTest.sleep_seconds = 10
+        @to_kill_job_spec.job_template.sleep_seconds = 10
+        
         @job_scheduler.schedule_job_spec_now(@to_kill_job_spec)
 
         def to_kill_job
@@ -118,8 +118,6 @@ RSpec.describe JobScheduler, :type => :model do
         end
       end
 
-      after { TplDevTest.sleep_seconds = 0 }
-    
       it 'can kill the job' do
         wait_for('job to run') { to_kill_job[:running] }
 

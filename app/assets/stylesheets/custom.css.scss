@@ -19,6 +19,11 @@ html {
 }
 
 body {
+  background-color: #fff;
+  color: #333;
+  font-family: verdana, arial, helvetica, sans-serif;
+  font-size: 12px;
+  line-height: 18px;
   padding-top: 60px;
 }
 
@@ -38,6 +43,12 @@ textarea {
 }
 
 /* typography */
+
+a {
+  &:hover {
+    text-decoration: none
+  }
+}
 
 h1, h2, h3, h4, h5, h6 {
   line-height: 1;
@@ -59,9 +70,21 @@ h2 {
   color: $gray-light;
 }
 
-p {
-  font-size: 1.1em;
-  line-height: 1.7em;
+p, ol, ul, td, a {
+  font-family: verdana, arial, helvetica, sans-serif;
+  font-size: 13px;
+  line-height: 18px;
+}
+
+td {
+  font-size: 11px;
+  a { font-size: 11px; }
+}
+
+pre {
+  background-color: #eee;
+  padding: 10px;
+  font-size: 11px;
 }
 
 /* header */

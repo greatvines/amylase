@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141105165053) do
+ActiveRecord::Schema.define(version: 20141105222442) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -180,9 +180,10 @@ ActiveRecord::Schema.define(version: 20141105165053) do
   add_index "tpl_birst_staged_refreshes", ["staging_space_id"], name: "index_tpl_birst_staged_refreshes_on_staging_space_id", using: :btree
 
   create_table "tpl_dev_tests", force: true do |t|
-    t.string   "argument",   null: false
+    t.text     "argument"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "sleep_seconds", default: 0
   end
 
 end
