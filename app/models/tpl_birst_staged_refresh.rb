@@ -3,6 +3,7 @@ class TplBirstStagedRefresh < ActiveRecord::Base
 
   JOB_SPEC_PERMITTED_ATTRIBUTES =
     [
+      :id,
       :data_source_collection_id,
       :birst_process_group_collection_id,
       :production_space_id,

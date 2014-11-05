@@ -1,7 +1,7 @@
 class JobSpec < ActiveRecord::Base
-  nilify_blanks
 
   after_initialize :defaults, unless: :persisted?
+  nilify_blanks
 
   job_template_types_prod = %w(TplBirstSoapGenericCommand TplBirstDuplicateSpace TplBirstStagedRefresh)
   job_template_types_test = %w(TplDevTest)
@@ -14,7 +14,7 @@ class JobSpec < ActiveRecord::Base
   validates_presence_of :name
 
   belongs_to :job_template, polymorphic: true, dependent: :destroy, inverse_of: :job_spec
-  accepts_nested_attributes_for :job_template, reject_if: :all_blank
+  accepts_nested_attributes_for :job_template
 
   belongs_to :job_schedule_group
   belongs_to :client
@@ -23,7 +23,7 @@ class JobSpec < ActiveRecord::Base
 
 
   def defaults
-    self.enabled = true if self.enabled.blank?
+    self.enabled = true if self.enabled.nil?
   end
 
   def build_job_template(params)

@@ -101,13 +101,17 @@ class JobSpecsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def job_spec_params
-      tpl_attributes = (
-        TplBirstSoapGenericCommand::JOB_SPEC_PERMITTED_ATTRIBUTES +
-        TplBirstDuplicateSpace::JOB_SPEC_PERMITTED_ATTRIBUTES +
-        TplBirstStagedRefresh::JOB_SPEC_PERMITTED_ATTRIBUTES
-      )
 
-      params.require(:job_spec).permit(:name, :enabled, :job_template_type, :job_template_id, :job_schedule_group_id, :client_id, job_template_attributes: tpl_attributes.uniq)
+      # Some parameters may share the same name with different templates.  The form
+      # needs unique names for each template, so we store those shared parameters
+      # in a separate part of the parameter hash and then merge it back into the
+      # standard location once the job template type has been established.
+      if params[:job_spec][:job_template_attributes]
+        params[:job_spec][:job_template_attributes].merge!(params[:job_spec][params[:job_spec][:job_template_type].underscore])
+      end
+      
+      params.require(:job_spec).permit(:name, :enabled, :job_template_type, :job_template_id, :job_schedule_group_id, :client_id, 
+        job_template_attributes: "#{params[:job_spec][:job_template_type]}::JOB_SPEC_PERMITTED_ATTRIBUTES".constantize)
     end
 
 end
