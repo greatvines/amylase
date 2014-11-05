@@ -1,7 +1,7 @@
 class TplBirstSoapGenericCommand < ActiveRecord::Base
   nilify_blanks
 
-  JOB_SPEC_PERMITTED_ATTRIBUTES = [:command, :argument_json]
+  JOB_SPEC_PERMITTED_ATTRIBUTES = [:id, :command, :argument_json]
 
   validates_presence_of :command
   has_one :job_spec, as: :job_template

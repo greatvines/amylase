@@ -1,4 +1,5 @@
 <%= f.simple_fields_for :job_template_attributes, form_job_template_object(@job_spec, 'TplBirstSoapGenericCommand') do |tpl| %>
+  <%= tpl.input :id, as: :hidden, input_html: { name: 'job_spec[tpl_birst_soap_generic_command][id]' } %>
   <%= tpl.input :command %>
   <%= tpl.input :argument_json %>
 <% end %>

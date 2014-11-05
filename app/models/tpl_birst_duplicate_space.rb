@@ -3,6 +3,7 @@ class TplBirstDuplicateSpace < ActiveRecord::Base
 
   JOB_SPEC_PERMITTED_ATTRIBUTES = 
     [
+      :id,
       :from_space_id_str, 
       :to_space_name, 
       :with_membership, 
@@ -20,9 +21,9 @@ class TplBirstDuplicateSpace < ActiveRecord::Base
   after_initialize :defaults, unless: :persisted?
 
   def defaults
-    self.with_membership = true if self.with_membership.blank?
-    self.with_data = true if self.with_data.blank?
-    self.with_datastore = true if self.with_datastore.blank?
+    self.with_membership = true if self.with_membership.nil?
+    self.with_data = true if self.with_data.nil?
+    self.with_datastore = true if self.with_datastore.nil?
   end
 
   extend Amylase::JobInitializers

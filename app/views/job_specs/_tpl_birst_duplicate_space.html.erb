@@ -1,4 +1,5 @@
 <%= f.simple_fields_for :job_template_attributes, form_job_template_object(@job_spec, 'TplBirstDuplicateSpace') do |tpl| %>
+  <%= tpl.input :id, as: :hidden, input_html: { name: 'job_spec[tpl_birst_duplicate_space][id]' } %>
   <%= tpl.input :from_space_id_str %>
   <%= tpl.input :to_space_name %>
 
