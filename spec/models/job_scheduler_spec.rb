@@ -108,7 +108,7 @@ RSpec.describe JobScheduler, :type => :model do
           @job_scheduler.jobs.select { |job| job[:job_spec_id] == @to_kill_job_spec.id }.first || {}
         end
 
-        def wait_for(msg, interval = 0.3, max_iter = 10, &condition)
+        def wait_for(msg, interval = 0.3, max_iter = 20, &condition)
           iter = 0
           until condition.call || iter >= max_iter
             sleep interval

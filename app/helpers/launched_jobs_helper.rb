@@ -9,6 +9,7 @@ module LaunchedJobsHelper
   end
 
   def truncate_status_message(status_message)
+    return '' unless status_message
     truncate(status_message.gsub(/\A\s*Backtrace:\s*/,''), length: 40)
   end
   
