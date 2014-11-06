@@ -1,5 +1,5 @@
-<h1>JobSpecs#show</h1>
-<p>Find me in app/views/job_specs/show.html.erb</p>
+<% provide(:title, 'Job Spec') %>
+<h1> <%= @job_spec.name %> </h1>
 
 <%= link_to 'Run now', job_specs_run_now_path(@job_spec.id) %>
 

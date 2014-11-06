@@ -88,20 +88,35 @@ pre {
 }
 
 /* header */
+.navbar {
+  background-color: $gray-lighter;
+  a {
+    color: $gray-light;
+    &:hover {
+      color: $gray-dark;
+    }
+  }
+  .active {
+    background-color: lighten($gray-light, 40%);
+    a {
+      &:hover {
+        background-color: lighten($gray-light, 40%);
+      }
+    }
+    
+  }
+}
+
 
 #logo {
   float: left;
-  margin-right: 10px;
   font-size: 1.7em;
-  color: #fff;
   text-transform:uppercase;
-  letter-spacing: -1px;
-  padding-top: 9px;
+  letter-spacing: -2px;
   font-weight: bold;
   line-height: 1;
   &:hover {
-    color: #fff;
-    text-decoration: none;
+    color: $gray-light;
   }
 }
 
