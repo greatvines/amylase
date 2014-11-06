@@ -8,6 +8,10 @@ module LaunchedJobsHelper
     time.strftime "%Y-%m-%d %H:%M:%S %Z"
   end
 
+  def truncate_status_message(status_message)
+    truncate(status_message.gsub(/\A\s*Backtrace:\s*/,''), length: 40)
+  end
+  
   def row_functions(launched_job_id)
     render partial: "row_functions", locals: { launched_job_id: launched_job_id }, formats: [:html]
   end
