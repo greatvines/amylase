@@ -1,6 +1,6 @@
 class LaunchedJobDatatable < AjaxDatatablesRails::Base
 
-  def_delegators :@view, :link_to, :link_to_if, :pretty_print_duration, :row_functions, :format_datetime, :truncate
+  def_delegators :@view, :link_to, :link_to_if, :pretty_print_duration, :row_functions, :format_datetime, :truncate_status_message
 
   # uncomment the appropriate paginator module,
   # depending on gems available in your project.
@@ -50,7 +50,7 @@ class LaunchedJobDatatable < AjaxDatatablesRails::Base
         link_to(record.job_spec.name, record.job_spec),
         format_datetime(record.start_time),
         pretty_print_duration(record.run_time),
-        truncate(record.status_message, length: 30),
+        truncate_status_message(record.status_message),
         record.status,
         row_functions(record.id)
       ]
