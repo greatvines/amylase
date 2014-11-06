@@ -1,7 +1,7 @@
 jQuery ->
   if $('.datatable-job-summary').length
     $('#min-start-date').datetimepicker()
-    $('#min-start-date').data("DateTimePicker").setDate(moment().subtract(1,'day'))
+    $('#min-start-date').data("DateTimePicker").setDate(moment.utc().subtract(1,'day'))
 
     ajax_url = () -> '/launched_jobs.json/?min_start_date='+$('#min-start-date').data("DateTimePicker").getDate().format("YYYY-MM-DD HH:mm:00")
 
