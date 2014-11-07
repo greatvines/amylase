@@ -50,13 +50,13 @@ data_sources:
     sslmode: <%= ENV['AMYLASE_REDSHIFT_S3_SSLMODE'] %>
 
 
-# Some parameters only needed during test (set values in settings.local.yml)
+# Some parameters only needed during test (set these values in settings.local.yml, the values given here are examples only)
 test:
   # Location of an s3 file to test getting data from s3
-  s3_file: 
+  s3_file: s3://amylase/test/random.txt
 
   # Query to run against Redshift to test connection (should be relatively small, but contain detailed columns and multiple rows)
-  redshift_query: 
+  redshift_query: select * from @redshift_schema.sales limit 1000
 
   # Redshift schema to use with the query
-  redshift_schema:
+  redshift_schema: mysalesschema
