@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe JobScheduler, :type => :model do
-  before { @job_scheduler = JobScheduler.new timeout: 2 }
+  before { @job_scheduler = JobScheduler.new }
   after { @job_scheduler.destroy }
   subject { @job_scheduler }
 
@@ -19,6 +19,11 @@ RSpec.describe JobScheduler, :type => :model do
   end
 
   it 'starts up and shuts down' do
+
+    # Want a different scheduler with a timeout for this test
+    @job_scheduler.destroy
+    @job_scheduler = JobScheduler.new timeout: 1
+
     expect(@job_scheduler.running).to be false
 
     @job_scheduler.start_scheduler
@@ -43,7 +48,7 @@ RSpec.describe JobScheduler, :type => :model do
 
       @job_scheduler.start_scheduler
     end
-    after { @job_scheduler.destroy }
+#    after { @job_scheduler.destroy }
 
 
     it 'schedules JobSpecs that are enabled' do
@@ -61,8 +66,7 @@ RSpec.describe JobScheduler, :type => :model do
       last_time = lambda { @job_scheduler.jobs.select { |j| j[:job_spec_name] == 'MyTestSpec' }.pop[:last_time] }
 
       expect(last_time.call).to be_nil
-      @job_scheduler.wait_for_shutdown
-      expect(last_time.call).to be_a(Time)
+      SpecSupport.wait_for('enabled JobSpec never ran') { last_time.call.is_a? Time }
     end
 
     it 'can unschedule a job_spec' do
@@ -97,6 +101,18 @@ RSpec.describe JobScheduler, :type => :model do
       end
     end
 
+    context 'when the scheduled job runs again' do
+      before do
+        SpecSupport.wait_for('job to run the first time') { LaunchedJob.where(job_spec: @job_spec).count > 0 }
+        @first_launched_job_id = LaunchedJob.last.id
+      end
+
+      it 'creates a new launched job instance' do
+        SpecSupport.wait_for('job to run the second time') { LaunchedJob.where(job_spec: @job_spec).count > 1 }
+        expect(LaunchedJob.last.id).to_not eq @first_launched_job_id
+      end
+    end
+
     context 'with a job to be killed' do
       before do
         @to_kill_job_spec = FactoryGirl.create(:job_spec, name: 'ToKill')
@@ -107,22 +123,13 @@ RSpec.describe JobScheduler, :type => :model do
         def to_kill_job
           @job_scheduler.jobs.select { |job| job[:job_spec_id] == @to_kill_job_spec.id }.first || {}
         end
-
-        def wait_for(msg, interval = 0.3, max_iter = 20, &condition)
-          iter = 0
-          until condition.call || iter >= max_iter
-            sleep interval
-            iter += 1
-          end
-          raise "#{msg} wait timed out" if iter >= max_iter
-        end
       end
 
       it 'can kill the job' do
-        wait_for('job to run') { to_kill_job[:running] }
+        SpecSupport.wait_for('job to run') { to_kill_job[:running] }
 
         @job_scheduler.kill_job(to_kill_job[:launched_job])
-        wait_for('job to be killed') { to_kill_job.size == 0 }
+        SpecSupport.wait_for('job to be killed') { to_kill_job.size == 0 }
       end
     end
   end

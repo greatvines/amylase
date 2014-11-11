@@ -45,29 +45,55 @@ class LaunchedJob < ActiveRecord::Base
     (self.end_time || Time.now) - self.start_time
   end
 
-  # Public: This method allows the LaunchedJob class to act as a job handler
-  # for the Rufus scheduler.  At present it is just a wrapper for run_job,
-  # but it may be worthwhile to make some information stored in rjob available
-  # to the launched_job.
-  #
-  # rjob - A Rufus job object that contains various metadata about the status
-  #        of a job.
-  # time - The time when the job got cleared for triggering.
-  #
-  # Returns nothing.
-  def call(rjob, time)
-    # Since Rufus scheduler starts a new thread for each job, we must manage the connection
-    # pool ourselves.
-    # http://stackoverflow.com/questions/11248808/connection-pool-issue-with-activerecord-objects-in-rufus-scheduler
-    ActiveRecord::Base.connection_pool.with_connection do
-      run_job
+
+  # Public: The JobHandler class acts as the job handler LaunchedJobs
+  # via the Rufus scheduler.  When a job is initially added to the
+  # Rufus scheduler (so at startup or when there is a change to the
+  # JobSpec), a new instance of this JobHandler class is created.
+  # When Rufus actually schedules the job, it calls the JobHandler#call method
+  # of the JobHandler instance.  This instance then creates a new LaunchedJob
+  # 
+  class JobHandler
+    extend Forwardable
+    def_delegators :@launched_job, :job_spec_id, :job_spec_name
+
+    attr_reader :launched_job
+
+    def initialize(job_spec: nil)
+      @job_spec = job_spec
+      new_launched_job
+    end
+
+    def new_launched_job
+      @launched_job = LaunchedJob.new(job_spec: @job_spec)
+    end
+
+    # Public: Every time the Rufus scheduler executes a job, it calls this method.
+    # This method instantiates a new LaunchedJob and calls LaunchedJob#run_job.
+    #
+    # rjob - A Rufus job object that contains various metadata about the status
+    #        of a job.
+    # time - The time when the job got cleared for triggering.
+    #
+    # Returns nothing.
+    def call(rjob, time)
+      # Since Rufus scheduler starts a new thread for each job, we must manage the connection
+      # pool ourselves.
+      # http://stackoverflow.com/questions/11248808/connection-pool-issue-with-activerecord-objects-in-rufus-scheduler
+      ActiveRecord::Base.connection_pool.with_connection do
+        new_launched_job.run_job
+      end
     end
   end
 
+
+
+  # Public: Shortcut to get the JobSpec#id of this LaunchedJob
   def job_spec_id
     self.job_spec.id
   end
 
+  # Public: Shortcut to get the JobSpec#name of this LaunchedJob
   def job_spec_name
     self.job_spec.name
   end
