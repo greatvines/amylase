@@ -115,7 +115,7 @@ class JobScheduler
 
       return if opts[:_skip]
 
-      @rufus.send(job_schedule.schedule_method, job_schedule.schedule_time, LaunchedJob.new(job_spec: job_spec), opts)
+      @rufus.send(job_schedule.schedule_method, job_schedule.schedule_time, LaunchedJob::JobHandler.new(job_spec: job_spec), opts)
     end
   end
 
@@ -127,7 +127,7 @@ class JobScheduler
   # Returns nothing.
   def schedule_job_spec_now(job_spec)
     raise "JobSpec already running" if LaunchedJob.where(job_spec: job_spec, status: LaunchedJob::RUNNING).size > 0
-    @rufus.send('in', '0s', LaunchedJob.new(job_spec: job_spec))
+    @rufus.send('in', '0s', LaunchedJob::JobHandler.new(job_spec: job_spec))
   end
 
 
@@ -194,7 +194,7 @@ class JobScheduler
         :job => job,
         :job_spec_id => job.handler.job_spec_id,
         :job_spec_name => job.handler.job_spec_name,
-        :launched_job => job.handler,
+        :launched_job => job.handler.launched_job,
         :running => job.running?,
         :last_time => job.last_time,
         :next_time => job.next_time,
@@ -254,7 +254,7 @@ class JobScheduler
     # Private: This is a special instance of the LaunchedJob class that is used
     # for the Rufus job handler for the timeout job.
     class SchedulerTimeoutHandler < LaunchedJob
-      def run_job
+      def call
         JobScheduler.find.save_job_list
         JobScheduler.find.shutdown(:kill)
       end
@@ -265,6 +265,10 @@ class JobScheduler
 
       def job_spec_id
         -1
+      end
+
+      def launched_job
+        LaunchedJob.new
       end
     end
 
