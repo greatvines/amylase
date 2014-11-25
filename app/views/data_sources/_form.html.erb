@@ -10,8 +10,22 @@
         <%= f.input :name, as: :string %>
         <%= f.input :birst_filename, as: :string %>
         <%= f.input :data_source_type, collection: DataSource::DATA_SOURCE_TYPES, include_blank: false %>
-        <%= f.input :redshift_sql %>
-        <%= f.input :s3_path, as: :string %>
+
+        <div class="panel panel-default">
+          <div class="panel-heading">RedshiftS3DataSource</div>
+          <div class="panel-body">
+            <%= f.input :redshift_sql %>
+            <%= f.input :custom_header, as: :string, hint: 'Pipe-delimited list of case-sensitive column names.  Set blank to use default header.' %>
+          </div>
+        </div>
+
+
+        <div class="panel panel-default">
+          <div class="panel-heading">S3DataSource</div>
+          <div class="panel-body">
+            <%= f.input :s3_path, as: :string, hint: 's3://mybucket/path_to_file.csv' %>
+          </div>
+        </div>
       </div>
 
       <div class="form-actions">

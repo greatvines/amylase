@@ -83,6 +83,6 @@ class DataSourcesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def data_source_params
-      params.require(:data_source).permit(:name, :birst_filename, :data_source_type, :redshift_sql, :s3_path)
+      params.require(:data_source).permit(:name, :birst_filename, :data_source_type, :redshift_sql, :s3_path, :custom_header)
     end
 end

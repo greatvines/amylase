@@ -10,6 +10,7 @@ RSpec.describe DataSource, :type => :model do
   it { should respond_to(:data_source_type) }
   it { should respond_to(:redshift_sql) }
   it { should respond_to(:s3_path) }
+  it { should respond_to(:custom_header) }
   it { should be_valid }
 
   it { should validate_uniqueness_of(:name) }
@@ -84,8 +85,9 @@ RSpec.describe DataSource, :type => :model do
       @redshift_s3_data_source.initialize_data_source_type(redshift_schema: Settings.test.redshift_schema)
     end
 
+    let(:result) { @redshift_s3_data_source.chunks.inject('') { |result,chunk| result << chunk }.lines }
+
     it 'returns as many rows as generated' do
-      result = @redshift_s3_data_source.chunks.inject('') { |result,chunk| result << chunk }.lines
       expect(result.count - 1).to eq result[1].split('|')[0].to_i
     end
 
@@ -97,6 +99,13 @@ RSpec.describe DataSource, :type => :model do
       expect(s3_bucket.objects.with_prefix(s3_table_folder).count).to be 0
     end
 
-  end
+    it 'uses the default header' do
+      expect(result[0]).to match /\Acnt|.*/
+    end
 
+    it 'uses the custom header when set' do
+      @redshift_s3_data_source.custom_header = 'Total|Monster'
+      expect(result[0]).to eq "#{@redshift_s3_data_source.custom_header}\n"
+    end
+  end
 end
