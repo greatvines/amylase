@@ -1,7 +1,6 @@
 FactoryGirl.define do
   factory :birst_extract_group do
-    name "MyText"
-description "MyText"
+    sequence(:name) { |n| "MyBirstExtractGroup-#{n}" }
+    description "MyText"
   end
-
 end
