@@ -37,9 +37,11 @@ class BirstExtractGroupsController < ApplicationController
 
     respond_to do |format|
       if @birst_extract_group.save
-        format.html { redirect_to @birst_extract_group, notice: 'Birst extract group was successfully created.' }
+        flash[:success] = "Success! BirstExtractGroup created."
+        format.html { redirect_to @birst_extract_group }
         format.json { render json: @birst_extract_group, status: :created }
       else
+        flash[:danger] = "Error! BirstExtractGroup not created: #{@birst_extract_group.errors.full_messages}"
         format.html { render action: 'new' }
         format.json { render json: @birst_extract_group.errors, status: :unprocessable_entity }
       end
@@ -51,9 +53,11 @@ class BirstExtractGroupsController < ApplicationController
   def update
     respond_to do |format|
       if @birst_extract_group.update(birst_extract_group_params)
+        flash[:success] = "Success! BirstExtractGroup updated."
         format.html { redirect_to @birst_extract_group, notice: 'Birst extract group was successfully updated.' }
         format.json { head :no_content }
       else
+        flash[:danger] = "Error! BirstExtractGroup not updated: #{@birst_extract_group.errors.full_messages}"
         format.html { render action: 'edit' }
         format.json { render json: @birst_extract_group.errors, status: :unprocessable_entity }
       end
@@ -65,6 +69,7 @@ class BirstExtractGroupsController < ApplicationController
   def destroy
     @birst_extract_group.destroy
     respond_to do |format|
+      flash[:success] = 'Success! BirstExtractGroup destroyed.'
       format.html { redirect_to birst_extract_groups_url }
       format.json { head :no_content }
     end
