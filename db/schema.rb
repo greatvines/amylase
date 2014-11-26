@@ -11,10 +11,29 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141125232341) do
+ActiveRecord::Schema.define(version: 20141126001734) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "birst_extract_group_collection_associations", force: true do |t|
+    t.integer  "birst_extract_group_id"
+    t.integer  "birst_extract_group_collection_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "birst_extract_group_collection_associations", ["birst_extract_group_collection_id"], name: "idx_birst_extract_group_collection_associations_collection_id", using: :btree
+  add_index "birst_extract_group_collection_associations", ["birst_extract_group_id", "birst_extract_group_collection_id"], name: "idx_birst_extract_group_collection_associations", unique: true, using: :btree
+
+  create_table "birst_extract_group_collections", force: true do |t|
+    t.text     "name",        null: false
+    t.text     "description"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "birst_extract_group_collections", ["name"], name: "index_birst_extract_group_collections_on_name", unique: true, using: :btree
 
   create_table "birst_extract_groups", force: true do |t|
     t.text     "name",        null: false
