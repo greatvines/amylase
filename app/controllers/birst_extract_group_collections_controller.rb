@@ -37,9 +37,11 @@ class BirstExtractGroupCollectionsController < ApplicationController
 
     respond_to do |format|
       if @birst_extract_group_collection.save
-        format.html { redirect_to @birst_extract_group_collection, notice: 'Birst extract group collection was successfully created.' }
+        flash[:success] = "Success! BirstExtractGroupCollection created."
+        format.html { redirect_to @birst_extract_group_collection }
         format.json { render json: @birst_extract_group_collection, status: :created }
       else
+        flash[:danger] = "Error! BirstExtractGroupCollection not created: #{@birst_extract_group_collection.errors.full_messages}"
         format.html { render action: 'new' }
         format.json { render json: @birst_extract_group_collection.errors, status: :unprocessable_entity }
       end
@@ -51,9 +53,11 @@ class BirstExtractGroupCollectionsController < ApplicationController
   def update
     respond_to do |format|
       if @birst_extract_group_collection.update(birst_extract_group_collection_params)
+        flash[:success] = "Success! BirstExtractGroupCollection updated."
         format.html { redirect_to @birst_extract_group_collection, notice: 'Birst extract group collection was successfully updated.' }
         format.json { head :no_content }
       else
+        flash[:danger] = "Error! BirstExtractGroupCollection not updated: #{@birst_extract_group_collection.errors.full_messages}"
         format.html { render action: 'edit' }
         format.json { render json: @birst_extract_group_collection.errors, status: :unprocessable_entity }
       end
@@ -65,6 +69,7 @@ class BirstExtractGroupCollectionsController < ApplicationController
   def destroy
     @birst_extract_group_collection.destroy
     respond_to do |format|
+      flash[:success] = 'Success! BirstExtractGroupCollection destroyed.'
       format.html { redirect_to birst_extract_group_collections_url }
       format.json { head :no_content }
     end
@@ -78,6 +83,6 @@ class BirstExtractGroupCollectionsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def birst_extract_group_collection_params
-      params.require(:birst_extract_group_collection).permit(:name, :description)
+      params.require(:birst_extract_group_collection).permit(:name, :description, birst_extract_group_ids: [])
     end
 end

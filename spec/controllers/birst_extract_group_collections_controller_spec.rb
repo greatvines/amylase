@@ -20,15 +20,23 @@ require 'rails_helper'
 
 RSpec.describe BirstExtractGroupCollectionsController, :type => :controller do
 
+  def construct_associated_attributes(model, association_ids)
+    attributes = model.attributes.with_indifferent_access
+    attributes[association_ids] = model.send(association_ids)
+    attributes
+  end
+
   # This should return the minimal set of attributes required to create a valid
   # BirstExtractGroupCollection. As you add validations to BirstExtractGroupCollection, be sure to
   # adjust the attributes here as well.
   let(:valid_attributes) {
-    skip("Add a hash of attributes valid for your model")
+    valid_build = FactoryGirl.build(:birst_extract_group_collection, :with_existing_groups)
+    construct_associated_attributes(valid_build, :birst_extract_group_ids)
   }
 
   let(:invalid_attributes) {
-    skip("Add a hash of attributes invalid for your model")
+    # An invalid record is one where the same name already exists
+    valid_build = FactoryGirl.create(:birst_extract_group_collection).attributes
   }
 
   # This should return the minimal set of values that should be in the session
@@ -102,27 +110,28 @@ RSpec.describe BirstExtractGroupCollectionsController, :type => :controller do
 
   describe "PUT update" do
     describe "with valid params" do
-      let(:new_attributes) {
-        skip("Add a hash of attributes valid for your model")
-      }
+      before do
+        @birst_extract_group_collection = BirstExtractGroupCollection.create! valid_attributes
+
+        # Remove an extract group from the collection
+        @updated_attributes = construct_associated_attributes(@birst_extract_group_collection, :birst_extract_group_ids)
+        @updated_attributes[:birst_extract_group_ids].pop
+      end
 
       it "updates the requested birst_extract_group_collection" do
-        birst_extract_group_collection = BirstExtractGroupCollection.create! valid_attributes
-        put :update, {:id => birst_extract_group_collection.to_param, :birst_extract_group_collection => new_attributes}, valid_session
-        birst_extract_group_collection.reload
-        skip("Add assertions for updated state")
+        expect {
+          put :update, {:id => @birst_extract_group_collection.to_param, :birst_extract_group_collection => @updated_attributes}, valid_session
+        }.to change { @birst_extract_group_collection.birst_extract_groups.count }.by(-1)
       end
 
       it "assigns the requested birst_extract_group_collection as @birst_extract_group_collection" do
-        birst_extract_group_collection = BirstExtractGroupCollection.create! valid_attributes
-        put :update, {:id => birst_extract_group_collection.to_param, :birst_extract_group_collection => valid_attributes}, valid_session
-        expect(assigns(:birst_extract_group_collection)).to eq(birst_extract_group_collection)
+        put :update, {:id => @birst_extract_group_collection.to_param, :birst_extract_group_collection => @updated_attributes}, valid_session
+        expect(assigns(:birst_extract_group_collection)).to eq(@birst_extract_group_collection)
       end
 
       it "redirects to the birst_extract_group_collection" do
-        birst_extract_group_collection = BirstExtractGroupCollection.create! valid_attributes
-        put :update, {:id => birst_extract_group_collection.to_param, :birst_extract_group_collection => valid_attributes}, valid_session
-        expect(response).to redirect_to(birst_extract_group_collection)
+        put :update, {:id => @birst_extract_group_collection.to_param, :birst_extract_group_collection => @updated_attributes}, valid_session
+        expect(response).to redirect_to(@birst_extract_group_collection)
       end
     end
 
