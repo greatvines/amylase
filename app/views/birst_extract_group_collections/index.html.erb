@@ -1,0 +1,27 @@
+<h1>Listing birst_extract_group_collections</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Description</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @birst_extract_group_collections.each do |birst_extract_group_collection| %>
+      <tr>
+        <td><%= birst_extract_group_collection.name %></td>
+        <td><%= birst_extract_group_collection.description %></td>
+        <td><%= link_to 'Show', birst_extract_group_collection %></td>
+        <td><%= link_to 'Edit', edit_birst_extract_group_collection_path(birst_extract_group_collection) %></td>
+        <td><%= link_to 'Destroy', birst_extract_group_collection, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Birst extract group collection', new_birst_extract_group_collection_path %>
