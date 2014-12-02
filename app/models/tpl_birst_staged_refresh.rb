@@ -6,6 +6,7 @@ class TplBirstStagedRefresh < ActiveRecord::Base
       :id,
       :data_source_collection_id,
       :birst_process_group_collection_id,
+      :birst_extract_group_collection_id,
       :production_space_id,
       :staging_space_id
     ]
@@ -14,12 +15,14 @@ class TplBirstStagedRefresh < ActiveRecord::Base
   belongs_to :birst_process_group_collection
   belongs_to :production_space, class_name: 'BirstSpace'
   belongs_to :staging_space, class_name: 'BirstSpace'
-
+  belongs_to :birst_extract_group_collection
+  
   has_one :job_spec, as: :job_template
 
   has_many :data_sources, through: :data_source_collection
   has_many :birst_process_groups, through: :birst_process_group_collection
   has_one :client, through: :job_spec
+  has_many :birst_extract_groups, through: :birst_extract_group_collection
 
   extend Amylase::JobInitializers
   include Amylase::BirstSoap
@@ -58,7 +61,7 @@ class TplBirstStagedRefresh < ActiveRecord::Base
     upload_data_sources(staging_space_uuid, data_source_list)
 
     launched_job.update(status_message: 'extracting salesforce')
-    extract_space(staging_space_uuid)
+    extract_space(staging_space_uuid, extract_groups: self.birst_extract_groups.collect { |g| g.name })
 
     launched_job.update(status_message: 'processing space')
     process_space(staging_space_uuid, process_groups: self.birst_process_groups.collect { |g| g.name })

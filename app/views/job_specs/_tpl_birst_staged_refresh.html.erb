@@ -3,5 +3,6 @@
   <%= tpl.association :production_space, collection: BirstSpace.order(:name), include_blank: 'Default' %>
   <%= tpl.association :staging_space, collection: BirstSpace.order(:name), include_blank: 'Default' %>
   <%= tpl.association :data_source_collection, collection: DataSourceCollection.order(:name), include_blank: 'Default - None' %>
+  <%= tpl.association :birst_extract_group_collection, collection: BirstExtractGroupCollection.order(:name), include_blank: 'Default - All' %>
   <%= tpl.association :birst_process_group_collection, collection: BirstProcessGroupCollection.order(:name), include_blank: 'Default - All' %>
 <% end %>

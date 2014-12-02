@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141126001734) do
+ActiveRecord::Schema.define(version: 20141201213545) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -201,8 +201,10 @@ ActiveRecord::Schema.define(version: 20141126001734) do
     t.integer  "staging_space_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "birst_extract_group_collection_id"
   end
 
+  add_index "tpl_birst_staged_refreshes", ["birst_extract_group_collection_id"], name: "idx_tpl_staged_refresh_extract_group_collection", using: :btree
   add_index "tpl_birst_staged_refreshes", ["birst_process_group_collection_id"], name: "idx_tpl_staged_refresh_process_group_collection", using: :btree
   add_index "tpl_birst_staged_refreshes", ["data_source_collection_id"], name: "index_tpl_birst_staged_refreshes_on_data_source_collection_id", using: :btree
   add_index "tpl_birst_staged_refreshes", ["production_space_id"], name: "index_tpl_birst_staged_refreshes_on_production_space_id", using: :btree
