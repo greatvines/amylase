@@ -10,11 +10,13 @@ RSpec.describe TplBirstStagedRefresh, :type => :model do
   it { should belong_to(:birst_process_group_collection) }
   it { should belong_to(:production_space).class_name('BirstSpace') }
   it { should belong_to(:staging_space).class_name('BirstSpace') }
+  it { should belong_to(:birst_extract_group_collection) }
   it { should have_one(:job_spec) }
 
   it { should have_many(:data_sources).through(:data_source_collection) }
   it { should have_many(:birst_process_groups).through(:birst_process_group_collection) }
   it { should have_one(:client).through(:job_spec) }
+  it { should have_many(:birst_extract_groups).through(:birst_extract_group_collection) }
 
   context 'with a full job_spec' do
     before do
@@ -144,10 +146,22 @@ RSpec.describe TplBirstStagedRefresh, :type => :model do
           end
           run_template
         end
-
       end
 
-    end
+      context 'with extract groups' do
+        before do
+          birst_extract_group_collection = FactoryGirl.create(:birst_extract_group_collection, :with_existing_groups)
+          @tpl_extract_groups = birst_extract_group_collection.birst_extract_groups
+          @tpl.birst_extract_group_collection = birst_extract_group_collection
+        end
 
+        it 'provides a list of extract group names' do
+          allow(@tpl).to receive(:extract_space) do |space_id, extract_groups: nil|
+            expect(extract_groups).to eq @tpl_extract_groups.collect { |pg| pg.name }
+          end
+          run_template
+        end
+      end
+    end
   end
 end

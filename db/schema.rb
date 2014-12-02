@@ -11,10 +11,38 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141105222442) do
+ActiveRecord::Schema.define(version: 20141201213545) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "birst_extract_group_collection_associations", force: true do |t|
+    t.integer  "birst_extract_group_id"
+    t.integer  "birst_extract_group_collection_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "birst_extract_group_collection_associations", ["birst_extract_group_collection_id"], name: "idx_birst_extract_group_collection_associations_collection_id", using: :btree
+  add_index "birst_extract_group_collection_associations", ["birst_extract_group_id", "birst_extract_group_collection_id"], name: "idx_birst_extract_group_collection_associations", unique: true, using: :btree
+
+  create_table "birst_extract_group_collections", force: true do |t|
+    t.text     "name",        null: false
+    t.text     "description"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "birst_extract_group_collections", ["name"], name: "index_birst_extract_group_collections_on_name", unique: true, using: :btree
+
+  create_table "birst_extract_groups", force: true do |t|
+    t.text     "name",        null: false
+    t.text     "description"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "birst_extract_groups", ["name"], name: "index_birst_extract_groups_on_name", unique: true, using: :btree
 
   create_table "birst_process_group_collection_associations", force: true do |t|
     t.integer  "birst_process_group_id"
@@ -92,6 +120,7 @@ ActiveRecord::Schema.define(version: 20141105222442) do
     t.text     "s3_path"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.text     "custom_header"
   end
 
   add_index "data_sources", ["name"], name: "index_data_sources_on_name", unique: true, using: :btree
@@ -172,8 +201,10 @@ ActiveRecord::Schema.define(version: 20141105222442) do
     t.integer  "staging_space_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "birst_extract_group_collection_id"
   end
 
+  add_index "tpl_birst_staged_refreshes", ["birst_extract_group_collection_id"], name: "idx_tpl_staged_refresh_extract_group_collection", using: :btree
   add_index "tpl_birst_staged_refreshes", ["birst_process_group_collection_id"], name: "idx_tpl_staged_refresh_process_group_collection", using: :btree
   add_index "tpl_birst_staged_refreshes", ["data_source_collection_id"], name: "index_tpl_birst_staged_refreshes_on_data_source_collection_id", using: :btree
   add_index "tpl_birst_staged_refreshes", ["production_space_id"], name: "index_tpl_birst_staged_refreshes_on_production_space_id", using: :btree

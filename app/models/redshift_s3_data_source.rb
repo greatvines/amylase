@@ -43,7 +43,7 @@ class RedshiftS3DataSource < DataSource
     initialize_connection
     exec_query
 
-    yield header
+    yield @data_source.custom_header.blank? ? header : "#{@data_source.custom_header}\n"
 
     # There were some issues with streaming data directly from S3 to
     # Birst.  Independently, they both work just fine, but some sort

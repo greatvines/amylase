@@ -25,6 +25,8 @@ feature 'User navigates across the site' do
     expect(page).to have_link 'new_data_source_collection'
     expect(page).to have_link 'new_birst_process_group'
     expect(page).to have_link 'new_birst_process_group_collection'
+    expect(page).to have_link 'new_birst_extract_group'
+    expect(page).to have_link 'new_birst_extract_group_collection'
 
     expect(page).to have_link 'job_specs'
     expect(page).to have_link 'job_schedule_groups'
@@ -34,6 +36,8 @@ feature 'User navigates across the site' do
     expect(page).to have_link 'data_source_collections'
     expect(page).to have_link 'birst_process_groups'
     expect(page).to have_link 'birst_process_group_collections'
+    expect(page).to have_link 'birst_extract_groups'
+    expect(page).to have_link 'birst_extract_group_collections'
 
     expect(page).to have_link 'new_job_scheduler'
     expect(page).not_to have_link 'job_scheduler'
@@ -80,6 +84,15 @@ feature 'User navigates across the site' do
     expect(page).to have_full_title 'New Birst Process Group Collection'
   end
 
+  scenario 'the new_birst_extract_group path' do
+    click_link 'new_birst_extract_group'
+    expect(page).to have_full_title 'New Birst Extract Group'
+  end
+
+  scenario 'the new_birst_extract_group_collection path' do
+    click_link 'new_birst_extract_group_collection'
+    expect(page).to have_full_title 'New Birst Extract Group Collection'
+  end
 
   scenario 'the launched_jobs path' do
     click_link 'launched_jobs'
@@ -124,6 +137,16 @@ feature 'User navigates across the site' do
   scenario 'the birst_process_group_collections path' do
     click_link 'birst_process_group_collections'
     expect(page).to have_full_title 'Birst Process Group Collections'
+  end
+
+  scenario 'the birst_extract_groups path' do
+    click_link 'birst_extract_groups'
+    expect(page).to have_full_title 'Birst Extract Groups'
+  end
+
+  scenario 'the birst_extract_group_collections path' do
+    click_link 'birst_extract_group_collections'
+    expect(page).to have_full_title 'Birst Extract Group Collections'
   end
 
 

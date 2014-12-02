@@ -1,5 +1,7 @@
 Rails.application.routes.draw do
 
+  resources :birst_extract_group_collections
+
   root 'launched_jobs#index'
   match '/home', to: 'static_pages#home', via: 'get'
   match '/help', to: 'static_pages#help', via: 'get'
@@ -24,6 +26,7 @@ Rails.application.routes.draw do
   resources :data_source_collections
   resources :birst_process_groups
   resources :birst_process_group_collections
+  resources :birst_extract_groups
 
   get '/job_spec/show_job_template_form' => 'job_specs#show_job_template_form', as: 'show_job_template_form'
 
