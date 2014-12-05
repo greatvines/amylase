@@ -374,7 +374,7 @@ module Amylase
       birst_soap_session do |bc|        
         result[:upload_token] = bc.begin_data_upload(
           :spaceID    => space_id,
-          :sourceName => data_source.name
+          :sourceName => data_source.birst_filename
         )
       end
 
