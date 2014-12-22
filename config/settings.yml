@@ -1,14 +1,14 @@
 # Birst_Command default session settings
 birst_soap:
   session:
-    wsdl:           "https://app2102.bws.birst.com/CommandWebService.asmx?WSDL"
-    endpoint:       "https://app2102.bws.birst.com/CommandWebService.asmx"
+    wsdl:           "<%= ENV['BIRST_URL'] %>/CommandWebService.asmx?WSDL"
+    endpoint:       "<%= ENV['BIRST_URL'] %>/CommandWebService.asmx"
     username:       <%= ENV['BIRST_USER'] %>
     password:       <%= ENV['BIRST_PWD'] %>
     soap_logger:    Rails.logger
     soap_log:       true
     soap_log_level: debug
-    
+
   wait:
     # Job wait timeout
     timeout: 12h
