@@ -578,7 +578,7 @@ module Amylase
 
 
             # Some errors get shut down immediately
-            if [BWSInvalidTokenError, Savon::ExpectationError].include? bws_err.class
+            if [Savon::ExpectationError].include? bws_err.class
               @job_log.error "Unrecoverable error detected: #{bws_err.class.name}: #{bws_err}"
 
               waiter_err = bws_err
