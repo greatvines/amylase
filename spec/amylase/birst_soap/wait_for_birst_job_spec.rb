@@ -43,25 +43,29 @@ describe "wait_for_birst_job", :birst_soap_mock => true do
   end
 
   context "with a token expiration error" do
+    before { Settings.birst_soap.wait.max_retry = 1 }
+
     before do
       mock_is_job_complete(false)
 
       job_token_message = { :token => BirstSoapFixtures.login_token, :jobToken => BirstSoapFixtures.job_token }
-      mock_login do
-        savon.expects(:is_job_complete)
-          .with(message: job_token_message)
-          .returns(BirstSoapFixtures.token_expiration_error)
+      1.upto(2) do
+        mock_login do
+          savon.expects(:is_job_complete)
+            .with(message: job_token_message)
+            .returns(BirstSoapFixtures.token_expiration_error)
+        end
       end
     end
 
-    it "raises an invalid token error" do
+    it "raises an invalid token error after failing multiple times" do
       expect { wait_task }.to raise_error Amylase::BirstSoap::BWSInvalidTokenError
     end
   end
 
   context "with a recoverable error" do
 
-    before { Settings.birst_soap.wait.max_retry = 1 }
+    before { Settings.birst_soap.wait.max_retry = 2 }
 
     context "that recovers" do
       before do
@@ -88,7 +92,7 @@ describe "wait_for_birst_job", :birst_soap_mock => true do
         mock_is_job_complete(false)
 
         job_token_message = { :token => BirstSoapFixtures.login_token, :jobToken => BirstSoapFixtures.job_token }
-        1.upto(2).each do 
+        1.upto(3).each do 
           mock_login do
             savon.expects(:is_job_complete)
               .with(message: job_token_message)
