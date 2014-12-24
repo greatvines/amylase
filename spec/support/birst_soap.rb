@@ -5,9 +5,17 @@ RSpec.configure do |config|
   config.before(:each, :birst_soap_mock => true) do
     savon.mock!
 
+    stub_request(:get, "https://app2101.bws.birst.com/CommandWebService.asmx?WSDL")
+      .with(:headers => {'Accept'=>'*/*'})
+      .to_return(:status => 200, :body => File.open(File.join(Rails.root, 'spec/support/birst_soap_wsdl_app2101_5_15.xml')).read, :headers => {})
+
     stub_request(:get, "https://app2102.bws.birst.com/CommandWebService.asmx?WSDL")
       .with(:headers => {'Accept'=>'*/*'})
-      .to_return(:status => 200, :body => File.open(File.join(Rails.root, 'spec/support/birst_soap_wsdl_app2102_5_13.xml')).read, :headers => {})
+      .to_return(:status => 200, :body => File.open(File.join(Rails.root, 'spec/support/birst_soap_wsdl_app2102_5_16.xml')).read, :headers => {})
+
+    stub_request(:get, "https://app2103.bws.birst.com/CommandWebService.asmx?WSDL")
+      .with(:headers => {'Accept'=>'*/*'})
+      .to_return(:status => 200, :body => File.open(File.join(Rails.root, 'spec/support/birst_soap_wsdl_app2103_5_14.xml')).read, :headers => {})
   end
 
   config.after(:each, :birst_soap_mock => true) do
