@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141201213545) do
+ActiveRecord::Schema.define(version: 20150106232852) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -124,6 +124,18 @@ ActiveRecord::Schema.define(version: 20141201213545) do
   end
 
   add_index "data_sources", ["name"], name: "index_data_sources_on_name", unique: true, using: :btree
+
+  create_table "gooddata_projects", force: true do |t|
+    t.text     "name",        null: false
+    t.text     "description"
+    t.text     "project_uid"
+    t.integer  "client_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "gooddata_projects", ["client_id"], name: "index_gooddata_projects_on_client_id", using: :btree
+  add_index "gooddata_projects", ["name"], name: "index_gooddata_projects_on_name", unique: true, using: :btree
 
   create_table "job_schedule_groups", force: true do |t|
     t.string   "name",       null: false

@@ -12,5 +12,6 @@ RSpec.describe Client, :type => :model do
   it { should be_valid }
 
   it { should have_many(:birst_spaces) }
+  it { should have_many(:gooddata_projects) }
 
 end
