@@ -1,5 +1,7 @@
 Rails.application.routes.draw do
 
+  resources :gooddata_projects
+
   resources :birst_extract_group_collections
 
   root 'launched_jobs#index'
