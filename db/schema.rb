@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150106232852) do
+ActiveRecord::Schema.define(version: 20150107005341) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -124,6 +124,17 @@ ActiveRecord::Schema.define(version: 20150106232852) do
   end
 
   add_index "data_sources", ["name"], name: "index_data_sources_on_name", unique: true, using: :btree
+
+  create_table "external_credentials", force: true do |t|
+    t.text     "name",        null: false
+    t.text     "description"
+    t.text     "username"
+    t.text     "password"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "external_credentials", ["name"], name: "index_external_credentials_on_name", unique: true, using: :btree
 
   create_table "gooddata_projects", force: true do |t|
     t.text     "name",        null: false
