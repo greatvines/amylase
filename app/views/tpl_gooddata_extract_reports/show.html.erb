@@ -1,0 +1,24 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Name:</strong>
+  <%= @tpl_gooddata_extract_report.name %>
+</p>
+
+<p>
+  <strong>Tpl gooddata extract:</strong>
+  <%= @tpl_gooddata_extract_report.tpl_gooddata_extract %>
+</p>
+
+<p>
+  <strong>Report oid:</strong>
+  <%= @tpl_gooddata_extract_report.report_oid %>
+</p>
+
+<p>
+  <strong>Destination file name:</strong>
+  <%= @tpl_gooddata_extract_report.destination_file_name %>
+</p>
+
+<%= link_to 'Edit', edit_tpl_gooddata_extract_report_path(@tpl_gooddata_extract_report) %> |
+<%= link_to 'Back', tpl_gooddata_extract_reports_path %>

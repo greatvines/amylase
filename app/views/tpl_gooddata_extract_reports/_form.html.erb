@@ -1,0 +1,14 @@
+<%= simple_form_for(@tpl_gooddata_extract_report) do |f| %>
+  <%= f.error_notification %>
+
+  <div class="form-inputs">
+    <%= f.input :name %>
+    <%= f.association :tpl_gooddata_extract %>
+    <%= f.input :report_oid %>
+    <%= f.input :destination_file_name %>
+  </div>
+
+  <div class="form-actions">
+    <%= f.button :submit %>
+  </div>
+<% end %>
