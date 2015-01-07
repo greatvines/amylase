@@ -13,8 +13,9 @@ class TplGooddataExtract < ActiveRecord::Base
   belongs_to :destination_credential, class_name: 'ExternalCredential'
 
   has_one :job_spec, as: :job_template
-
   has_one :client, through: :job_spec
+  has_many :tpl_gooddata_extract_reports, dependent: :destroy, inverse_of: :tpl_gooddata_extract
+  accepts_nested_attributes_for :tpl_gooddata_extract_reports, reject_if: :all_blank, allow_destroy: true
 
 
   extend Amylase::JobInitializers

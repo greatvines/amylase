@@ -13,6 +13,6 @@ RSpec.describe TplGooddataExtract, :type => :model do
 
   it { should have_one(:client).through(:job_spec) }
 
-
-
+  it { should have_many(:tpl_gooddata_extract_reports).dependent(:destroy) }
+  it { should accept_nested_attributes_for(:tpl_gooddata_extract_reports) }
 end
