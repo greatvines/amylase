@@ -1,0 +1,31 @@
+<h1>Listing external_credentials</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Description</th>
+      <th>Username</th>
+      <th>Password</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @external_credentials.each do |external_credential| %>
+      <tr>
+        <td><%= external_credential.name %></td>
+        <td><%= external_credential.description %></td>
+        <td><%= external_credential.username %></td>
+        <td><%= external_credential.password %></td>
+        <td><%= link_to 'Show', external_credential %></td>
+        <td><%= link_to 'Edit', edit_external_credential_path(external_credential) %></td>
+        <td><%= link_to 'Destroy', external_credential, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New External credential', new_external_credential_path %>

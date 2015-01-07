@@ -1,6 +1,8 @@
 Rails.application.routes.draw do
 
 
+  resources :external_credentials
+
   root 'launched_jobs#index'
   match '/home', to: 'static_pages#home', via: 'get'
   match '/help', to: 'static_pages#help', via: 'get'
