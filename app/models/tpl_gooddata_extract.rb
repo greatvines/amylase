@@ -6,7 +6,16 @@ class TplGooddataExtract < ActiveRecord::Base
       :id,
       :gooddata_project_id,
       :destination_credential_id,
-      :destination_path
+      :destination_path,
+      tpl_gooddata_extract_reports_attributes: 
+        [
+          :id,
+          :tpl_gooddata_extract_id,
+          :_destroy,
+          :name,
+          :report_oid,
+          :destination_file_name
+        ]
     ]
 
   belongs_to :gooddata_project

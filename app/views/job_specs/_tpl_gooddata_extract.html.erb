@@ -1,0 +1,17 @@
+<%= f.simple_fields_for :job_template_attributes, form_job_template_object(@job_spec, 'TplGooddataExtract') do |tpl_f| %>
+  <%= tpl_f.input :id, as: :hidden, input_html: { name: 'job_spec[tpl_gooddata_extract][id]' } %>
+
+  <%= tpl_f.association :gooddata_project, collection: GooddataProject.order(:name), required: true %>
+  <%= tpl_f.association :destination_credential, collection: ExternalCredential.order(:name), required: true %>
+  <%= tpl_f.input :destination_path, as: :string, input_html: { value: 'ftp://' }, required: true %>
+
+  <div id="tpl_gooddata_extract_reports">
+    <%= tpl_f.simple_fields_for :tpl_gooddata_extract_reports do |rpt_fields| %>
+      <% Rails.logger.info "rpt_fields: #{rpt_fields}" %>
+      <%= render partial: 'tpl_gooddata_extract_report_fields', locals: { f: rpt_fields } %>
+    <% end %>
+    <%= link_to_add_association tpl_f, :tpl_gooddata_extract_reports, { class:  "btn btn-primary btn-sm" } do %>
+      <span class="glyphicon glyphicon-plus"></span> Add Gooddata Report
+    <% end %>
+  </div>
+<% end %>
