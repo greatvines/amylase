@@ -1,0 +1,19 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Gooddata project:</strong>
+  <%= @tpl_gooddata_extract.gooddata_project %>
+</p>
+
+<p>
+  <strong>Destination credential:</strong>
+  <%= @tpl_gooddata_extract.destination_credential %>
+</p>
+
+<p>
+  <strong>Destination path:</strong>
+  <%= @tpl_gooddata_extract.destination_path %>
+</p>
+
+<%= link_to 'Edit', edit_tpl_gooddata_extract_path(@tpl_gooddata_extract) %> |
+<%= link_to 'Back', tpl_gooddata_extracts_path %>

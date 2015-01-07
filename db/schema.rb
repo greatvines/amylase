@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150107005341) do
+ActiveRecord::Schema.define(version: 20150107164944) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -239,5 +239,16 @@ ActiveRecord::Schema.define(version: 20150107005341) do
     t.datetime "updated_at"
     t.integer  "sleep_seconds", default: 0
   end
+
+  create_table "tpl_gooddata_extracts", force: true do |t|
+    t.integer  "gooddata_project_id"
+    t.integer  "destination_credential_id"
+    t.text     "destination_path"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "tpl_gooddata_extracts", ["destination_credential_id"], name: "index_tpl_gooddata_extracts_on_destination_credential_id", using: :btree
+  add_index "tpl_gooddata_extracts", ["gooddata_project_id"], name: "index_tpl_gooddata_extracts_on_gooddata_project_id", using: :btree
 
 end

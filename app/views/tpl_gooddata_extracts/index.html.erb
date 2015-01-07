@@ -1,0 +1,29 @@
+<h1>Listing tpl_gooddata_extracts</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Gooddata project</th>
+      <th>Destination credential</th>
+      <th>Destination path</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @tpl_gooddata_extracts.each do |tpl_gooddata_extract| %>
+      <tr>
+        <td><%= tpl_gooddata_extract.gooddata_project %></td>
+        <td><%= tpl_gooddata_extract.destination_credential %></td>
+        <td><%= tpl_gooddata_extract.destination_path %></td>
+        <td><%= link_to 'Show', tpl_gooddata_extract %></td>
+        <td><%= link_to 'Edit', edit_tpl_gooddata_extract_path(tpl_gooddata_extract) %></td>
+        <td><%= link_to 'Destroy', tpl_gooddata_extract, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Tpl gooddata extract', new_tpl_gooddata_extract_path %>

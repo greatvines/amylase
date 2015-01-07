@@ -1,6 +1,8 @@
 Rails.application.routes.draw do
 
 
+  resources :tpl_gooddata_extracts
+
   resources :external_credentials
 
   root 'launched_jobs#index'
