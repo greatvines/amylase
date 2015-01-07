@@ -1,14 +1,21 @@
-<%= simple_form_for(@gooddata_project) do |f| %>
-  <%= f.error_notification %>
+<div class="row">
+  <div class="col-md-10">
 
-  <div class="form-inputs">
-    <%= f.input :name %>
-    <%= f.input :description %>
-    <%= f.input :project_uid %>
-    <%= f.association :client %>
-  </div>
+    <%= simple_form_for @gooddata_project,
+        html: { class: 'form-horizontal' },
+        wrapper: :horizontal_form do |f| %>
+      <%= f.error_notification %>
 
-  <div class="form-actions">
-    <%= f.button :submit %>
+      <div class="form-inputs">
+        <%= f.input :name, as: :string %>
+        <%= f.input :description %>
+        <%= f.association :client %>
+        <%= f.input :project_uid, as: :string %>
+      </div>
+
+      <div class="form-actions">
+        <%= f.button :submit %>
+      </div>
+    <% end %>
   </div>
-<% end %>
+</div>
