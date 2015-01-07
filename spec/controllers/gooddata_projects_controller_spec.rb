@@ -24,11 +24,11 @@ RSpec.describe GooddataProjectsController, :type => :controller do
   # GooddataProject. As you add validations to GooddataProject, be sure to
   # adjust the attributes here as well.
   let(:valid_attributes) {
-    skip("Add a hash of attributes valid for your model")
+    FactoryGirl.build(:gooddata_project).attributes
   }
 
   let(:invalid_attributes) {
-    skip("Add a hash of attributes invalid for your model")
+    FactoryGirl.build(:gooddata_project, project_uid: 'not-a-uid').attributes
   }
 
   # This should return the minimal set of values that should be in the session
@@ -103,14 +103,14 @@ RSpec.describe GooddataProjectsController, :type => :controller do
   describe "PUT update" do
     describe "with valid params" do
       let(:new_attributes) {
-        skip("Add a hash of attributes valid for your model")
+        valid_attributes.merge({ 'description' => 'modified' })
       }
 
       it "updates the requested gooddata_project" do
         gooddata_project = GooddataProject.create! valid_attributes
         put :update, {:id => gooddata_project.to_param, :gooddata_project => new_attributes}, valid_session
         gooddata_project.reload
-        skip("Add assertions for updated state")
+        expect(gooddata_project.description).to eq 'modified'
       end
 
       it "assigns the requested gooddata_project as @gooddata_project" do

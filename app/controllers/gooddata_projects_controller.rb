@@ -37,9 +37,11 @@ class GooddataProjectsController < ApplicationController
 
     respond_to do |format|
       if @gooddata_project.save
-        format.html { redirect_to @gooddata_project, notice: 'Gooddata project was successfully created.' }
+        flash[:success] = "Success! GooddataProject created."        
+        format.html { redirect_to @gooddata_project }
         format.json { render json: @gooddata_project, status: :created }
       else
+        flash[:danger] = "Error! GooddataProject not created: #{@gooddata_project.errors.full_messages}"
         format.html { render action: 'new' }
         format.json { render json: @gooddata_project.errors, status: :unprocessable_entity }
       end
@@ -51,9 +53,11 @@ class GooddataProjectsController < ApplicationController
   def update
     respond_to do |format|
       if @gooddata_project.update(gooddata_project_params)
-        format.html { redirect_to @gooddata_project, notice: 'Gooddata project was successfully updated.' }
+        flash[:success] = "Success! GooddataProject updated."
+        format.html { redirect_to @gooddata_project }
         format.json { head :no_content }
       else
+        flash[:danger] = "Error! GooddataProject not updated: #{@gooddata_project.errors.full_messages}"
         format.html { render action: 'edit' }
         format.json { render json: @gooddata_project.errors, status: :unprocessable_entity }
       end
@@ -65,6 +69,7 @@ class GooddataProjectsController < ApplicationController
   def destroy
     @gooddata_project.destroy
     respond_to do |format|
+      flash[:success] = 'Success! GooddataProject destroyed.'
       format.html { redirect_to gooddata_projects_url }
       format.json { head :no_content }
     end
