@@ -37,9 +37,11 @@ class ExternalCredentialsController < ApplicationController
 
     respond_to do |format|
       if @external_credential.save
-        format.html { redirect_to @external_credential, notice: 'External credential was successfully created.' }
+        flash[:success] = "Success! ExternalCredential created."
+        format.html { redirect_to @external_credential }
         format.json { render json: @external_credential, status: :created }
       else
+        flash[:danger] = "Error! ExternalCredential not created: #{@external_credential.errors.full_messages}"
         format.html { render action: 'new' }
         format.json { render json: @external_credential.errors, status: :unprocessable_entity }
       end
@@ -51,9 +53,11 @@ class ExternalCredentialsController < ApplicationController
   def update
     respond_to do |format|
       if @external_credential.update(external_credential_params)
-        format.html { redirect_to @external_credential, notice: 'External credential was successfully updated.' }
+        flash[:success] = "Success! ExternalCredential updated."
+        format.html { redirect_to @external_credential }
         format.json { head :no_content }
       else
+        flash[:danger] = "Error! ExternalCredential not updated: #{@external_credential.errors.full_messages}"
         format.html { render action: 'edit' }
         format.json { render json: @external_credential.errors, status: :unprocessable_entity }
       end
@@ -65,6 +69,7 @@ class ExternalCredentialsController < ApplicationController
   def destroy
     @external_credential.destroy
     respond_to do |format|
+      flash[:success] = 'Success! ExternalCredential destroyed.'
       format.html { redirect_to external_credentials_url }
       format.json { head :no_content }
     end
