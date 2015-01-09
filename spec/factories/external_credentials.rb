@@ -3,6 +3,6 @@ FactoryGirl.define do
     sequence(:name) { |n| "MyCredential-#{n}" }
     description "MyText"
     username "MyUsername"
-    password "ThisIsNotEncrypted"
+    password "ThisShouldBeEncrypted"
   end
 end

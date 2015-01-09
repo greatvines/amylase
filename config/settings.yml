@@ -1,3 +1,6 @@
+# Envcrypt - DO NOT SET THE PRODUCTION KEY HERE, KEEP IT AS AN ENVIRONMENT VARIABLE
+envcrypt_key: <%= ENV['ENVCRYPT_KEY'] %>
+
 # Birst_Command default session settings
 birst_soap:
   session:
