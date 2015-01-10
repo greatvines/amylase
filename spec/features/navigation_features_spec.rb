@@ -20,6 +20,7 @@ feature 'User navigates across the site' do
     expect(page).to have_link 'new_job_spec'
     expect(page).to have_link 'new_job_schedule_group'
     expect(page).to have_link 'new_client'
+    expect(page).to have_link 'new_external_credential'
     expect(page).to have_link 'new_birst_space'
     expect(page).to have_link 'new_gooddata_project'
     expect(page).to have_link 'new_data_source'
@@ -32,6 +33,7 @@ feature 'User navigates across the site' do
     expect(page).to have_link 'job_specs'
     expect(page).to have_link 'job_schedule_groups'
     expect(page).to have_link 'clients'
+    expect(page).to have_link 'external_credentials'
     expect(page).to have_link 'birst_spaces'
     expect(page).to have_link 'gooddata_projects'
     expect(page).to have_link 'data_sources'
@@ -59,6 +61,11 @@ feature 'User navigates across the site' do
   scenario 'the new_client path' do
     click_link 'new_client'
     expect(page).to have_full_title 'New Client'
+  end
+
+  scenario 'the new_extenal_credential path' do
+    click_link 'new_external_credential'
+    expect(page).to have_full_title 'New ExternalCredential'
   end
 
   scenario 'the new_birst_space path' do
@@ -119,6 +126,11 @@ feature 'User navigates across the site' do
   scenario 'the clients path' do
     click_link 'clients'
     expect(page).to have_full_title 'Clients'
+  end
+
+  scenario 'the external_credentials path' do
+    click_link 'external_credentials'
+    expect(page).to have_full_title 'ExternalCredentials'
   end
 
   scenario 'the birst_spaces path' do

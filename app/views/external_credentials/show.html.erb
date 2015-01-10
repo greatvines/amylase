@@ -1,4 +1,4 @@
-<p id="notice"><%= notice %></p>
+<% provide(:title, 'ExternalCredential') %>
 
 <p>
   <strong>Name:</strong>
@@ -13,11 +13,6 @@
 <p>
   <strong>Username:</strong>
   <%= @external_credential.username %>
-</p>
-
-<p>
-  <strong>Password:</strong>
-  <%= @external_credential.password %>
 </p>
 
 <%= link_to 'Edit', edit_external_credential_path(@external_credential) %> |
