@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150107181052) do
+ActiveRecord::Schema.define(version: 20150116232538) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -247,6 +247,7 @@ ActiveRecord::Schema.define(version: 20150107181052) do
     t.text     "destination_file_name",   null: false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.text     "export_method",           null: false
   end
 
   add_index "tpl_gooddata_extract_reports", ["tpl_gooddata_extract_id"], name: "index_tpl_gooddata_extract_reports_on_tpl_gooddata_extract_id", using: :btree
@@ -257,6 +258,7 @@ ActiveRecord::Schema.define(version: 20150107181052) do
     t.text     "destination_path"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.boolean  "append_timestamp",          default: true
   end
 
   add_index "tpl_gooddata_extracts", ["destination_credential_id"], name: "index_tpl_gooddata_extracts_on_destination_credential_id", using: :btree

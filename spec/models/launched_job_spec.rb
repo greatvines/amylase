@@ -38,7 +38,7 @@ RSpec.describe LaunchedJob, :type => :model do
       let(:log_result) { @log_output.read }
 
       it 'initializes the job log' do
-        expect(log_result).to match /INFO  JobLog : Logging temporary output to .*#{@launched_job.job_log_base_name}.*/
+        expect(log_result).to match /INFO  JobLog-\w+ : Logging temporary output to .*#{@launched_job.job_log_base_name}.*/
       end
     end
 

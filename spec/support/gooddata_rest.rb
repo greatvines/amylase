@@ -56,9 +56,9 @@ module GooddataRestSupport
       .to_return(:status => 200, :body => stub_response_reports, :headers => {})
   end
 
-  def stub_post_gdc_xtab2_executor3
+  def stub_post_gdc_xtab2_executor3(obj = @stub_obj)
     stub_request(:post, "https://secure.gooddata.com/gdc/xtab2/executor3")
-      .with(:body => "{\"report_req\":{\"report\":\"/gdc/md/#{@stub_pid}/obj/#{@stub_obj}\"}}",
+      .with(:body => "{\"report_req\":{\"report\":\"/gdc/md/#{@stub_pid}/obj/#{obj}\"}}",
             :headers => {'Accept'=>'application/json', 'Accept-Encoding'=>'gzip, deflate', 'Content-Type'=>'application/json', 'Cookie'=> @stub_token_cookie, 'User-Agent'=>'Ruby'})
       .to_return(:status => 200, :body => stub_response_executor3, :headers => {})
   end
@@ -70,9 +70,9 @@ module GooddataRestSupport
       .to_return(:status => 200, :body => stub_download_uri_body_executed, :headers => {})
   end
 
-  def stub_post_gdc_app_projects_pid_execute_raw
+  def stub_post_gdc_app_projects_pid_execute_raw(obj = @stub_obj)
     stub_request(:post, "https://secure.gooddata.com/gdc/app/projects/#{@stub_pid}/execute/raw")
-       .with(:body => "{\"report_req\":{\"report\":\"/gdc/md/#{@stub_pid}/obj/#{@stub_obj}\"}}",
+       .with(:body => "{\"report_req\":{\"report\":\"/gdc/md/#{@stub_pid}/obj/#{obj}\"}}",
             :headers => {'Accept'=>'application/json', 'Accept-Encoding'=>'gzip, deflate', 'Content-Type'=>'application/json', 'Cookie'=> @stub_token_cookie, 'User-Agent'=>'Ruby'})
        .to_return(:status => 200, :body => stub_download_uri_body_raw, :headers => {})
   end
@@ -107,13 +107,13 @@ module GooddataRestSupport
   end
 
 
-  def stub_response_reports
+  def stub_response_reports(obj = @stub_obj)
     <<-EOT.unindent
      {
       "query": {
         "entries": [
           {
-            "link": "/gdc/md/#{@stub_pid}/obj/#{@stub_obj}",
+            "link": "/gdc/md/#{@stub_pid}/obj/#{obj}",
             "locked": 0,
             "author": "/gdc/account/profile/6e7b02ecce3236a4e92a218d8246f439",
             "tags": "",

@@ -17,11 +17,11 @@ describe Amylase::JobLog do
   let(:log_result) { @log_output.read }
 
   it "logs messages to the JobLog logging channel" do
-    expect(log_result).to match /INFO  JobLog : This is a logging message/
+    expect(log_result).to match /INFO  JobLog-\w+ : This is a logging message/
   end
 
   it "logs the name of the temporary output file" do
-    expect(log_result).to match /INFO  JobLog : Logging temporary output to .*#{@job_log_base_name}.*/
+    expect(log_result).to match /INFO  JobLog-\w+ : Logging temporary output to .*#{@job_log_base_name}.*/
   end
 
   it "logs messages to file with the date enclosed in brackets" do

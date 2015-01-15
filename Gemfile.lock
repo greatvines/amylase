@@ -320,6 +320,7 @@ DEPENDENCIES
   rails_config (~> 0.4)
   rest_client (~> 1.8)
   rspec-rails (~> 3.0)
+  rubyzip (~> 1.1)
   rufus-scheduler (~> 3.0)
   sass-rails (~> 4.0.3)
   savon (~> 2.5)

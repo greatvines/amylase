@@ -105,8 +105,8 @@ class LaunchedJob < ActiveRecord::Base
   # Returns nothing.
   def run_job
     begin
-      initialize_job
       set_initial_status
+      initialize_job
       run_job_template
     rescue => err
       job_error_handler(err)

@@ -41,7 +41,7 @@ RSpec.describe TplBirstSoapGenericCommand, :type => :model do
       it "logs SOAP messages" do
         run_template
         log_output = @log_output.read
-        expect(log_output).to match /INFO  JobLog : SOAP response \(status 200\)/
+        expect(log_output).to match /INFO  JobLog-\w+ : SOAP response \(status 200\)/
         expect(log_output).to match /<listSpacesResponse xmlns="http:\/\/www.birst.com\/">/
         expect(log_output).to match /<listSpacesResult>/
         expect(log_output).to match /<UserSpace>/

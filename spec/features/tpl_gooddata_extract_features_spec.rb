@@ -33,7 +33,7 @@ feature 'User creates a TplGooddataExtract', :js => true do
     select 'TplGooddataExtract', from: 'Job template type'
 
     select @gooddata_project.name, from: 'Gooddata project'
-    fill_in 'Destination path', with: 'ftp://example.com/feature_reports.csv'
+    fill_in 'Destination path', with: 'ftp://example.com/feature_reports.zip'
   end
 
   after { Capybara.use_default_driver }

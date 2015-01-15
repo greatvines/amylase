@@ -153,8 +153,8 @@ module Amylase
         end
 
         @rest_log.info "#{method.upcase}: #{url}"
-        @rest_log.info "HEADERS: #{params.headers}"
-        @rest_log.info "VALUES: #{masked_values}"
+        @rest_log.info "HEADERS: #{JSON.pretty_generate params.headers rescue params.headers}"
+        @rest_log.info "VALUES: #{JSON.pretty_generate JSON.parse(masked_values) rescue masked_values}"
       end
 
       response = case method
@@ -166,7 +166,8 @@ module Amylase
         raise "Unkown RestClient method #{method}"
       end
 
-      @rest_log.info "RESPONSE: #{response}" if Array(log).include? :response
+      @rest_log.info "RESPONSE (headers): #{JSON.pretty_generate response.headers rescue response.headers}"
+      @rest_log.info "RESPONSE: #{JSON.pretty_generate JSON.parse(response) rescue response}" if Array(log).include? :response
 
       response
     end

@@ -3,11 +3,11 @@
 
   <%= tpl_f.association :gooddata_project, collection: GooddataProject.order(:name), required: true %>
   <%= tpl_f.association :destination_credential, collection: ExternalCredential.order(:name), required: true %>
-  <%= tpl_f.input :destination_path, as: :string, input_html: { value: 'ftp://' }, required: true %>
+  <%= tpl_f.input :destination_path, as: :string, input_html: { value: @job_spec.job_template.try(:destination_path) || 'ftp://' }, required: true, hint: 'Accepted values include folder (ftp://example.com/reports/) or zip file (ftp://example.com/reports/myreport.zip)' %>
+  <%= tpl_f.input :append_timestamp, as: :boolean, wrapper: :horizontal_boolean %>
 
   <div id="tpl_gooddata_extract_reports">
     <%= tpl_f.simple_fields_for :tpl_gooddata_extract_reports do |rpt_fields| %>
-      <% Rails.logger.info "rpt_fields: #{rpt_fields}" %>
       <%= render partial: 'tpl_gooddata_extract_report_fields', locals: { f: rpt_fields } %>
     <% end %>
     <%= link_to_add_association tpl_f, :tpl_gooddata_extract_reports, { class:  "btn btn-primary btn-sm" } do %>
