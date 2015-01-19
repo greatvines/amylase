@@ -8,10 +8,12 @@
 
   <div id="tpl_gooddata_extract_reports">
     <%= tpl_f.simple_fields_for :tpl_gooddata_extract_reports do |rpt_fields| %>
-      <%= render partial: 'tpl_gooddata_extract_report_fields', locals: { f: rpt_fields } %>
+      <%= render partial: 'tpl_gooddata_extract_report_fields', locals: { f: rpt_fields, disabled: disabled } %>
     <% end %>
-    <%= link_to_add_association tpl_f, :tpl_gooddata_extract_reports, { class:  "btn btn-primary btn-sm" } do %>
-      <span class="glyphicon glyphicon-plus"></span> Add Gooddata Report
+    <% unless disabled %>
+      <%= link_to_add_association tpl_f, :tpl_gooddata_extract_reports, { class:  "btn btn-primary btn-sm", render_options: { locals: { disabled: disabled } } } do %>
+        <span class="glyphicon glyphicon-plus"></span> Add Gooddata Report
+      <% end %>
     <% end %>
   </div>
 <% end %>

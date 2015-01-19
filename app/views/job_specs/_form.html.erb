@@ -22,10 +22,10 @@
           </div>
 
           <div id="job_template_form">
-            <%= render partial: 'job_template', locals: { f: f } %>
+            <%= render partial: 'job_template', locals: { f: f, disabled: disabled } %>
           </div>
 
-          <%= f.button :submit %>
+          <%= f.button :submit unless disabled%>
         <% end %>
 
       </div>

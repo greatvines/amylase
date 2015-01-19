@@ -1,11 +1,15 @@
 <% provide(:title, 'Job Spec') %>
 <h1> <%= @job_spec.name %> </h1>
 
-<%= link_to 'Run now', job_specs_run_now_path(@job_spec.id) %>
+<div class='disable_input'>
+  <%= render "form", disabled: true %>
+</div>
+
+<%= link_to 'Run now', job_specs_run_now_path(@job_spec.id) %> | 
+<%= link_to 'Edit', edit_job_spec_path(@job_spec) %> |
+<%= link_to 'Back', job_specs_path %>
 
 <pre>
   <%= "#{@job_spec.as_json({ include: :job_template }).to_yaml}" %>
 </pre>
 
-<%= link_to 'Edit', edit_job_spec_path(@job_spec) %> |
-<%= link_to 'Back', job_specs_path %>

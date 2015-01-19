@@ -2,7 +2,7 @@
   <div class="job_template_form panel panel-primary" id="<%= job_template_type %>" style="display: none;">
     <div class="panel-heading"><%= job_template_type %></div>
     <div class="panel-body">
-      <%= render partial: job_template_type.underscore, locals: { f: f }%>
+      <%= render partial: job_template_type.underscore, locals: { f: f, disabled: disabled } %>
     </div>
   </div>
 <% end %>
