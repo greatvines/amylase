@@ -299,21 +299,44 @@ module Amylase
       end
     end
 
-    # Private: Downlaods a file from a the given URI.
+    # Private: Downlaods a file from a the given URI.  Gooddata REST queries
+    # are performed asynchronously, so it's possible the report is not quite ready
+    # when the call to download is made.  Fortunately, Gooddata uses return codes
+    # to indicate the status of the request.  From Gooddata support:
+    #
+    # 200 means the report is already computed and ready to be downloaded - and the response is the data 
+    # 204 means the report is already computed but empty (no data) - and the response is empty (no report to download) 
+    # 202 means that the report is still being computed and you can check later - and the response is link where to check (the same URL actually)
+    #
+    # So, we'll use an exponential backoff strategy to check the return code and
+    # download only when the report is ready.
     #
     # uri             - The URI to download a report from.
     # local_file_name - The name of the file to save the URI to.
     #
     # Returns nothing.
     def download_uri(uri:, local_file_name:)
-      download_string = rest_client :get, "#{@url_base}#{uri}", log: :request do |params|
-        params.headers = {
-          :cookie => @token_cookie
-        }
+      download_query = lambda do
+        rest_client :get, "#{@url_base}#{uri}", log: :request do |params|
+          params.headers = {
+            :cookie => @token_cookie
+          }
+        end
       end
 
-      File.open(local_file_name, 'wb' ) do |output|
-        output.write download_string
+      1.upto(10) do |iter|
+        response = download_query.call
+        
+        case response.code
+        when 202
+          sleep 0.5 * 2**iter
+          next
+        else
+          File.open(local_file_name, 'wb' ) do |output|
+            output.write response
+          end
+          break
+        end
       end
     end
 
