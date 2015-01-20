@@ -1,0 +1,37 @@
+<% provide(:title, 'ExternalCredentials') %>
+
+<table class="table datatable">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Description</th>
+      <th>Username</th>
+      <th></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @external_credentials.each do |external_credential| %>
+      <tr>
+        <td><%= external_credential.name %></td>
+        <td><%= external_credential.description %></td>
+        <td><%= external_credential.username %></td>
+        <td class="text-right"> <%= render partial: "shared/row_functions", locals: { obj: external_credential } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+
+  <tfoot>
+    <tr>
+      <th>Name</th>
+      <th>Description</th>
+      <th>Username</th>
+      <th></th>
+    </tr>
+  </tfoot>
+
+</table>
+
+<br>
+
+<%= link_to 'New External credential', new_external_credential_path, { class: "btn btn-default" } %>

@@ -20,7 +20,9 @@ feature 'User navigates across the site' do
     expect(page).to have_link 'new_job_spec'
     expect(page).to have_link 'new_job_schedule_group'
     expect(page).to have_link 'new_client'
+    expect(page).to have_link 'new_external_credential'
     expect(page).to have_link 'new_birst_space'
+    expect(page).to have_link 'new_gooddata_project'
     expect(page).to have_link 'new_data_source'
     expect(page).to have_link 'new_data_source_collection'
     expect(page).to have_link 'new_birst_process_group'
@@ -31,7 +33,9 @@ feature 'User navigates across the site' do
     expect(page).to have_link 'job_specs'
     expect(page).to have_link 'job_schedule_groups'
     expect(page).to have_link 'clients'
+    expect(page).to have_link 'external_credentials'
     expect(page).to have_link 'birst_spaces'
+    expect(page).to have_link 'gooddata_projects'
     expect(page).to have_link 'data_sources'
     expect(page).to have_link 'data_source_collections'
     expect(page).to have_link 'birst_process_groups'
@@ -59,9 +63,19 @@ feature 'User navigates across the site' do
     expect(page).to have_full_title 'New Client'
   end
 
+  scenario 'the new_extenal_credential path' do
+    click_link 'new_external_credential'
+    expect(page).to have_full_title 'New ExternalCredential'
+  end
+
   scenario 'the new_birst_space path' do
     click_link 'new_birst_space'
     expect(page).to have_full_title 'New Birst Space'
+  end
+
+  scenario 'the new_gooddata_project path' do
+    click_link 'new_gooddata_project'
+    expect(page).to have_full_title 'New Gooddata Project'
   end
 
   scenario 'the new_data_source path' do
@@ -114,9 +128,19 @@ feature 'User navigates across the site' do
     expect(page).to have_full_title 'Clients'
   end
 
+  scenario 'the external_credentials path' do
+    click_link 'external_credentials'
+    expect(page).to have_full_title 'ExternalCredentials'
+  end
+
   scenario 'the birst_spaces path' do
     click_link 'birst_spaces'
     expect(page).to have_full_title 'Birst Spaces'
+  end
+
+  scenario 'the gooddata_projects path' do
+    click_link 'gooddata_projects'
+    expect(page).to have_full_title 'Gooddata Projects'
   end
 
   scenario 'the data_sources path' do

@@ -1,0 +1,27 @@
+<% provide(:title, 'Gooddata Projects') %>
+
+<table class="table datatable">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Client</th>
+      <th>Project UID</th>
+      <th></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @gooddata_projects.each do |gooddata_project| %>
+      <tr>
+        <td><%= gooddata_project.name %></td>
+        <td><%= link_to_if(gooddata_project.client, gooddata_project.client.try(:name), gooddata_project.client) %></td>
+        <td><%= gooddata_project.project_uid %></td>
+        <td class="text-right"> <%= render partial: "shared/row_functions", locals: { obj: gooddata_project } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Gooddata project', new_gooddata_project_path, { class: "btn btn-default" } %>

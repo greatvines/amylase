@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141201213545) do
+ActiveRecord::Schema.define(version: 20150116232538) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -125,6 +125,29 @@ ActiveRecord::Schema.define(version: 20141201213545) do
 
   add_index "data_sources", ["name"], name: "index_data_sources_on_name", unique: true, using: :btree
 
+  create_table "external_credentials", force: true do |t|
+    t.text     "name",        null: false
+    t.text     "description"
+    t.text     "username"
+    t.text     "password"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "external_credentials", ["name"], name: "index_external_credentials_on_name", unique: true, using: :btree
+
+  create_table "gooddata_projects", force: true do |t|
+    t.text     "name",        null: false
+    t.text     "description"
+    t.text     "project_uid"
+    t.integer  "client_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "gooddata_projects", ["client_id"], name: "index_gooddata_projects_on_client_id", using: :btree
+  add_index "gooddata_projects", ["name"], name: "index_gooddata_projects_on_name", unique: true, using: :btree
+
   create_table "job_schedule_groups", force: true do |t|
     t.string   "name",       null: false
     t.datetime "created_at"
@@ -216,5 +239,29 @@ ActiveRecord::Schema.define(version: 20141201213545) do
     t.datetime "updated_at"
     t.integer  "sleep_seconds", default: 0
   end
+
+  create_table "tpl_gooddata_extract_reports", force: true do |t|
+    t.text     "name",                    null: false
+    t.integer  "tpl_gooddata_extract_id", null: false
+    t.text     "report_oid",              null: false
+    t.text     "destination_file_name",   null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.text     "export_method",           null: false
+  end
+
+  add_index "tpl_gooddata_extract_reports", ["tpl_gooddata_extract_id"], name: "index_tpl_gooddata_extract_reports_on_tpl_gooddata_extract_id", using: :btree
+
+  create_table "tpl_gooddata_extracts", force: true do |t|
+    t.integer  "gooddata_project_id"
+    t.integer  "destination_credential_id"
+    t.text     "destination_path"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.boolean  "append_timestamp",          default: true
+  end
+
+  add_index "tpl_gooddata_extracts", ["destination_credential_id"], name: "index_tpl_gooddata_extracts_on_destination_credential_id", using: :btree
+  add_index "tpl_gooddata_extracts", ["gooddata_project_id"], name: "index_tpl_gooddata_extracts_on_gooddata_project_id", using: :btree
 
 end

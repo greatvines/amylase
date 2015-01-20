@@ -1,0 +1,14 @@
+<div class="panel panel-primary nested-fields">
+  <div class="panel-heading">TplGooddataExtractReport</div>
+  <div class="panel-body">
+    <%= f.input :name, as: :string, required: true %>
+    <%= f.input :report_oid, as: :string, required: true %>
+    <%= f.input :export_method, collection: TplGooddataExtractReport::VALID_EXPORT_METHODS, include_blank: false, required: true, selected: f.object.export_method || 'executed' %>
+    <%= f.input :destination_file_name, as: :string, required: true %>
+    <% unless disabled %>
+      <%= link_to_remove_association f, { class: "btn btn-danger btn-sm" } do %>
+        <span class="glyphicon glyphicon-remove"></span> TplGooddataExtractReport
+      <% end %>
+    <% end %>
+  </div>
+</div>

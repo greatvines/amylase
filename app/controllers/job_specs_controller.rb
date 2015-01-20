@@ -28,6 +28,10 @@ class JobSpecsController < ApplicationController
 
   #  POST /job_specs
   def create
+    Rails.logger.info "HEYMOFO!"
+    Rails.logger.info job_spec_params.to_yaml
+      
+
     @job_spec = JobSpec.new(job_spec_params)
     respond_to do |format|
       if @job_spec.save
@@ -109,7 +113,7 @@ class JobSpecsController < ApplicationController
       if params[:job_spec][:job_template_attributes]
         params[:job_spec][:job_template_attributes].merge!(params[:job_spec][params[:job_spec][:job_template_type].underscore])
       end
-      
+
       params.require(:job_spec).permit(:name, :enabled, :job_template_type, :job_template_id, :job_schedule_group_id, :client_id, 
         job_template_attributes: "#{params[:job_spec][:job_template_type]}::JOB_SPEC_PERMITTED_ATTRIBUTES".constantize)
     end

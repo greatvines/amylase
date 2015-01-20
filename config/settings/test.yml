@@ -1,2 +1,5 @@
+# Envcrypt - DO NOT SET THE PRODUCTION KEY HERE, KEEP IT AS AN ENVIRONMENT VARIABLE
+envcrypt_key: zs27X5CZ/6WwQWCdAraw5A==$LxPF731GIxsxAEddq7dcUR+QRWguTgzMyKKWciSW3IA=$fM4qXJElxNQUxJUVz/zOVQ==
+
 logging:
   save_logs_to_s3: false

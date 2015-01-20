@@ -1,6 +1,6 @@
 module Amylase
   module JobLog
-    
+
     # Public: Gets the job logger (uses Logging gem)
     attr_reader :job_log
 
@@ -10,7 +10,7 @@ module Amylase
     # Public: Get the name of the log file
     attr_reader :job_log_file
 
-    # Public: Full path to the 
+    # Public: Full path to the
     attr_reader :job_log_s3_full_path
 
     # Public: Hook that adds the initialize_job_log method to any class it is
@@ -49,8 +49,9 @@ module Amylase
           :color_scheme => 'trafficlight'
         )
       )
-
-      @job_log = Logging.logger['JobLog']
+      Logging.logger(STDOUT).close
+      @job_log = Logging.logger["JobLog-#{self.try(:id).blank? ? SecureRandom.hex(2) : self.id}"]
+      @job_log.clear_appenders
       @job_log.level = :info
       @job_log.add_appenders(
           Logging.appenders.stdout,

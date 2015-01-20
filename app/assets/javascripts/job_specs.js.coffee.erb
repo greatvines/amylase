@@ -7,3 +7,4 @@ showSelected = () -> $('#show_job_template_form a').trigger('click')
 jQuery ->
   $('#job_template_type_selector').change(showSelected)
   $('#show_job_template_form a').trigger('click')
+  $('.disable_input :input').prop('disabled', true)

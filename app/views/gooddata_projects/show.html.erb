@@ -1,0 +1,26 @@
+<% provide(:title, 'Gooddata Project') %>
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Name:</strong>
+  <%= @gooddata_project.name %>
+</p>
+
+<p>
+  <strong>Client:</strong>
+  <td><%= link_to_if(@gooddata_project.client, @gooddata_project.client.try(:name), @gooddata_project.client) %></td>
+</p>
+
+<p>
+  <strong>Description:</strong>
+  <%= @gooddata_project.description %>
+</p>
+
+<p>
+  <strong>Project uid:</strong>
+  <%= @gooddata_project.project_uid %>
+</p>
+
+
+<%= link_to 'Edit', edit_gooddata_project_path(@gooddata_project) %> |
+<%= link_to 'Back', gooddata_projects_path %>

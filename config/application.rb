@@ -14,6 +14,9 @@ require "sprockets/railtie"
 Bundler.require(*Rails.groups)
 
 module Amylase
+  require 'net/ftp'
+  require 'zip'
+
   class Application < Rails::Application
     config.autoload_paths << Rails.root.join('lib')
     # Settings in config/environments/* take precedence over those specified here.

@@ -1,0 +1,19 @@
+<% provide(:title, 'ExternalCredential') %>
+
+<p>
+  <strong>Name:</strong>
+  <%= @external_credential.name %>
+</p>
+
+<p>
+  <strong>Description:</strong>
+  <%= @external_credential.description %>
+</p>
+
+<p>
+  <strong>Username:</strong>
+  <%= @external_credential.username %>
+</p>
+
+<%= link_to 'Edit', edit_external_credential_path(@external_credential) %> |
+<%= link_to 'Back', external_credentials_path %>

@@ -73,6 +73,12 @@ gem 'aws-sdk-v1', '~> 1'
 # Save blanks as nil
 gem 'nilify_blanks', '~> 1.1'
 
+# REST client
+gem 'rest_client', '~> 1.8'
+
+# Zip file support
+gem 'rubyzip', '~> 1.1'
+
 group :development, :test do
   gem 'rspec-rails', '~> 3.0'
   gem 'factory_girl_rails', '~> 4.4'

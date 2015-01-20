@@ -27,7 +27,7 @@ RSpec.describe TplDevTest, :type => :model do
 
     it "logs a message within the job template" do
       run_template
-      expect(log_output).to match /INFO  JobLog : Logging within TplDevTest job/
+      expect(log_output).to match /INFO  JobLog-\w+ : Logging within TplDevTest job/
     end
 
     it "updates the job status message" do
