@@ -141,7 +141,7 @@ class TplGooddataExtract < ActiveRecord::Base
     job_log.info "Connecting to FTP host #{self.destination_host} with username #{self.destination_credential.username}"
     Net::FTP.open(self.destination_host) do |ftp|
       ftp.login(self.destination_credential.username, self.destination_credential.password)
-      ftp.passive
+      ftp.passive = true
 
       job_log.info "chdir #{self.destination_folder}"
       ftp.chdir(self.destination_folder)

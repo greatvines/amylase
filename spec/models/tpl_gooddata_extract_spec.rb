@@ -244,7 +244,7 @@ RSpec.describe TplGooddataExtract, :type => :model do
         ftp = double('Ftp server', :null_object => true)
         expect(Net::FTP).to receive(:open).once.and_yield(ftp)
         expect(ftp).to receive(:login).once.with(@tpl.destination_credential.username, @tpl.destination_credential.password)
-        expect(ftp).to receive(:passive).once
+        expect(ftp).to receive(:passive=).once.with(true)
         expect(ftp).to receive(:chdir).once.with(@tpl.destination_folder)
         @files_hash.each do |remote_file, local_file|
           expect(ftp).to receive(:putbinaryfile).with(local_file, @tpl.with_timestamp(remote_file))
