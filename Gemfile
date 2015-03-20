@@ -79,6 +79,10 @@ gem 'rest_client', '~> 1.8'
 # Zip file support
 gem 'rubyzip', '~> 1.1'
 
+group :development do
+  gem 'rails-erd'
+end
+
 group :development, :test do
   gem 'rspec-rails', '~> 3.0'
   gem 'factory_girl_rails', '~> 4.4'
