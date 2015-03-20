@@ -15,7 +15,7 @@ RSpec.configure do |config|
 
     stub_request(:get, "https://app2103.bws.birst.com/CommandWebService.asmx?WSDL")
       .with(:headers => {'Accept'=>'*/*'})
-      .to_return(:status => 200, :body => File.open(File.join(Rails.root, 'spec/support/birst_soap_wsdl_app2103_5_14.xml')).read, :headers => {})
+      .to_return(:status => 200, :body => File.open(File.join(Rails.root, 'spec/support/birst_soap_wsdl_app2103_5_17.xml')).read, :headers => {})
   end
 
   config.after(:each, :birst_soap_mock => true) do
