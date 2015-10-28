@@ -14,7 +14,7 @@ birst_soap:
 
   wait:
     # Job wait timeout
-    timeout: 12h
+    timeout: <%= ENV['JOB_WAIT_TIMEOUT'] %>
 
     # Job wait check status frequency
     every: 60s
