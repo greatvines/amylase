@@ -150,6 +150,7 @@ class LaunchedJob < ActiveRecord::Base
   # Returns nothing.
   def initialize_job
     launched_job_initializers
+  
     job_template_initializers
   end
 
@@ -216,9 +217,11 @@ class LaunchedJob < ActiveRecord::Base
 
   # Private: Log error message to the log, update the status of the launched job,
   # and re-raise the error.
+  # Also send job notification email
   #
   # Returns nothing.
   def job_error_handler(err)
+	UserMailer.job_notification_email(job_spec, @job_log_s3_full_path).deliver
     self.update(status: ERROR, status_message: error_message(err))
     @job_log.error error_message(err)
     raise err

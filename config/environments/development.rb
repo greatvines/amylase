@@ -1,6 +1,8 @@
 Rails.application.configure do
   ENV['ENVCRYPT_KEY'] = Settings.envcrypt_key
-
+  ENV['AMYLASE_LOGGING_S3_BUCKET'] = '/Users/nancywong/Documents/GreatVines/opt/amylase/log'
+  ENV['BIRST_USER'] = 'nancy.wong@greatvines.com'
+  
   # Settings specified here will take precedence over those in config/application.rb.
 
   # In the development environment your application's code is reloaded on
@@ -16,7 +18,17 @@ Rails.application.configure do
   config.action_controller.perform_caching = false
 
   # Don't care if the mailer can't send.
-  config.action_mailer.raise_delivery_errors = false
+  config.action_mailer.raise_delivery_errors = true
+  config.action_mailer.delivery_method = :smtp
+  config.action_mailer.smtp_settings = {
+  	address:              'smtp.gmail.com',
+  	port:                 587,
+  	domain:               'greatvines.com',
+  	user_name:            'filetransfer@greatvines.com',
+  	password:             'nvzfqemmamyuexrc',
+  	authentication:       'plain',
+	enable_starttls_auto: true  }
+  config.action_mailer.perform_deliveries = true
 
   # Print deprecation notices to the Rails logger.
   config.active_support.deprecation = :log
@@ -36,4 +48,12 @@ Rails.application.configure do
 
   # Raises error for missing translations
   # config.action_view.raise_on_missing_translations = true
+  
+  require 'byebug'
+if ENV['RUBY_DEBUG_PORT']
+  Byebug.start_server 'localhost', ENV['RUBY_DEBUG_PORT'].to_i
+else
+  Byebug.start_server 'localhost'
+end
+  
 end

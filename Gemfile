@@ -88,6 +88,7 @@ group :development, :test do
   gem 'factory_girl_rails', '~> 4.4'
   gem 'shoulda-matchers', '~> 2.6'
   gem 'database_cleaner', '~> 1.3'
+  gem 'byebug'
 end
 
 group :test do

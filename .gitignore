@@ -24,3 +24,11 @@ config/environments/*.local.yml
 /vendor
 /.powenv
 .elasticbeanstalk/
+
+# Elastic Beanstalk Files
+.elasticbeanstalk/*
+!.elasticbeanstalk/*.cfg.yml
+!.elasticbeanstalk/*.global.yml
+
+config/environments/development.rb
+config/database.yml
