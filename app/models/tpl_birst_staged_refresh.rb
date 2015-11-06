@@ -55,7 +55,11 @@ class TplBirstStagedRefresh < ActiveRecord::Base
     end
 
     launched_job.update(status_message: 'deleting all staging data')
-    delete_all_data(staging_space_uuid)
+    begin
+    	delete_all_data(staging_space_uuid)
+    rescue => err
+    	launched_job.update( status_message: 'Standard Error::BWSDeleteAllDataError, will ignore: #{err}' )
+    end
 
     launched_job.update(status_message: 'uploading external data')
     upload_data_sources(staging_space_uuid, data_source_list)

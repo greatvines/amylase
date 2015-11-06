@@ -78,7 +78,9 @@ stored is in an environment variable.
 
 This application has been developed using Ruby 2.x,
 [rbenv](https://github.com/sstephenson/rbenv), [Bundler](http://bundler.io/),
-and [Pow](http://pow.cx/). We've spent a lot of effort developing a good set of
+and [Pow](http://pow.cx/). Note, rbenv may not install correctly if rvm is also installed.  Follow Pow install instructions for Rack app.
+
+We've spent a lot of effort developing a good set of
 [RSpec](http://relishapp.com/rspec) tests.  So prior to deploying any code
 changes, a test spec should be defined and the full suite tested via
 
@@ -97,6 +99,52 @@ default).
 Additionally, some of the live tests require that an object already exists
 in S3 or Redshift.  These can be configured under the `test:` namespace in
 `config/settings.local.yml`
+
+## Development and Deployment Cycle
+
+On AWS console, go to Amylase on Elastic Beanstalk.  If a UAT server does not exist, clone the production server.  Make sure RDS is also set up, but the UAT version can live on a much smaller instance class.
+
+To run Amylase locally, make sure postgresql is installed and initialized with user and 2 amylase databases.
+
+To create database:
+psql
+create database "amylase-dev";
+create database "amylase-test";
+
+Run bundle install to make sure all package dependencies are installed.
+
+In Amylase directory, set the database variables.
+rake db:schema:load RAILS_ENV=development
+rake db:schema:load RAILS_ENV=test
+
+On local development machine, get the latest Amylase code base from git.  Create branch for code changes.
+
+Run below command line to restart web engine.
+touch tmp/restart.txt
+
+Pow should be running.  Make a symbolic link to your application:
+cd ~/.pow
+ln -s /path/to/myapp
+Example, ln -s /Users/nancywong/Documents/GreatVines/opt/amylase
+Application should be running at 
+http://amylase.dev/
+
+Install EB Command Line Interface (CLI) version 3
+(http://docs.aws.amazon.com/elasticbeanstalk/latest/dg/eb-cli3-install.html)
+command line, pip install awsebcli
+
+eb --version
+
+Run initialization elastic beanstalk configuration on Amylase development directory.
+eb init
+Default region is us-west-2 : US West (Oregon).
+
+Deploy to default environment or specify environment for deployment.
+eb deploy
+eb deploy amylase-uat-1
+This wraps up the local Amylase repository into a zip file and moves it to the AWS elastic beanstalk specified deploy environment.
+
+Note, when moving to production, stop scheduler to make sure no jobs are running.  Also, make sure changes are committed to git in order to deploy to AWS elastic beanstalk.  After deployment, start scheduler.
 
 ## Roadmap
 
