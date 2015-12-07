@@ -62,14 +62,15 @@ Rails.application.configure do
 
   # Ignore bad email addresses and do not raise email delivery errors.
   # Set this to true and configure the email server for immediate delivery to raise delivery errors.
+  crypt = Envcrypt::Envcrypter.new
   config.action_mailer.raise_delivery_errors = false
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.smtp_settings = {
   	address:              'smtp.gmail.com',
   	port:                 587,
   	domain:               'greatvines.com',
-  	user_name:            'filetransfer@greatvines.com',
-  	password:             'nvzfqemmamyuexrc',
+  	user_name:            Settings.mailer.account,
+  	password:             crypt.decrypt(Settings.mailer.password),
   	authentication:       'plain',
 	enable_starttls_auto: true  }
  config.action_mailer.perform_deliveries = true

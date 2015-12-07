@@ -51,7 +51,11 @@ data_sources:
     user: <%= ENV['AMYLASE_REDSHIFT_S3_USER'] %>
     password: <%= ENV['AMYLASE_REDSHIFT_S3_PASSWORD'] %>
     sslmode: <%= ENV['AMYLASE_REDSHIFT_S3_SSLMODE'] %>
-
+    
+# mailer account settings
+mailer:
+    account: <%= ENV['MAILER_ACCOUNT'] %>
+    password: <%= ENV['MAILER_PASSWORD'] %>
 
 # Some parameters only needed during test (set these values in settings.local.yml, the values given here are examples only)
 test:
